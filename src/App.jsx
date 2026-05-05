@@ -2001,10 +2001,19 @@ const COMPARISON = [
     accent: true,
     rows: [true, true, true, true, true, true, true],
   },
-  { name: 'Promto.ai', rows: [true, false, 'partial', false, true, false, true] },
-  { name: 'Lovable / v0 / Bolt', rows: [true, false, false, false, false, false, 'partial'] },
+  {
+    name: 'AI-конструкторы РФ',
+    rows: [true, false, 'partial', false, true, false, true],
+  },
+  {
+    name: 'Lovable / v0 / Bolt',
+    rows: [true, false, false, false, false, false, 'partial'],
+  },
   { name: 'Tilda / Wix', rows: [false, false, false, true, true, false, true] },
-  { name: 'Студия / агентство', rows: [false, false, true, true, true, false, true] },
+  {
+    name: 'Студия / агентство',
+    rows: [false, false, true, true, true, false, true],
+  },
 ]
 
 const COMPARISON_FEATURES = [
@@ -2187,7 +2196,6 @@ const TIERS = [
     name: 'Lite',
     price: '990',
     sub: 'для одиночных проектов',
-    promtoNote: 'Promto Старт — 690 ₽',
     features: [
       '1 проект',
       'Кошелёк токенов 1 000 ₽',
@@ -2202,7 +2210,6 @@ const TIERS = [
     name: 'Starter',
     price: '2 990',
     sub: 'для бизнеса и фрилансеров',
-    promtoNote: 'Promto Про — 2 790 ₽',
     features: [
       'До 3 проектов',
       'Кошелёк токенов 2 500 ₽',
@@ -2220,7 +2227,6 @@ const TIERS = [
     sub: 'для production-задач',
     highlight: true,
     badge: 'Популярный',
-    promtoNote: 'Promto Про Макс — 6 890 ₽',
     features: [
       'До 10 проектов · 2 домена',
       'Кошелёк токенов 6 000 ₽',
@@ -2237,7 +2243,6 @@ const TIERS = [
     name: 'Enterprise',
     price: '19 990',
     sub: 'для агентств и команд',
-    promtoNote: 'У Promto такого тира нет',
     features: [
       'Безлимит проектов · 5 доменов',
       'Кошелёк токенов 18 000 ₽',
@@ -2264,8 +2269,9 @@ function PricingSection() {
             От <span className="accent-gradient">990 ₽</span>. Один счёт. Без сюрпризов.
           </h2>
           <p className="mt-5 text-ink-muted">
-            Цены в паритете с Promto.ai — но у нас mix LLM, выделенный VPS, реальный
-            backend, версионирование и 152-ФЗ. На каждом тире.
+            Mix LLM, выделенный VPS, реальный backend, версионирование с откатом и
+            152-ФЗ — на каждом тире. Хостинг, AI-токены, домен и поддержка — в одной
+            подписке.
           </p>
         </div>
 
@@ -2341,10 +2347,6 @@ function PricingSection() {
                 <span className="text-[12.5px] text-ink-muted">₽ / мес</span>
               </div>
 
-              <div className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-ink-dim">
-                vs {t.promtoNote}
-              </div>
-
               <ul className="mt-5 space-y-2 flex-1">
                 {t.features.map((f) => (
                   <li
@@ -2394,12 +2396,12 @@ function PricingSection() {
 
 const FAQ = [
   {
-    q: 'Чем вы отличаетесь от Promto.ai?',
-    a: 'Цены в паритете (990 ₽ vs 690 ₽ на entry, 7 990 ₽ vs 6 890 ₽ на топе), но у нас на каждом тире: (1) визуальный rollback после каждого промпта, (2) mix из 6 LLM включая YandexGPT/GigaChat для 152-ФЗ — Promto только Anthropic, (3) реальный backend на FastAPI + Postgres + JWT — у Promto «PHP до Redis» расплывчато, (4) выделенный VPS на Pro/Enterprise, (5) self-export ZIP/Docker без vendor lock-in, (6) 1С-интеграция и часы инженеров на Enterprise. Мы — production-инфраструктура, Promto — конструктор для прототипов.',
+    q: 'Чем вы отличаетесь от других AI-конструкторов?',
+    a: 'Мы единственные на российском рынке, кто закрывает все 7 пунктов сразу: (1) визуальный rollback после каждого промпта, (2) mix из 6 LLM включая YandexGPT и GigaChat для 152-ФЗ, (3) реальный backend — FastAPI + Postgres 16 + JWT с миграциями, (4) выделенный VPS на Pro/Enterprise, а не shared-поддомен, (5) self-export ZIP/Docker без vendor lock-in, (6) 1С-интеграция и часы инженеров на Enterprise, (7) рублёвая оплата и российская юрисдикция. Это production-инфраструктура, а не «конструктор для прототипов».',
   },
   {
     q: 'А если AI сломает сайт неудачным промптом?',
-    a: 'Не сломает — каждый промпт создаёт новый снапшот, старая версия живёт. Откат в один клик через ленту версий, без git и терминала. Это главное, чем мы отличаемся от Lovable, Bolt, v0 и Promto.',
+    a: 'Не сломает — каждый промпт создаёт новый снапшот, старая версия живёт. Откат в один клик через ленту версий, без git и терминала. Никто из конкурентов в РФ так не делает.',
   },
   {
     q: 'А если ваш сервис закроется — мои сайты пропадут?',
