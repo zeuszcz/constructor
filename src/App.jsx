@@ -29,6 +29,14 @@ import {
   Coffee,
   MapPin,
   Clock,
+  Box,
+  Cpu,
+  HardDrive,
+  Activity,
+  Hourglass,
+  Timer,
+  Terminal,
+  Lock,
 } from 'lucide-react'
 import { track } from './lib/track.js'
 
@@ -1156,25 +1164,81 @@ function HeroDemo() {
 /* ================================================================== */
 
 function Hero() {
+  const ease = [0.16, 1, 0.3, 1]
   return (
     <section id="top" className="relative overflow-hidden pb-12 pt-28 md:pb-16 md:pt-32">
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
+
+      {/* drifting accent orbs for depth */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute left-[8%] top-[18%] h-[420px] w-[420px] glow-orb opacity-50"
+        animate={{
+          x: [0, 30, -10, 0],
+          y: [0, -20, 10, 0],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute right-[6%] top-[8%] h-[360px] w-[360px] glow-orb opacity-30"
+        animate={{
+          x: [0, -25, 15, 0],
+          y: [0, 18, -8, 0],
+        }}
+        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
       <div className="container-x relative">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <span className="eyebrow">
+          <motion.span
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease }}
+            className="eyebrow"
+          >
             <Sparkles className="h-3 w-3 text-accent-glow" />
             Российская AI-платформа · pre-launch
-          </span>
+          </motion.span>
+
           <h1 className="display-h1 mt-5">
-            <span className="text-gradient">Промпт. Сайт.</span>{' '}
-            <span className="accent-gradient">Откат.</span>
+            {[
+              { text: 'Промпт.', accent: false, delay: 0.1 },
+              { text: 'Сайт.', accent: false, delay: 0.22 },
+              { text: 'Откат.', accent: true, delay: 0.34 },
+            ].map((w, i) => (
+              <motion.span
+                key={w.text}
+                initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 0.7, delay: w.delay, ease }}
+                className={
+                  'inline-block ' +
+                  (w.accent ? 'accent-gradient' : 'text-gradient')
+                }
+              >
+                {w.text}
+                {i < 2 && ' '}
+              </motion.span>
+            ))}
           </h1>
-          <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-ink-muted md:text-[18px]">
+
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.48, ease }}
+            className="mt-5 max-w-xl text-[17px] leading-relaxed text-ink-muted md:text-[18px]"
+          >
             Сайт с backend, доменом и SSL — за минуты по одному чату. И откат любой
             версии в один клик, если AI что-то сломает.
-          </p>
+          </motion.p>
 
-          <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.6, ease }}
+            className="mt-7 flex flex-col items-center gap-3 sm:flex-row"
+          >
             <a
               href="#start"
               className="btn-primary text-[15px]"
@@ -1190,9 +1254,14 @@ function Hero() {
             >
               ↓ Смотри живой пример
             </a>
-          </div>
+          </motion.div>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-dim">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.75 }}
+            className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-dim"
+          >
             <span className="inline-flex items-center gap-1.5">
               <Check className="h-3 w-3 text-success" /> Без VPN и крипты
             </span>
@@ -1202,13 +1271,18 @@ function Hero() {
             <span className="inline-flex items-center gap-1.5">
               <Check className="h-3 w-3 text-success" /> Оплата ₽ · ЮKassa
             </span>
-          </div>
+          </motion.div>
         </div>
 
         {/* The demo — story-driven, the heart of the page */}
-        <div className="relative mx-auto mt-12 max-w-6xl">
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.65, ease }}
+          className="relative mx-auto mt-12 max-w-6xl"
+        >
           <HeroDemo />
-        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -1480,6 +1554,432 @@ function HowItWorks() {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
+/* Stack — what AI builds under the hood                              */
+/* ================================================================== */
+
+const STACK_LAYERS = [
+  {
+    icon: Zap,
+    title: 'Frontend',
+    tech: 'React 19 · Vite · Tailwind',
+    desc: 'Адаптивная вёрстка, анимации, SEO-теги, Lighthouse 90+. Без 1 строчки кода руками.',
+  },
+  {
+    icon: Cpu,
+    title: 'Backend API',
+    tech: 'FastAPI · OpenAPI · JWT',
+    desc: 'REST-эндпоинты, авторизация, валидация. AI генерит логику и тесты.',
+  },
+  {
+    icon: Database,
+    title: 'База данных',
+    tech: 'Postgres 16 · Alembic',
+    desc: 'Схемы, миграции, индексы. AI поддерживает миграции на каждом апдейте.',
+  },
+  {
+    icon: Globe,
+    title: 'Домен и SSL',
+    tech: 'Reg.ru · Lets Encrypt',
+    desc: 'Регистрация .ru/.рф, DNS, SSL-сертификат. Авто-обновление.',
+  },
+  {
+    icon: Rocket,
+    title: 'Auto-deploy',
+    tech: 'Docker · Ansible · Nginx',
+    desc: 'Staging + prod, blue-green деплой. Никаких ручных SSH-сессий.',
+  },
+  {
+    icon: Server,
+    title: 'Сервера в РФ',
+    tech: 'SafeCloud · CORTEL',
+    desc: 'VPS в Москве, 99.5% uptime. ПДн внутри страны (152-ФЗ из коробки).',
+  },
+  {
+    icon: HardDrive,
+    title: 'Бэкапы и мониторинг',
+    tech: 'Daily snapshots · Loki · Grafana',
+    desc: 'Снэпшоты БД ежедневно, 7 дней истории. Алерты в Telegram при 5xx.',
+  },
+]
+
+const BUILD_LOG = [
+  { ms: '0:01', tag: 'frontend', text: 'Сгенерирован Hero, меню, форма брони · 312 строк' },
+  { ms: '0:14', tag: 'database', text: 'Создана схема: users, bookings, menu_items' },
+  { ms: '0:23', tag: 'backend', text: 'API: POST /booking, GET /menu, JWT-auth ✓' },
+  { ms: '0:31', tag: 'domain', text: 'Зарегистрирован espressonadya.ru через Reg.ru API' },
+  { ms: '0:42', tag: 'ssl', text: 'SSL-сертификат от Lets Encrypt получен' },
+  { ms: '0:58', tag: 'deploy', text: 'Docker-образ собран, деплой на safecloud-vps-04' },
+  { ms: '1:12', tag: 'health', text: 'Health-check passed · 200 OK на всех маршрутах' },
+  { ms: '1:14', tag: 'live', text: 'Live: https://espressonadya.ru', highlight: true },
+]
+
+function BuildConsole() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="relative overflow-hidden rounded-2xl border border-line bg-canvas/80 shadow-cardLift backdrop-blur-xl"
+    >
+      <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 glow-orb opacity-60" />
+      <div className="pointer-events-none absolute -right-8 bottom-0 h-40 w-40 glow-orb opacity-40" />
+
+      <div className="relative flex items-center gap-2 border-b border-line bg-elev1/80 px-4 py-2.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <div className="ml-2 inline-flex items-center gap-1.5 font-mono text-[10.5px] text-ink-dim">
+          <Terminal className="h-3 w-3" />
+          omnia · build espressonadya.ru
+        </div>
+        <div className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10.5px] text-success">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-50" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+          </span>
+          building
+        </div>
+      </div>
+
+      <div className="relative space-y-2 px-5 py-5 font-mono text-[12.5px]">
+        {BUILD_LOG.map((line, i) => (
+          <motion.div
+            key={line.ms + line.tag}
+            initial={{ opacity: 0, x: -12 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.35, delay: 0.4 + i * 0.18 }}
+            className="flex items-baseline gap-2.5"
+          >
+            <span className="text-ink-dim">{line.ms}</span>
+            <span
+              className="rounded-md border px-1.5 py-0 text-[10px] uppercase tracking-wider"
+              style={{
+                borderColor: line.highlight
+                  ? 'rgba(39, 166, 68, 0.4)'
+                  : 'rgba(113, 112, 255, 0.35)',
+                background: line.highlight
+                  ? 'rgba(39, 166, 68, 0.12)'
+                  : 'rgba(113, 112, 255, 0.10)',
+                color: line.highlight ? '#27a644' : '#8b8aff',
+                fontWeight: 590,
+              }}
+            >
+              {line.tag}
+            </span>
+            <span className={line.highlight ? 'text-ink' : 'text-ink-muted'}>
+              {line.text}
+            </span>
+            {line.highlight && (
+              <span className="ml-auto inline-flex items-center gap-1 text-[10.5px] text-success">
+                <CheckCircle2 className="h-3 w-3" />
+                done
+              </span>
+            )}
+          </motion.div>
+        ))}
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.5, delay: 0.4 + BUILD_LOG.length * 0.18 + 0.4 }}
+          className="mt-4 flex items-center justify-between border-t border-line pt-3 text-[11px]"
+        >
+          <span className="inline-flex items-center gap-2 text-ink-muted">
+            <Hourglass className="h-3 w-3 text-accent-glow" />
+            Build complete · <span className="text-ink" style={{ fontWeight: 590 }}>1 мин 14 сек</span>
+          </span>
+          <span className="font-mono text-ink-dim">7 layers ✓</span>
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}
+
+function StackSection() {
+  return (
+    <section id="stack" className="relative py-20 md:py-28">
+      <div className="container-x">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <Box className="h-3 w-3 text-accent-glow" /> Что AI собирает под капотом
+          </span>
+          <h2 className="display-h2 mt-5 text-gradient">
+            Полный стек —
+            <br className="hidden md:block" />{' '}
+            <span className="accent-gradient">по одному промпту</span>
+          </h2>
+          <p className="mt-5 text-ink-muted">
+            У конкурентов клиент собирает 5–7 разных сервисов и платит 5 счетов: хостинг,
+            домен, AI, базу данных, поддержку. У нас AI делает всё сам — от дизайна до
+            бэкапов. Один чат. Один счёт. Один менеджер.
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+          <BuildConsole />
+
+          <div className="space-y-2.5">
+            {STACK_LAYERS.map((l, i) => (
+              <motion.div
+                key={l.title}
+                initial={{ opacity: 0, x: 24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{
+                  duration: 0.5,
+                  delay: i * 0.06,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="group flex items-start gap-3.5 rounded-xl border border-line bg-elev1/40 p-4 transition hover:border-white/15 hover:bg-elev1/70"
+              >
+                <div className="grid h-10 w-10 flex-none place-items-center rounded-lg border border-line bg-white/[0.03] transition group-hover:border-accent/30 group-hover:bg-accent/10">
+                  <l.icon className="h-4 w-4 text-accent-glow" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                    <span
+                      className="text-[15px] text-ink"
+                      style={{ fontWeight: 590 }}
+                    >
+                      {l.title}
+                    </span>
+                    <span className="font-mono text-[10.5px] uppercase tracking-wider text-ink-dim">
+                      {l.tech}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+                    {l.desc}
+                  </p>
+                </div>
+                <div className="grid h-5 w-5 flex-none place-items-center rounded-full bg-success/15 text-success">
+                  <Check className="h-3 w-3" strokeWidth={3} />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.55, delay: 0.5 }}
+          className="mx-auto mt-12 max-w-3xl rounded-2xl border border-accent/30 bg-gradient-to-r from-accent/[0.10] via-accent/[0.05] to-transparent p-5 text-center"
+        >
+          <p className="text-[14.5px] text-ink">
+            Ты пишешь промптом —{' '}
+            <span className="accent-gradient" style={{ fontWeight: 590 }}>
+              AI делает под капотом
+            </span>
+            .{' '}
+            <span className="text-ink-muted">
+              Тебе не нужно знать, что такое Postgres, Ansible или 152-ФЗ.
+            </span>
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
+/* Timeline compare — 5 minutes vs 2 months                           */
+/* ================================================================== */
+
+const FAST_TIMELINE = [
+  { time: '0:00', label: 'Описал промптом' },
+  { time: '0:30', label: 'AI собрал дизайн и UX' },
+  { time: '1:00', label: 'Backend + БД развёрнуты' },
+  { time: '1:30', label: 'Домен зарегистрирован' },
+  { time: '2:00', label: 'SSL · auto-deploy' },
+  { time: '5:00', label: 'Live · 6 990 ₽ / мес', final: true },
+]
+
+const SLOW_TIMELINE = [
+  { time: 'День 1', label: 'Бриф у агентства' },
+  { time: 'День 7', label: 'Получили первый дизайн' },
+  { time: 'День 21', label: 'Утвердили вёрстку' },
+  { time: 'День 35', label: 'Backend в работе' },
+  { time: 'День 50', label: 'Деплой настраивают' },
+  { time: 'День 60', label: 'Live · 250 000 ₽', final: true },
+]
+
+function TimelineTrack({ items, accent, fast }) {
+  return (
+    <div className="relative">
+      {/* vertical line */}
+      <div
+        className="absolute left-[11px] top-3 bottom-3 w-px"
+        style={{
+          background: fast
+            ? 'linear-gradient(to bottom, rgba(113,112,255,0.6), rgba(113,112,255,0.15))'
+            : 'linear-gradient(to bottom, rgba(244,68,68,0.4), rgba(244,68,68,0.1))',
+        }}
+      />
+
+      <div className="space-y-4">
+        {items.map((it, i) => (
+          <motion.div
+            key={it.time + it.label}
+            initial={{ opacity: 0, x: fast ? -16 : 16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{
+              duration: 0.4,
+              delay: fast ? i * 0.1 : i * 0.22,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className="relative flex items-start gap-3.5"
+          >
+            {/* dot */}
+            <div className="relative z-10 grid h-6 w-6 flex-none place-items-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{
+                  duration: 0.35,
+                  delay: fast ? i * 0.1 + 0.05 : i * 0.22 + 0.05,
+                  type: 'spring',
+                  stiffness: 220,
+                }}
+                className="h-3 w-3 rounded-full"
+                style={{
+                  background: it.final ? accent : it.final ? '#27a644' : accent,
+                  boxShadow: it.final
+                    ? `0 0 18px ${accent}`
+                    : `0 0 10px ${accent}66`,
+                }}
+              />
+            </div>
+
+            <div className="min-w-0 flex-1 pb-1">
+              <div
+                className="font-mono text-[10.5px] uppercase tracking-[0.16em]"
+                style={{ color: fast ? '#8b8aff' : '#a8aab1', fontWeight: 590 }}
+              >
+                {it.time}
+              </div>
+              <div
+                className={
+                  'mt-0.5 text-[13.5px] ' +
+                  (it.final ? 'text-ink' : 'text-ink-muted')
+                }
+                style={{ fontWeight: it.final ? 590 : 510 }}
+              >
+                {it.label}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TimelineCompareSection() {
+  return (
+    <section id="speed" className="relative py-20 md:py-28">
+      <div className="container-x">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <Timer className="h-3 w-3 text-accent-glow" /> Скорость до результата
+          </span>
+          <h2 className="display-h2 mt-5 text-gradient">
+            5 минут вместо
+            <br className="hidden md:block" />{' '}
+            <span className="accent-gradient">2 месяцев</span>
+          </h2>
+          <p className="mt-5 text-ink-muted">
+            Один и тот же сайт — кофейне на Патриках. Слева — путь с AI. Справа —
+            классический путь через агентство.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-14 grid max-w-4xl gap-4 md:grid-cols-2">
+          {/* Fast */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.10] via-elev1/60 to-canvas p-6 shadow-glow"
+          >
+            <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 glow-orb opacity-70" />
+            <div className="relative">
+              <div className="mb-1 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/15 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-accent-glow" style={{ fontWeight: 590 }}>
+                <Sparkles className="h-3 w-3" />
+                С Omnia.AI
+              </div>
+              <div className="mt-3 mb-5 flex items-baseline gap-2">
+                <span className="text-[42px] leading-none text-ink" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
+                  5
+                </span>
+                <span className="text-[14px] text-ink-muted">минут до live-сайта</span>
+              </div>
+              <TimelineTrack items={FAST_TIMELINE} accent="#7170ff" fast />
+            </div>
+          </motion.div>
+
+          {/* Slow */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden rounded-2xl border border-line bg-elev1/40 p-6"
+          >
+            <div className="relative">
+              <div className="mb-1 inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.02] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-ink-muted" style={{ fontWeight: 590 }}>
+                <Hourglass className="h-3 w-3" />
+                Без Omnia.AI · агентство
+              </div>
+              <div className="mt-3 mb-5 flex items-baseline gap-2">
+                <span className="text-[42px] leading-none text-ink-muted" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
+                  60
+                </span>
+                <span className="text-[14px] text-ink-dim">дней до live-сайта</span>
+              </div>
+              <TimelineTrack items={SLOW_TIMELINE} accent="#a8aab1" />
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="mx-auto mt-10 grid max-w-4xl gap-3 sm:grid-cols-3"
+        >
+          {[
+            { v: '17 280×', l: 'быстрее, чем агентство' },
+            { v: '−97%', l: 'дешевле первой настройки' },
+            { v: '0', l: 'звонков с подрядчиком' },
+          ].map((s) => (
+            <div
+              key={s.l}
+              className="rounded-xl border border-line bg-elev1/40 p-4 text-center"
+            >
+              <div
+                className="text-[28px] leading-none"
+                style={{ fontWeight: 600, letterSpacing: '-0.02em' }}
+              >
+                <span className="accent-gradient">{s.v}</span>
+              </div>
+              <div className="mt-1.5 text-[12px] text-ink-muted">{s.l}</div>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   )
@@ -2039,6 +2539,8 @@ export default function App() {
         <VersioningSection />
         <ProblemsSection />
         <HowItWorks />
+        <StackSection />
+        <TimelineCompareSection />
         <ComparisonSection />
         <FeaturesSection />
         <PricingSection />
