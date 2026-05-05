@@ -187,260 +187,677 @@ function VersionPill({ version, active }) {
 /* Preview surfaces — 5 visually distinct mocks                        */
 /* ------------------------------------------------------------------ */
 
-function MockWarm({ withMenu, mini = false }) {
-  const sz = mini ? mockMiniSizes : mockFullSizes
+/* Polished, real-cafe-looking previews. Each variant has a `full` design
+   and an `abstract mini` rendered into timeline thumbnails. The mini is
+   intentionally NOT a scaled-down full — at thumb size, real text becomes
+   illegible, so the mini uses geometric blocks that are recognisable in
+   one glance (warm vs dark vs broken vs restored). */
+
+const MENU_ITEMS = [
+  { name: 'Эспрессо', desc: 'двойной, 30 мл', price: '200 ₽', tag: null },
+  { name: 'Капучино', desc: 'с тёртым какао', price: '320 ₽', tag: 'хит' },
+  { name: 'Раф ванильный', desc: 'на кокосе', price: '380 ₽', tag: null },
+  { name: 'Латте', desc: 'тройной, с молоком', price: '350 ₽', tag: null },
+]
+
+function MenuFull({ accent = 'warm', muted = false }) {
+  const isWarm = accent === 'warm'
   return (
-    <div
-      className="relative h-full w-full overflow-hidden"
-      style={{
-        background:
-          'radial-gradient(ellipse 100% 70% at 50% 0%, #f5e6c8 0%, #e8d4ad 45%, #d4ba83 100%)',
-      }}
-    >
-      {/* paper grain */}
+    <div className={'mt-3 ' + (muted ? 'opacity-25' : '')}>
+      <div className="mb-2 flex items-center gap-2">
+        <span className={'h-px flex-1 ' + (isWarm ? 'bg-amber-900/20' : 'bg-amber-200/15')} />
+        <span
+          className={
+            'font-serif text-[12px] italic ' +
+            (isWarm ? 'text-amber-800' : 'text-amber-200/70')
+          }
+        >
+          меню осени
+        </span>
+        <span className={'h-px flex-1 ' + (isWarm ? 'bg-amber-900/20' : 'bg-amber-200/15')} />
+      </div>
       <div
-        className="absolute inset-0 opacity-30 mix-blend-multiply"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 30% 20%, rgba(120,80,30,0.08), transparent 40%), radial-gradient(circle at 80% 70%, rgba(140,90,40,0.07), transparent 40%)',
-        }}
-      />
-      <div className={'relative z-10 ' + sz.pad}>
-        <div className={'inline-flex items-center gap-1.5 rounded-full border border-amber-900/20 bg-white/40 backdrop-blur ' + sz.eyebrow}>
-          <Coffee className={sz.tinyIcon + ' text-amber-900/70'} />
-          <span className="uppercase tracking-[0.22em] text-amber-900/80">
-            Кофейня · Патрики
-          </span>
-        </div>
-
-        <h3 className={'mt-3 font-serif text-amber-950 ' + sz.h1} style={{ fontWeight: 590, letterSpacing: '-0.01em' }}>
-          Эспрессо у Нади
-        </h3>
-        <p className={'mt-1 text-amber-900/75 ' + sz.body}>
-          Зерно прямого обжарова с ферм Эфиопии и Бразилии
-        </p>
-
-        {!withMenu ? (
-          <div className={'mt-4 grid grid-cols-2 gap-2 ' + sz.bodyBlock}>
-            <div className="rounded-lg border border-amber-900/15 bg-white/60 p-2.5">
-              <Clock className={sz.tinyIcon + ' text-amber-900/70'} />
-              <div className={'mt-1 text-amber-950 ' + sz.label} style={{ fontWeight: 510 }}>
-                Открыто
+        className={
+          'rounded-xl border px-3 py-2.5 backdrop-blur-sm ' +
+          (isWarm
+            ? 'border-amber-900/15 bg-amber-50/55'
+            : 'border-amber-200/10 bg-white/[0.025]')
+        }
+      >
+        {MENU_ITEMS.map((it, i) => (
+          <div
+            key={it.name}
+            className={'flex items-baseline gap-2 ' + (i > 0 ? 'mt-1.5' : '')}
+          >
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={
+                    'text-[12.5px] ' +
+                    (isWarm ? 'text-amber-950' : 'text-amber-50')
+                  }
+                  style={{ fontWeight: 590 }}
+                >
+                  {it.name}
+                </span>
+                {it.tag && (
+                  <span
+                    className={
+                      'rounded-full px-1.5 py-0 text-[8.5px] uppercase tracking-wider ' +
+                      (isWarm
+                        ? 'bg-amber-700 text-amber-50'
+                        : 'bg-amber-300 text-amber-950')
+                    }
+                    style={{ fontWeight: 590 }}
+                  >
+                    {it.tag}
+                  </span>
+                )}
               </div>
-              <div className={'text-amber-900/70 ' + sz.tinyText}>пн–вс · 8:00–22:00</div>
+              <div
+                className={
+                  'text-[10px] italic ' +
+                  (isWarm ? 'text-amber-800/60' : 'text-amber-200/45')
+                }
+              >
+                {it.desc}
+              </div>
             </div>
-            <div className="rounded-lg border border-amber-900/15 bg-white/60 p-2.5">
-              <MapPin className={sz.tinyIcon + ' text-amber-900/70'} />
-              <div className={'mt-1 text-amber-950 ' + sz.label} style={{ fontWeight: 510 }}>
-                Найти нас
-              </div>
-              <div className={'text-amber-900/70 ' + sz.tinyText}>Малая Бронная, 12</div>
+            <div
+              className={
+                'mb-0.5 flex-1 self-end border-b border-dotted ' +
+                (isWarm ? 'border-amber-900/25' : 'border-amber-200/20')
+              }
+            />
+            <div
+              className={
+                'font-mono text-[12.5px] ' +
+                (isWarm ? 'text-amber-900' : 'text-amber-200/90')
+              }
+              style={{ fontWeight: 590 }}
+            >
+              {it.price}
             </div>
           </div>
-        ) : (
-          <MockMenu mini={mini} accent="warm" />
-        )}
-
-        <div className={'mt-4 inline-flex items-center gap-1.5 rounded-full bg-amber-700 px-4 py-2 text-white ' + sz.cta} style={{ fontWeight: 510 }}>
-          {withMenu ? 'Заказать онлайн' : 'Забронировать столик'}
-          <ArrowRight className={sz.tinyIcon} />
-        </div>
+        ))}
       </div>
     </div>
   )
 }
 
-function MockDark({ broken = false, restored = false, mini = false }) {
-  const sz = mini ? mockMiniSizes : mockFullSizes
+function NavMockWarm() {
   return (
-    <div
-      className="relative h-full w-full overflow-hidden"
-      style={{
-        background:
-          'radial-gradient(ellipse 90% 60% at 50% 0%, rgba(255,193,107,0.08) 0%, transparent 60%), linear-gradient(180deg, #0c0d10 0%, #08090a 100%)',
-      }}
-    >
-      {/* faint grid */}
+    <div className="relative z-10 flex items-center justify-between border-b border-amber-900/15 px-5 py-2.5">
+      <div className="flex items-center gap-2">
+        <div className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-amber-700 to-amber-950 text-amber-50 shadow-sm">
+          <Coffee className="h-3.5 w-3.5" strokeWidth={2} />
+        </div>
+        <span
+          className="text-[12px] tracking-[0.18em] text-amber-950"
+          style={{ fontWeight: 590 }}
+        >
+          НАДЯ
+        </span>
+      </div>
+      <div className="hidden items-center gap-4 text-[10px] uppercase tracking-[0.18em] text-amber-800/60 md:flex">
+        <span style={{ fontWeight: 510 }}>Меню</span>
+        <span style={{ fontWeight: 510 }}>О нас</span>
+        <span style={{ fontWeight: 510 }}>Бронь</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <div className="h-1 w-1 rounded-full bg-amber-900/50" />
+        <div className="h-1 w-1 rounded-full bg-amber-900/50" />
+        <div className="h-1 w-1 rounded-full bg-amber-900/50" />
+      </div>
+    </div>
+  )
+}
+
+function NavMockDark({ broken = false }) {
+  return (
+    <div className="relative z-10 flex items-center justify-between border-b border-amber-200/10 px-5 py-2.5">
+      <div className="flex items-center gap-2">
+        <div className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-amber-400 to-amber-700 text-amber-950 shadow-[0_0_15px_rgba(255,193,107,0.4)]">
+          <Coffee className="h-3.5 w-3.5" strokeWidth={2} />
+        </div>
+        <span
+          className="text-[12px] tracking-[0.18em] text-amber-100"
+          style={{ fontWeight: 590 }}
+        >
+          НАДЯ
+        </span>
+      </div>
+      <div className="hidden items-center gap-4 text-[10px] uppercase tracking-[0.18em] text-amber-200/55 md:flex">
+        <span style={{ fontWeight: 510 }}>Меню</span>
+        <span style={{ fontWeight: 510 }}>О нас</span>
+        <span style={{ fontWeight: 510 }}>Бронь</span>
+      </div>
+      {broken ? (
+        <div className="inline-flex items-center gap-1.5 rounded-md border border-danger/40 bg-danger/10 px-2 py-1 font-mono text-[10px] text-danger">
+          <AlertTriangle className="h-3 w-3 animate-pulse" />
+          error
+        </div>
+      ) : (
+        <div className="flex items-center gap-1.5">
+          <div className="h-1 w-1 rounded-full bg-amber-300/60" />
+          <div className="h-1 w-1 rounded-full bg-amber-300/60" />
+          <div className="h-1 w-1 rounded-full bg-amber-300/60" />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function HeroCardWarm() {
+  return (
+    <div className="relative grid place-items-center pr-1">
       <div
-        className="absolute inset-0 opacity-50"
+        className="relative grid h-[92px] w-[92px] place-items-center rounded-2xl"
         style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          background:
+            'linear-gradient(135deg, #c4842d 0%, #8b4f1e 50%, #4d2810 100%)',
+          boxShadow:
+            '0 24px 40px -14px rgba(80,40,10,0.4), inset 0 1px 0 rgba(255,255,255,0.14)',
+        }}
+      >
+        <Coffee className="h-11 w-11 text-amber-50/95" strokeWidth={1.3} />
+        <svg
+          className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-70"
+          width="46"
+          height="22"
+          viewBox="0 0 46 22"
+          fill="none"
+        >
+          <path
+            d="M10 21 Q12 13 8 7 Q4 1 11 -2"
+            stroke="rgba(255,243,210,0.85)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M23 21 Q21 13 25 7 Q29 1 22 -2"
+            stroke="rgba(255,243,210,0.85)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M36 21 Q38 13 34 7 Q30 1 37 -2"
+            stroke="rgba(255,243,210,0.85)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+      {/* coffee bean accent */}
+      <svg
+        className="absolute -bottom-2 -left-2 h-7 w-7 rotate-12 text-amber-900/35"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <ellipse cx="12" cy="12" rx="6" ry="9" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M12 5 Q14 12 12 19" stroke="currentColor" strokeWidth="1.4" />
+      </svg>
+    </div>
+  )
+}
+
+function HeroCardDark() {
+  return (
+    <div className="relative grid place-items-center pr-1">
+      <div
+        className="relative grid h-[92px] w-[92px] place-items-center rounded-2xl"
+        style={{
+          background:
+            'linear-gradient(135deg, #d18b34 0%, #8b4f1e 50%, #3a1d0c 100%)',
+          boxShadow:
+            '0 0 50px -12px rgba(255,193,107,0.35), 0 24px 40px -14px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.14)',
+        }}
+      >
+        <Coffee className="h-11 w-11 text-amber-50/95" strokeWidth={1.3} />
+        <svg
+          className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-80"
+          width="46"
+          height="22"
+          viewBox="0 0 46 22"
+          fill="none"
+        >
+          <path
+            d="M10 21 Q12 13 8 7 Q4 1 11 -2"
+            stroke="rgba(255,213,160,0.85)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M23 21 Q21 13 25 7 Q29 1 22 -2"
+            stroke="rgba(255,213,160,0.85)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M36 21 Q38 13 34 7 Q30 1 37 -2"
+            stroke="rgba(255,213,160,0.85)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+      <svg
+        className="absolute -bottom-2 -left-2 h-7 w-7 rotate-12 text-amber-200/30"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <ellipse cx="12" cy="12" rx="6" ry="9" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M12 5 Q14 12 12 19" stroke="currentColor" strokeWidth="1.4" />
+      </svg>
+    </div>
+  )
+}
+
+/* ---------- Full mock: WARM ---------- */
+
+function WarmFull({ withMenu }) {
+  return (
+    <div className="relative h-full w-full overflow-hidden font-sans">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, #fdf4e3 0%, #f3dfba 60%, #ddc090 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-50 mix-blend-multiply"
+        style={{
+          backgroundImage: `radial-gradient(circle at 15% 0%, rgba(180,130,50,0.18), transparent 50%), radial-gradient(circle at 90% 100%, rgba(120,70,20,0.16), transparent 50%)`,
+        }}
+      />
+
+      <NavMockWarm />
+
+      <div className="relative z-10 px-5 pb-3 pt-3.5">
+        <div className="grid grid-cols-[1fr_auto] items-start gap-4">
+          <div className="space-y-1.5">
+            <div
+              className="inline-flex items-center gap-2 rounded-full border border-amber-900/15 bg-amber-50/40 px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-amber-900/80 backdrop-blur"
+              style={{ fontWeight: 590 }}
+            >
+              <span className="h-1 w-1 rounded-full bg-amber-700" />
+              Кофейня · Патрики
+              <span className="h-1 w-1 rounded-full bg-amber-700" />
+            </div>
+            <h1
+              className="font-serif leading-[0.92] text-amber-950"
+              style={{
+                fontWeight: 600,
+                letterSpacing: '-0.025em',
+                fontSize: '40px',
+              }}
+            >
+              Эспрессо
+              <br />
+              <span className="italic text-amber-800">у Нади</span>
+            </h1>
+            <p className="max-w-[260px] text-[12px] leading-snug text-amber-900/80">
+              Зерно прямого обжарова с ферм Эфиопии и Бразилии. Каждое утро —
+              свежее.
+            </p>
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <span
+                className="text-[14px] text-amber-700"
+                style={{ letterSpacing: '-0.04em' }}
+              >
+                ★★★★★
+              </span>
+              <span
+                className="text-[11px] text-amber-950"
+                style={{ fontWeight: 590 }}
+              >
+                4.9
+              </span>
+              <span className="text-[10px] text-amber-900/55">
+                · 1 247 отзывов
+              </span>
+            </div>
+          </div>
+
+          <HeroCardWarm />
+        </div>
+
+        {!withMenu ? (
+          <div className="mt-3.5 grid grid-cols-3 gap-2">
+            <div className="rounded-xl border border-amber-900/15 bg-amber-50/55 p-2 backdrop-blur-sm">
+              <div
+                className="flex items-center gap-1 text-[9px] uppercase tracking-[0.16em] text-amber-700/75"
+                style={{ fontWeight: 590 }}
+              >
+                <Clock className="h-2.5 w-2.5" />
+                открыто
+              </div>
+              <div
+                className="mt-0.5 text-[12px] text-amber-950"
+                style={{ fontWeight: 590 }}
+              >
+                8:00–22:00
+              </div>
+              <div className="text-[9.5px] text-amber-900/60">пн – вс</div>
+            </div>
+            <div className="rounded-xl border border-amber-900/15 bg-amber-50/55 p-2 backdrop-blur-sm">
+              <div
+                className="flex items-center gap-1 text-[9px] uppercase tracking-[0.16em] text-amber-700/75"
+                style={{ fontWeight: 590 }}
+              >
+                <MapPin className="h-2.5 w-2.5" />
+                адрес
+              </div>
+              <div
+                className="mt-0.5 text-[12px] text-amber-950"
+                style={{ fontWeight: 590 }}
+              >
+                М. Бронная, 12
+              </div>
+              <div className="text-[9.5px] text-amber-900/60">м. Тверская</div>
+            </div>
+            <div
+              className="grid place-items-center rounded-xl bg-gradient-to-br from-amber-700 to-amber-950 p-2 text-center text-[11px] text-amber-50 shadow-lg"
+              style={{ fontWeight: 590 }}
+            >
+              <span>Забронировать</span>
+              <ArrowRight className="mt-0.5 h-3 w-3" />
+            </div>
+          </div>
+        ) : (
+          <MenuFull accent="warm" />
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ---------- Full mock: DARK (also broken & restored states) ---------- */
+
+function DarkFull({ broken = false, restored = false }) {
+  return (
+    <div className="relative h-full w-full overflow-hidden font-sans">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, #1a1208 0%, #0c0d10 60%, #08090a 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,193,107,0.10) 0%, transparent 60%)',
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-60"
+        style={{
+          backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)`,
           backgroundSize: '40px 40px',
         }}
       />
 
-      <div className={'relative z-10 ' + sz.pad}>
-        <div className="flex items-center justify-between">
-          <div className={'inline-flex items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-300/[0.06] backdrop-blur ' + sz.eyebrow}>
-            <Coffee className={sz.tinyIcon + ' text-amber-300/80'} />
-            <span className="uppercase tracking-[0.22em] text-amber-200/80">
-              Кофейня · Патрики
-            </span>
-          </div>
-          {broken && !mini && (
-            <div className="inline-flex items-center gap-1.5 rounded-md border border-danger/40 bg-danger/10 px-2 py-1 font-mono text-[10px] text-danger">
-              <AlertTriangle className="h-3 w-3 animate-pulse" />
-              layout collision
-            </div>
-          )}
-        </div>
+      <NavMockDark broken={broken} />
 
-        {/* Heading area — broken state shows logo overlapping */}
-        <div className="relative mt-3">
-          {broken && (
+      <div className="relative z-10 px-5 pb-3 pt-3.5">
+        <div className="grid grid-cols-[1fr_auto] items-start gap-4">
+          <div className="space-y-1.5">
             <div
-              className={'absolute -left-2 -top-2 z-10 rounded-md border border-danger/30 bg-danger/15 px-2 py-1 ' + sz.h1}
-              style={{ fontWeight: 590, color: '#fca5a5' }}
+              className="inline-flex items-center gap-2 rounded-full border border-amber-300/15 bg-amber-300/[0.06] px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-amber-200/75 backdrop-blur"
+              style={{ fontWeight: 590 }}
             >
-              ☕ Надя
+              <span className="h-1 w-1 rounded-full bg-amber-300" />
+              Кофейня · Патрики
+              <span className="h-1 w-1 rounded-full bg-amber-300" />
             </div>
-          )}
-          <h3
-            className={'font-serif text-amber-50 ' + sz.h1 + (broken ? ' opacity-40 line-through decoration-danger/60' : '')}
-            style={{ fontWeight: 590, letterSpacing: '-0.01em' }}
-          >
-            Эспрессо у Нади
-          </h3>
-        </div>
-        <p className={'mt-1 text-amber-100/60 ' + sz.body + (broken ? ' opacity-40' : '')}>
-          Зерно прямого обжарова с ферм Эфиопии и Бразилии
-        </p>
-
-        <MockMenu mini={mini} accent="dark" muted={broken} />
-
-        <div
-          className={
-            'mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 ' +
-            sz.cta +
-            (broken
-              ? ' border border-danger/30 bg-danger/10 text-danger'
-              : ' bg-amber-400 text-amber-950')
-          }
-          style={{ fontWeight: 510 }}
-        >
-          {broken ? 'Кнопка не работает' : 'Заказать онлайн'}
-          {!broken && <ArrowRight className={sz.tinyIcon} />}
-        </div>
-
-        {/* Restored success toast */}
-        <AnimatePresence>
-          {restored && !mini && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="absolute right-4 top-4 z-20 inline-flex items-center gap-2 rounded-lg border border-success/40 bg-success/15 px-3 py-2 text-[12px] text-success backdrop-blur"
+            <div className="relative">
+              {broken && (
+                <div
+                  className="absolute -left-2 -top-2 z-10 inline-flex items-center gap-1 rounded-md border border-danger/40 bg-danger/15 px-2 py-1 font-serif"
+                  style={{
+                    fontWeight: 600,
+                    color: '#fda4af',
+                    fontSize: '18px',
+                  }}
+                >
+                  ☕ Надя
+                </div>
+              )}
+              <h1
+                className={
+                  'font-serif leading-[0.92] ' +
+                  (broken
+                    ? 'text-amber-50/40 line-through decoration-danger/70'
+                    : 'text-amber-50')
+                }
+                style={{
+                  fontWeight: 600,
+                  letterSpacing: '-0.025em',
+                  fontSize: '40px',
+                }}
+              >
+                Эспрессо
+                <br />
+                <span className={'italic ' + (broken ? '' : 'text-amber-200')}>
+                  у Нади
+                </span>
+              </h1>
+            </div>
+            <p
+              className={
+                'max-w-[260px] text-[12px] leading-snug ' +
+                (broken ? 'text-amber-100/30' : 'text-amber-100/65')
+              }
             >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Откатил на v3 за 0.4 сек
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Mini badge for restored thumbnail */}
-        {restored && mini && (
-          <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-success">
-            <CheckCircle2 className="h-2 w-2 text-canvas" />
+              Зерно прямого обжарова с ферм Эфиопии и Бразилии. Каждое утро —
+              свежее.
+            </p>
+            <div
+              className={
+                'flex items-center gap-1.5 pt-0.5 ' + (broken ? 'opacity-40' : '')
+              }
+            >
+              <span
+                className="text-[14px] text-amber-300"
+                style={{ letterSpacing: '-0.04em' }}
+              >
+                ★★★★★
+              </span>
+              <span
+                className="text-[11px] text-amber-100"
+                style={{ fontWeight: 590 }}
+              >
+                4.9
+              </span>
+              <span className="text-[10px] text-amber-200/45">
+                · 1 247 отзывов
+              </span>
+            </div>
           </div>
-        )}
 
-        {/* Mini badge for broken thumbnail */}
-        {broken && mini && (
-          <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-danger">
-            <X className="h-2 w-2 text-canvas" strokeWidth={3} />
-          </div>
-        )}
+          <HeroCardDark />
+        </div>
+
+        <MenuFull accent="dark" muted={broken} />
       </div>
-    </div>
-  )
-}
 
-function MockMenu({ mini, accent = 'warm', muted = false }) {
-  const sz = mini ? mockMiniSizes : mockFullSizes
-  const items = [
-    { name: 'Эспрессо', price: '200 ₽', tag: null },
-    { name: 'Капучино', price: '320 ₽', tag: 'хит' },
-    { name: 'Раф ванильный', price: '380 ₽', tag: null },
-    { name: 'Латте', price: '350 ₽', tag: null },
-  ]
-  const isWarm = accent === 'warm'
-  return (
-    <div
-      className={
-        'mt-4 grid gap-1.5 rounded-xl border p-2.5 ' +
-        (isWarm
-          ? 'border-amber-900/15 bg-white/60'
-          : 'border-amber-200/10 bg-white/[0.02]') +
-        (muted ? ' opacity-30' : '')
-      }
-    >
-      {items.map((it) => (
-        <div
-          key={it.name}
-          className={
-            'flex items-center justify-between border-b py-1.5 last:border-b-0 ' +
-            (isWarm ? 'border-amber-900/10' : 'border-white/5')
-          }
-        >
-          <span
-            className={
-              'flex items-center gap-1.5 ' +
-              sz.bodyBlock +
-              (isWarm ? ' text-amber-950' : ' text-amber-50')
-            }
+      <AnimatePresence>
+        {restored && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="absolute right-4 top-4 z-20 inline-flex items-center gap-2 rounded-lg border border-success/40 bg-success/15 px-3 py-2 text-[12px] text-success backdrop-blur"
             style={{ fontWeight: 510 }}
           >
-            {it.name}
-            {it.tag && !mini && (
-              <span
-                className={
-                  'rounded-full px-1.5 py-0 font-mono text-[9px] uppercase ' +
-                  (isWarm
-                    ? 'bg-amber-700/15 text-amber-800'
-                    : 'bg-amber-300/15 text-amber-300')
-                }
-              >
-                {it.tag}
-              </span>
-            )}
-          </span>
-          <span
-            className={
-              'font-mono ' +
-              sz.bodyBlock +
-              (isWarm ? ' text-amber-900/80' : ' text-amber-200/80')
-            }
-          >
-            {it.price}
-          </span>
-        </div>
-      ))}
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Откатил на v3 · 0.4 сек
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
 
-const mockFullSizes = {
-  pad: 'p-5 sm:p-6',
-  eyebrow: 'px-2.5 py-1 text-[10px]',
-  h1: 'text-[26px] sm:text-[30px]',
-  body: 'text-[12.5px] sm:text-[13px]',
-  bodyBlock: 'text-[12px]',
-  label: 'text-[12px]',
-  tinyText: 'text-[10.5px]',
-  cta: 'text-[12px]',
-  tinyIcon: 'h-3 w-3',
+/* ---------- Mini abstracts (timeline thumbnails) ---------- */
+
+function WarmMini({ withMenu }) {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300/70 px-2 py-1.5">
+      {/* nav */}
+      <div className="flex items-center justify-between border-b border-amber-900/20 pb-1">
+        <div className="flex items-center gap-0.5">
+          <div className="h-1.5 w-1.5 rounded-full bg-amber-900" />
+          <div className="h-0.5 w-2 rounded-full bg-amber-900/70" />
+        </div>
+        <div className="flex gap-0.5">
+          <div className="h-0.5 w-1.5 rounded-full bg-amber-900/40" />
+          <div className="h-0.5 w-1.5 rounded-full bg-amber-900/40" />
+          <div className="h-0.5 w-1.5 rounded-full bg-amber-900/40" />
+        </div>
+      </div>
+      {/* hero */}
+      <div className="mt-1 flex items-start justify-between gap-1">
+        <div className="flex-1 space-y-0.5">
+          <div className="h-0.5 w-3 rounded-full bg-amber-700/50" />
+          <div className="h-1.5 w-10 rounded-sm bg-amber-950" />
+          <div className="h-1.5 w-7 rounded-sm bg-amber-800 italic" />
+          <div className="h-px w-9 rounded-full bg-amber-900/40" />
+          <div className="flex items-center gap-0.5">
+            <div className="h-0.5 w-3 rounded-sm bg-amber-700" />
+            <div className="h-0.5 w-1.5 rounded-sm bg-amber-900" />
+          </div>
+        </div>
+        <div className="grid h-7 w-7 place-items-center rounded-xl bg-gradient-to-br from-amber-700 to-amber-950 shadow-md">
+          <div className="h-2.5 w-2 rounded-sm bg-amber-100/85" />
+        </div>
+      </div>
+      {/* below */}
+      {withMenu ? (
+        <div className="mt-1 space-y-0.5">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center gap-1">
+              <div
+                className={
+                  'h-0.5 rounded-full bg-amber-950/70 ' +
+                  (i === 1 ? 'w-5' : 'w-4')
+                }
+              />
+              <div className="h-px flex-1 bg-amber-900/20" />
+              <div className="h-0.5 w-2 rounded-full bg-amber-900/70" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-1 grid grid-cols-3 gap-0.5">
+          <div className="h-2.5 rounded-sm border border-amber-900/15 bg-white/40" />
+          <div className="h-2.5 rounded-sm border border-amber-900/15 bg-white/40" />
+          <div className="h-2.5 rounded-sm bg-amber-700" />
+        </div>
+      )}
+    </div>
+  )
 }
-const mockMiniSizes = {
-  pad: 'p-1.5',
-  eyebrow: 'px-1 py-0.5 text-[5px]',
-  h1: 'text-[8px]',
-  body: 'text-[5px]',
-  bodyBlock: 'text-[5px]',
-  label: 'text-[5px]',
-  tinyText: 'text-[4px]',
-  cta: 'text-[5px]',
-  tinyIcon: 'h-1 w-1',
+
+function DarkMini({ broken, restored }) {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-gradient-to-b from-[#1a1208] via-[#0c0d10] to-[#08090a] px-2 py-1.5">
+      {/* warm glow */}
+      <div className="pointer-events-none absolute -top-2 left-1/2 h-4 w-12 -translate-x-1/2 rounded-full bg-amber-300/20 blur-md" />
+      {/* nav */}
+      <div className="relative flex items-center justify-between border-b border-white/10 pb-1">
+        <div className="flex items-center gap-0.5">
+          <div className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+          <div className="h-0.5 w-2 rounded-full bg-amber-200/70" />
+        </div>
+        <div className="flex gap-0.5">
+          <div className="h-0.5 w-1.5 rounded-full bg-white/30" />
+          <div className="h-0.5 w-1.5 rounded-full bg-white/30" />
+          <div className="h-0.5 w-1.5 rounded-full bg-white/30" />
+        </div>
+      </div>
+      {/* hero */}
+      <div className="relative mt-1 flex items-start justify-between gap-1">
+        <div className="flex-1 space-y-0.5">
+          <div className="h-0.5 w-3 rounded-full bg-amber-300/55" />
+          <div className="relative">
+            {broken && (
+              <div className="absolute -left-0.5 -top-0.5 z-10 h-1.5 w-4 rounded-sm border border-danger/60 bg-danger/30" />
+            )}
+            <div
+              className={
+                'h-1.5 w-10 rounded-sm ' +
+                (broken ? 'bg-amber-50/30' : 'bg-amber-50')
+              }
+            />
+          </div>
+          <div
+            className={
+              'h-1.5 w-7 rounded-sm italic ' +
+              (broken ? 'bg-amber-50/30' : 'bg-amber-200/95')
+            }
+          />
+          <div className="h-px w-9 rounded-full bg-amber-200/30" />
+          <div className="flex items-center gap-0.5">
+            <div className="h-0.5 w-3 rounded-sm bg-amber-300" />
+            <div className="h-0.5 w-1.5 rounded-sm bg-amber-100" />
+          </div>
+        </div>
+        <div className="grid h-7 w-7 place-items-center rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 shadow-lg">
+          <div className="h-2.5 w-2 rounded-sm bg-amber-100/85" />
+        </div>
+      </div>
+      {/* menu rows */}
+      <div className="mt-1 space-y-0.5">
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={
+              'flex items-center gap-1 ' +
+              (broken && i === 1 ? 'opacity-30' : '')
+            }
+          >
+            <div
+              className={
+                'h-0.5 rounded-full bg-amber-100/70 ' +
+                (i === 1 ? 'w-5' : 'w-4')
+              }
+            />
+            <div className="h-px flex-1 bg-white/10" />
+            <div className="h-0.5 w-2 rounded-full bg-amber-200/65" />
+          </div>
+        ))}
+      </div>
+      {/* status pip */}
+      {broken && (
+        <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-danger ring-2 ring-canvas">
+          <X className="h-2 w-2 text-white" strokeWidth={3.5} />
+        </div>
+      )}
+      {restored && (
+        <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-success ring-2 ring-canvas">
+          <Check className="h-2 w-2 text-white" strokeWidth={3.5} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ---------- Adapters ---------- */
+
+function MockWarm({ withMenu = false, mini = false }) {
+  return mini ? <WarmMini withMenu={withMenu} /> : <WarmFull withMenu={withMenu} />
+}
+
+function MockDark({ broken = false, restored = false, mini = false }) {
+  return mini ? (
+    <DarkMini broken={broken} restored={restored} />
+  ) : (
+    <DarkFull broken={broken} restored={restored} />
+  )
 }
 
 const PREVIEW_REGISTRY = {
