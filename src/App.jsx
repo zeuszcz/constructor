@@ -22,13 +22,19 @@ import {
   ChevronDown,
   Github,
   Send,
-  PlayCircle,
+  Pause,
+  Play,
+  AlertTriangle,
+  CheckCircle2,
+  Coffee,
+  MapPin,
+  Clock,
 } from 'lucide-react'
 import { track } from './lib/track.js'
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* Logo                                                               */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 function Logo({ className = '' }) {
   return (
@@ -46,9 +52,9 @@ function Logo({ className = '' }) {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* NavBar                                                             */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false)
@@ -60,10 +66,10 @@ function NavBar() {
   }, [])
 
   const links = [
+    { id: 'demo', label: 'Демо' },
+    { id: 'versions', label: 'Версии и откат' },
     { id: 'how', label: 'Как работает' },
-    { id: 'features', label: 'Возможности' },
     { id: 'pricing', label: 'Тарифы' },
-    { id: 'faq', label: 'Вопросы' },
   ]
 
   return (
@@ -71,7 +77,7 @@ function NavBar() {
       className={
         'fixed inset-x-0 top-0 z-50 transition ' +
         (scrolled
-          ? 'border-b border-line bg-canvas/80 backdrop-blur-xl'
+          ? 'border-b border-line bg-canvas/85 backdrop-blur-xl'
           : 'border-b border-transparent')
       }
     >
@@ -92,13 +98,9 @@ function NavBar() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <a
-            href="#start"
-            className="hidden btn-ghost sm:inline-flex"
-            onClick={() => track('nav_login')}
-          >
-            Войти
-          </a>
+          <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-accent-glow sm:inline-flex">
+            Pre-launch
+          </span>
           <a
             href="#start"
             className="btn-primary"
@@ -113,358 +115,861 @@ function NavBar() {
   )
 }
 
+/* ================================================================== */
+/* Demo story — 5 versions of the same coffee-shop site               */
+/* ================================================================== */
+
+const STORY = [
+  {
+    user: 'Сделай лендинг для кофейни «Эспрессо у Нади» на Патриках',
+    ai: 'Беру тёплую палитру и serif-шрифт. Подключаю карту, часы, форму брони.',
+    diff: { kind: 'add', text: '+ 312 строк · шаблон, hero, контакты' },
+    version: { id: 'v1', label: 'Стартовый шаблон', tone: 'warm' },
+    preview: 'warm-template',
+  },
+  {
+    user: 'Добавь онлайн-меню с ценами',
+    ai: 'Создаю секцию меню. Поднимаю Postgres под будущие заказы и БД клиентов.',
+    diff: { kind: 'add', text: '+ 78 строк · меню (4 позиции) + БД' },
+    version: { id: 'v2', label: 'Меню добавлено', tone: 'warm' },
+    preview: 'warm-menu',
+  },
+  {
+    user: 'Поставь тёмную тему — клиент попросил',
+    ai: 'Перевожу палитру в тёмные оттенки. Контраст по AAA, акценты — тёплый янтарь.',
+    diff: { kind: 'mod', text: '~ 41 строка · цветовая схема' },
+    version: { id: 'v3', label: 'Тёмная тема', tone: 'dark' },
+    preview: 'dark-menu',
+  },
+  {
+    user: 'Замени логотип на «☕ Надя»',
+    ai: 'Применяю… Хм, новый логотип не помещается в шапку, layout сломался.',
+    diff: { kind: 'err', text: '× Сломалась шапка · 88 строк' },
+    version: { id: 'v4', label: 'AI сломал шапку', tone: 'broken' },
+    preview: 'broken',
+  },
+  {
+    user: '[Откат на v3]',
+    ai: 'Готово — за 1 клик откатил на v3. Логотип не трогаю, остальное на месте.',
+    diff: { kind: 'ok', text: '✓ Откат · восстановлено за 0.4 сек' },
+    version: { id: 'v5', label: 'Откат на v3', tone: 'restored' },
+    preview: 'dark-restored',
+    rollback: true,
+  },
+]
+
 /* ------------------------------------------------------------------ */
-/* Hero — animated demo                                               */
+/* Mini-version label / id chip                                       */
 /* ------------------------------------------------------------------ */
 
-const DEMO_MESSAGES = [
-  { role: 'user', text: 'Сделай лендинг для кофейни «Эспрессо у Нади» — Москва, Патрики' },
-  {
-    role: 'ai',
-    text: 'Ок! Подбираю шрифты, тёплую палитру, добавляю меню, карту и форму брони. Деплою на espressonadya.ru…',
-  },
-  { role: 'user', text: 'Замени фон на тёмный' },
-]
+function VersionPill({ version, active }) {
+  const tones = {
+    warm: 'border-amber-500/30 bg-amber-500/10 text-amber-200/90',
+    dark: 'border-accent/30 bg-accent/10 text-accent-glow',
+    broken: 'border-danger/40 bg-danger/10 text-danger',
+    restored: 'border-success/40 bg-success/10 text-success',
+  }
+  return (
+    <span
+      className={
+        'inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[10px] tracking-wide transition ' +
+        (tones[version.tone] || 'border-line bg-white/[0.03] text-ink-muted') +
+        (active ? ' ring-1 ring-accent/30' : '')
+      }
+    >
+      <span className="font-mono">{version.id}</span>
+      <span className="text-[10px] normal-case opacity-80">· {version.label}</span>
+    </span>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Preview surfaces — 5 visually distinct mocks                        */
+/* ------------------------------------------------------------------ */
+
+function MockWarm({ withMenu, mini = false }) {
+  const sz = mini ? mockMiniSizes : mockFullSizes
+  return (
+    <div
+      className="relative h-full w-full overflow-hidden"
+      style={{
+        background:
+          'radial-gradient(ellipse 100% 70% at 50% 0%, #f5e6c8 0%, #e8d4ad 45%, #d4ba83 100%)',
+      }}
+    >
+      {/* paper grain */}
+      <div
+        className="absolute inset-0 opacity-30 mix-blend-multiply"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 30% 20%, rgba(120,80,30,0.08), transparent 40%), radial-gradient(circle at 80% 70%, rgba(140,90,40,0.07), transparent 40%)',
+        }}
+      />
+      <div className={'relative z-10 ' + sz.pad}>
+        <div className={'inline-flex items-center gap-1.5 rounded-full border border-amber-900/20 bg-white/40 backdrop-blur ' + sz.eyebrow}>
+          <Coffee className={sz.tinyIcon + ' text-amber-900/70'} />
+          <span className="uppercase tracking-[0.22em] text-amber-900/80">
+            Кофейня · Патрики
+          </span>
+        </div>
+
+        <h3 className={'mt-3 font-serif text-amber-950 ' + sz.h1} style={{ fontWeight: 590, letterSpacing: '-0.01em' }}>
+          Эспрессо у Нади
+        </h3>
+        <p className={'mt-1 text-amber-900/75 ' + sz.body}>
+          Зерно прямого обжарова с ферм Эфиопии и Бразилии
+        </p>
+
+        {!withMenu ? (
+          <div className={'mt-4 grid grid-cols-2 gap-2 ' + sz.bodyBlock}>
+            <div className="rounded-lg border border-amber-900/15 bg-white/60 p-2.5">
+              <Clock className={sz.tinyIcon + ' text-amber-900/70'} />
+              <div className={'mt-1 text-amber-950 ' + sz.label} style={{ fontWeight: 510 }}>
+                Открыто
+              </div>
+              <div className={'text-amber-900/70 ' + sz.tinyText}>пн–вс · 8:00–22:00</div>
+            </div>
+            <div className="rounded-lg border border-amber-900/15 bg-white/60 p-2.5">
+              <MapPin className={sz.tinyIcon + ' text-amber-900/70'} />
+              <div className={'mt-1 text-amber-950 ' + sz.label} style={{ fontWeight: 510 }}>
+                Найти нас
+              </div>
+              <div className={'text-amber-900/70 ' + sz.tinyText}>Малая Бронная, 12</div>
+            </div>
+          </div>
+        ) : (
+          <MockMenu mini={mini} accent="warm" />
+        )}
+
+        <div className={'mt-4 inline-flex items-center gap-1.5 rounded-full bg-amber-700 px-4 py-2 text-white ' + sz.cta} style={{ fontWeight: 510 }}>
+          {withMenu ? 'Заказать онлайн' : 'Забронировать столик'}
+          <ArrowRight className={sz.tinyIcon} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MockDark({ broken = false, restored = false, mini = false }) {
+  const sz = mini ? mockMiniSizes : mockFullSizes
+  return (
+    <div
+      className="relative h-full w-full overflow-hidden"
+      style={{
+        background:
+          'radial-gradient(ellipse 90% 60% at 50% 0%, rgba(255,193,107,0.08) 0%, transparent 60%), linear-gradient(180deg, #0c0d10 0%, #08090a 100%)',
+      }}
+    >
+      {/* faint grid */}
+      <div
+        className="absolute inset-0 opacity-50"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      <div className={'relative z-10 ' + sz.pad}>
+        <div className="flex items-center justify-between">
+          <div className={'inline-flex items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-300/[0.06] backdrop-blur ' + sz.eyebrow}>
+            <Coffee className={sz.tinyIcon + ' text-amber-300/80'} />
+            <span className="uppercase tracking-[0.22em] text-amber-200/80">
+              Кофейня · Патрики
+            </span>
+          </div>
+          {broken && !mini && (
+            <div className="inline-flex items-center gap-1.5 rounded-md border border-danger/40 bg-danger/10 px-2 py-1 font-mono text-[10px] text-danger">
+              <AlertTriangle className="h-3 w-3 animate-pulse" />
+              layout collision
+            </div>
+          )}
+        </div>
+
+        {/* Heading area — broken state shows logo overlapping */}
+        <div className="relative mt-3">
+          {broken && (
+            <div
+              className={'absolute -left-2 -top-2 z-10 rounded-md border border-danger/30 bg-danger/15 px-2 py-1 ' + sz.h1}
+              style={{ fontWeight: 590, color: '#fca5a5' }}
+            >
+              ☕ Надя
+            </div>
+          )}
+          <h3
+            className={'font-serif text-amber-50 ' + sz.h1 + (broken ? ' opacity-40 line-through decoration-danger/60' : '')}
+            style={{ fontWeight: 590, letterSpacing: '-0.01em' }}
+          >
+            Эспрессо у Нади
+          </h3>
+        </div>
+        <p className={'mt-1 text-amber-100/60 ' + sz.body + (broken ? ' opacity-40' : '')}>
+          Зерно прямого обжарова с ферм Эфиопии и Бразилии
+        </p>
+
+        <MockMenu mini={mini} accent="dark" muted={broken} />
+
+        <div
+          className={
+            'mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 ' +
+            sz.cta +
+            (broken
+              ? ' border border-danger/30 bg-danger/10 text-danger'
+              : ' bg-amber-400 text-amber-950')
+          }
+          style={{ fontWeight: 510 }}
+        >
+          {broken ? 'Кнопка не работает' : 'Заказать онлайн'}
+          {!broken && <ArrowRight className={sz.tinyIcon} />}
+        </div>
+
+        {/* Restored success toast */}
+        <AnimatePresence>
+          {restored && !mini && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="absolute right-4 top-4 z-20 inline-flex items-center gap-2 rounded-lg border border-success/40 bg-success/15 px-3 py-2 text-[12px] text-success backdrop-blur"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Откатил на v3 за 0.4 сек
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mini badge for restored thumbnail */}
+        {restored && mini && (
+          <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-success">
+            <CheckCircle2 className="h-2 w-2 text-canvas" />
+          </div>
+        )}
+
+        {/* Mini badge for broken thumbnail */}
+        {broken && mini && (
+          <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-danger">
+            <X className="h-2 w-2 text-canvas" strokeWidth={3} />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MockMenu({ mini, accent = 'warm', muted = false }) {
+  const sz = mini ? mockMiniSizes : mockFullSizes
+  const items = [
+    { name: 'Эспрессо', price: '200 ₽', tag: null },
+    { name: 'Капучино', price: '320 ₽', tag: 'хит' },
+    { name: 'Раф ванильный', price: '380 ₽', tag: null },
+    { name: 'Латте', price: '350 ₽', tag: null },
+  ]
+  const isWarm = accent === 'warm'
+  return (
+    <div
+      className={
+        'mt-4 grid gap-1.5 rounded-xl border p-2.5 ' +
+        (isWarm
+          ? 'border-amber-900/15 bg-white/60'
+          : 'border-amber-200/10 bg-white/[0.02]') +
+        (muted ? ' opacity-30' : '')
+      }
+    >
+      {items.map((it) => (
+        <div
+          key={it.name}
+          className={
+            'flex items-center justify-between border-b py-1.5 last:border-b-0 ' +
+            (isWarm ? 'border-amber-900/10' : 'border-white/5')
+          }
+        >
+          <span
+            className={
+              'flex items-center gap-1.5 ' +
+              sz.bodyBlock +
+              (isWarm ? ' text-amber-950' : ' text-amber-50')
+            }
+            style={{ fontWeight: 510 }}
+          >
+            {it.name}
+            {it.tag && !mini && (
+              <span
+                className={
+                  'rounded-full px-1.5 py-0 font-mono text-[9px] uppercase ' +
+                  (isWarm
+                    ? 'bg-amber-700/15 text-amber-800'
+                    : 'bg-amber-300/15 text-amber-300')
+                }
+              >
+                {it.tag}
+              </span>
+            )}
+          </span>
+          <span
+            className={
+              'font-mono ' +
+              sz.bodyBlock +
+              (isWarm ? ' text-amber-900/80' : ' text-amber-200/80')
+            }
+          >
+            {it.price}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const mockFullSizes = {
+  pad: 'p-5 sm:p-6',
+  eyebrow: 'px-2.5 py-1 text-[10px]',
+  h1: 'text-[26px] sm:text-[30px]',
+  body: 'text-[12.5px] sm:text-[13px]',
+  bodyBlock: 'text-[12px]',
+  label: 'text-[12px]',
+  tinyText: 'text-[10.5px]',
+  cta: 'text-[12px]',
+  tinyIcon: 'h-3 w-3',
+}
+const mockMiniSizes = {
+  pad: 'p-1.5',
+  eyebrow: 'px-1 py-0.5 text-[5px]',
+  h1: 'text-[8px]',
+  body: 'text-[5px]',
+  bodyBlock: 'text-[5px]',
+  label: 'text-[5px]',
+  tinyText: 'text-[4px]',
+  cta: 'text-[5px]',
+  tinyIcon: 'h-1 w-1',
+}
+
+const PREVIEW_REGISTRY = {
+  'warm-template': (m) => <MockWarm mini={m} />,
+  'warm-menu': (m) => <MockWarm withMenu mini={m} />,
+  'dark-menu': (m) => <MockDark mini={m} />,
+  broken: (m) => <MockDark broken mini={m} />,
+  'dark-restored': (m) => <MockDark restored mini={m} />,
+}
+
+function PreviewMock({ variant, mini = false }) {
+  const Render = PREVIEW_REGISTRY[variant]
+  if (!Render) return null
+  return Render(mini)
+}
+
+/* ------------------------------------------------------------------ */
+/* Chat panel                                                         */
+/* ------------------------------------------------------------------ */
+
+function DiffBadge({ diff }) {
+  const tones = {
+    add: 'border-success/30 bg-success/10 text-success',
+    mod: 'border-accent/30 bg-accent/10 text-accent-glow',
+    err: 'border-danger/40 bg-danger/10 text-danger',
+    ok: 'border-success/40 bg-success/15 text-success',
+  }
+  return (
+    <span
+      className={
+        'inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[10.5px] ' +
+        (tones[diff.kind] || 'border-line bg-white/[0.03] text-ink-muted')
+      }
+    >
+      {diff.text}
+    </span>
+  )
+}
+
+function ChatPanel({ step, paused, onTogglePause }) {
+  // show the last 2 turns, with the latest pulsing in
+  const startIdx = Math.max(0, step - 1)
+  const visible = STORY.slice(startIdx, step + 1)
+
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border border-line bg-canvas/95 p-3">
+      <div className="flex items-center justify-between border-b border-line pb-2">
+        <div className="flex items-center gap-2 text-xs text-ink-muted">
+          <MessageSquare className="h-3.5 w-3.5" />
+          Чат проекта
+          <span className="ml-1 hidden rounded-full border border-line bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9.5px] sm:inline-flex">
+            Sonnet 4.6
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onTogglePause}
+          className="inline-flex items-center gap-1 rounded-md border border-line bg-white/[0.02] px-2 py-1 text-[10px] text-ink-muted transition hover:text-ink"
+          aria-label={paused ? 'Запустить демо' : 'Поставить на паузу'}
+        >
+          {paused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+          {paused ? 'Продолжить' : 'Пауза'}
+        </button>
+      </div>
+
+      <div className="flex min-h-[260px] flex-col gap-3 overflow-hidden">
+        <AnimatePresence initial={false} mode="popLayout">
+          {visible.map((s, idx) => {
+            const isLatest = idx === visible.length - 1
+            return (
+              <motion.div
+                key={'turn-' + (startIdx + idx)}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: isLatest ? 1 : 0.55, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35 }}
+                className="space-y-1.5"
+              >
+                <div
+                  className={
+                    'max-w-[88%] self-end rounded-2xl rounded-br-sm bg-accent/15 px-3 py-2 text-[13px] leading-snug text-ink ml-auto ' +
+                    (s.rollback ? 'border border-success/30 bg-success/10 text-success' : '')
+                  }
+                >
+                  {s.user}
+                </div>
+                <div className="max-w-[92%] self-start rounded-2xl rounded-bl-sm border border-line bg-white/[0.02] px-3 py-2 text-[13px] leading-snug text-ink-muted">
+                  {s.ai}
+                </div>
+                <div className="pl-1">
+                  <DiffBadge diff={s.diff} />
+                </div>
+              </motion.div>
+            )
+          })}
+        </AnimatePresence>
+      </div>
+
+      <div className="mt-1 flex items-center gap-2 rounded-xl border border-line bg-white/[0.02] px-3 py-2">
+        <div className="flex-1 truncate text-[12px] text-ink-dim">
+          Опишите, что нужно изменить…
+        </div>
+        <button
+          type="button"
+          className="grid h-7 w-7 place-items-center rounded-lg bg-accent text-white"
+          tabIndex={-1}
+          aria-label="Отправить"
+        >
+          <Send className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Preview panel                                                      */
+/* ------------------------------------------------------------------ */
+
+function PreviewPanel({ cur }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-line bg-canvas">
+      {/* Browser chrome */}
+      <div className="flex items-center gap-2 border-b border-line bg-elev1/80 px-3 py-2">
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="ml-2 hidden truncate font-mono text-[11px] text-ink-dim sm:inline">
+          https://espressonadya.ru
+        </span>
+        <span className="ml-2 truncate font-mono text-[11px] text-ink-dim sm:hidden">
+          espressonadya.ru
+        </span>
+        <span className="ml-auto inline-flex items-center gap-1.5">
+          <VersionPill version={cur.version} active />
+          <span className="rounded-md border border-line bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-success">
+            ● live
+          </span>
+        </span>
+      </div>
+
+      {/* Preview surface */}
+      <div className="relative h-[300px] sm:h-[360px] lg:h-[400px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={cur.preview + (cur.rollback ? '-r' : '')}
+            initial={{ opacity: 0, scale: 0.99 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45 }}
+            className="absolute inset-0"
+          >
+            <PreviewMock variant={cur.preview} />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* floating diff hint */}
+        <div className="pointer-events-none absolute left-3 bottom-3 right-3 flex items-center justify-between gap-2">
+          <DiffBadge diff={cur.diff} />
+          {cur.version.tone === 'broken' && (
+            <span className="hidden rounded-md border border-danger/40 bg-canvas/80 px-2 py-1 font-mono text-[10.5px] text-danger backdrop-blur sm:inline-flex">
+              ⚠ откати на стабильную версию
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Timeline — 5 mini-previews + rollback control                      */
+/* ------------------------------------------------------------------ */
+
+function Timeline({ step, onSelect }) {
+  const isBroken = STORY[step]?.version.tone === 'broken'
+
+  return (
+    <div className="rounded-2xl border border-line bg-elev1/60 p-3">
+      <div className="mb-2.5 flex items-center justify-between text-[11px] text-ink-muted">
+        <span className="inline-flex items-center gap-1.5">
+          <GitBranch className="h-3.5 w-3.5 text-accent-glow" />
+          Лента версий
+          <span className="hidden text-ink-dim sm:inline">
+            · снапшот после каждого промпта
+          </span>
+        </span>
+        <span className="font-mono text-[10px] text-ink-dim">кликни — откат</span>
+      </div>
+
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+        {STORY.map((s, i) => {
+          const active = i === step
+          const isPast = i < step
+          const tone = s.version.tone
+          return (
+            <button
+              key={s.version.id}
+              type="button"
+              onClick={() => onSelect(i)}
+              className={
+                'group relative overflow-hidden rounded-xl border text-left transition ' +
+                (active
+                  ? 'border-accent shadow-glow'
+                  : isPast
+                    ? 'border-line hover:border-white/15'
+                    : 'border-line/40 opacity-60 hover:opacity-100')
+              }
+            >
+              {/* mini preview */}
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-canvas">
+                <PreviewMock variant={s.preview} mini />
+                {/* hover overlay */}
+                <div className="absolute inset-0 grid place-items-center bg-canvas/0 opacity-0 transition group-hover:bg-canvas/50 group-hover:opacity-100">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas/80 px-2 py-0.5 font-mono text-[10px] text-ink">
+                    <Undo2 className="h-3 w-3" />
+                    откат
+                  </span>
+                </div>
+              </div>
+
+              <div className="border-t border-line/60 px-2 py-1.5">
+                <div className="flex items-center justify-between">
+                  <span
+                    className={
+                      'font-mono text-[10px] ' +
+                      (tone === 'broken'
+                        ? 'text-danger'
+                        : tone === 'restored'
+                          ? 'text-success'
+                          : tone === 'dark'
+                            ? 'text-accent-glow'
+                            : 'text-ink-muted')
+                    }
+                  >
+                    {s.version.id}
+                  </span>
+                  {active && (
+                    <span className="rounded-full bg-accent px-1.5 text-[8.5px] uppercase tracking-wider text-white">
+                      сейчас
+                    </span>
+                  )}
+                </div>
+                <div className="mt-0.5 truncate text-[10.5px] text-ink-muted">
+                  {s.version.label}
+                </div>
+              </div>
+
+              {/* connector arrow for v5 ← v3 (rollback indicator) */}
+              {s.rollback && (
+                <div className="absolute -top-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-success px-1.5 py-0.5 font-mono text-[8.5px] text-canvas">
+                  <Undo2 className="h-2.5 w-2.5" strokeWidth={3} />
+                  v3
+                </div>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Rollback CTA — pulses when v4 (broken) is active */}
+      <AnimatePresence>
+        {isBroken && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-danger/30 bg-danger/[0.07] px-3 py-2.5"
+          >
+            <div className="flex items-center gap-2 text-[12.5px] text-ink">
+              <AlertTriangle className="h-4 w-4 text-danger" />
+              <span>
+                AI сломал шапку. Не страшно — старые версии живут в ленте.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => onSelect(4)}
+              className="inline-flex animate-pulse items-center gap-1.5 rounded-full bg-success px-3 py-1.5 text-[12px] text-canvas"
+              style={{ fontWeight: 590 }}
+            >
+              <Undo2 className="h-3.5 w-3.5" />
+              Вернуть на v3
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero demo (composed)                                               */
+/* ------------------------------------------------------------------ */
 
 function HeroDemo() {
   const reduce = useReducedMotion()
   const [step, setStep] = useState(0)
+  const [paused, setPaused] = useState(false)
 
   useEffect(() => {
-    if (reduce) return
-    const t = setInterval(() => setStep((s) => (s + 1) % 5), 2200)
-    return () => clearInterval(t)
-  }, [reduce])
+    if (reduce || paused) return
+    const t = setTimeout(() => setStep((s) => (s + 1) % STORY.length), 4000)
+    return () => clearTimeout(t)
+  }, [step, reduce, paused])
 
-  const messagesShown = Math.min(step + 1, DEMO_MESSAGES.length)
-  const versionsBuilt = Math.min(step, 4)
+  const cur = STORY[step]
+
+  const onSeek = (i) => {
+    setPaused(true)
+    setStep(i)
+    track('demo_seek', { step: i, version: STORY[i].version.id })
+  }
+
+  const onTogglePause = () => {
+    setPaused((p) => !p)
+    track('demo_toggle_pause', { paused: !paused })
+  }
 
   return (
-    <div className="relative">
+    <div id="demo" className="relative">
       {/* glow orbs */}
-      <div className="pointer-events-none absolute -left-16 -top-16 h-72 w-72 glow-orb opacity-90" />
+      <div className="pointer-events-none absolute -left-20 -top-16 h-72 w-72 glow-orb opacity-90" />
       <div className="pointer-events-none absolute -right-10 bottom-0 h-72 w-72 glow-orb opacity-60" />
 
-      <div className="relative grid gap-3 rounded-3xl border border-line bg-elev1/60 p-3 shadow-cardLift backdrop-blur-xl md:p-4 lg:grid-cols-[360px_1fr]">
-        {/* Chat side */}
-        <div className="flex flex-col gap-2 rounded-2xl border border-line bg-canvas/90 p-3">
-          <div className="flex items-center justify-between border-b border-line pb-2">
-            <div className="flex items-center gap-2 text-xs text-ink-muted">
-              <MessageSquare className="h-3.5 w-3.5" />
-              Чат проекта
-            </div>
-            <span className="rounded-full border border-line bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-ink-muted">
-              Sonnet 4.6
-            </span>
-          </div>
-
-          <div className="flex min-h-[200px] flex-col gap-2 overflow-hidden">
-            <AnimatePresence initial={false}>
-              {DEMO_MESSAGES.slice(0, messagesShown).map((m, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className={
-                    'max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-snug ' +
-                    (m.role === 'user'
-                      ? 'self-end bg-accent/20 text-ink'
-                      : 'self-start border border-line bg-white/[0.02] text-ink-muted')
-                  }
-                >
-                  {m.text}
-                </motion.div>
-              ))}
-              {messagesShown < DEMO_MESSAGES.length && (
-                <motion.div
-                  key="typing"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="self-start rounded-2xl border border-line bg-white/[0.02] px-3 py-2 text-[13px] text-ink-dim"
-                >
-                  <span className="inline-flex gap-1">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-dim" />
-                    <span
-                      className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-dim"
-                      style={{ animationDelay: '0.2s' }}
-                    />
-                    <span
-                      className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-dim"
-                      style={{ animationDelay: '0.4s' }}
-                    />
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="mt-1 flex items-center gap-2 rounded-xl border border-line bg-white/[0.02] px-3 py-2">
-            <div className="flex-1 truncate text-[12px] text-ink-dim">
-              Опишите, что нужно изменить…
-            </div>
-            <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded-lg bg-accent text-white"
-              tabIndex={-1}
-              aria-label="Отправить"
-            >
-              <Send className="h-3.5 w-3.5" />
-            </button>
-          </div>
+      <div className="relative space-y-3 rounded-3xl border border-line bg-elev1/40 p-3 backdrop-blur-xl md:p-4">
+        <div className="grid gap-3 lg:grid-cols-[340px_1fr]">
+          <ChatPanel step={step} paused={paused} onTogglePause={onTogglePause} />
+          <PreviewPanel cur={cur} />
         </div>
 
-        {/* Preview side */}
-        <div className="overflow-hidden rounded-2xl border border-line bg-canvas">
-          <div className="flex items-center gap-2 border-b border-line bg-elev1/80 px-3 py-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="ml-2 truncate font-mono text-[11px] text-ink-dim">
-              https://espressonadya.ru
-            </span>
-            <span className="ml-auto rounded-md border border-line bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-success">
-              ● live
-            </span>
-          </div>
-
-          <div className="relative h-[260px] sm:h-[300px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, scale: 0.985 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.45 }}
-                className="absolute inset-0"
-              >
-                <PreviewMock variant={step % 3} />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Version timeline */}
-          <div className="border-t border-line bg-elev1/80 px-3 py-2.5">
-            <div className="mb-1.5 flex items-center justify-between text-[11px] text-ink-dim">
-              <span className="inline-flex items-center gap-1.5">
-                <GitBranch className="h-3 w-3" />
-                Лента версий
-              </span>
-              <span>после каждого промпта</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {Array.from({ length: 5 }).map((_, i) => {
-                const built = i <= versionsBuilt
-                const active = i === versionsBuilt
-                return (
-                  <div
-                    key={i}
-                    className={
-                      'flex-1 overflow-hidden rounded-md border transition ' +
-                      (active
-                        ? 'border-accent shadow-glow'
-                        : built
-                          ? 'border-line'
-                          : 'border-line/40')
-                    }
-                  >
-                    <div
-                      className={
-                        'h-9 w-full ' +
-                        (built
-                          ? 'bg-gradient-to-br from-accent/20 via-white/5 to-white/0'
-                          : 'bg-white/[0.02]')
-                      }
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
+        <Timeline step={step} onSelect={onSeek} />
       </div>
     </div>
   )
 }
 
-function PreviewMock({ variant }) {
-  if (variant === 0) {
-    return (
-      <div className="h-full w-full bg-gradient-to-b from-[#1a120a] via-[#0f0a07] to-[#08090a] p-4">
-        <div className="mx-auto max-w-[420px]">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-amber-300/70">
-            Кофейня · Патрики
-          </div>
-          <div
-            className="mt-1 text-[22px] leading-tight text-ink"
-            style={{ fontWeight: 590 }}
-          >
-            Эспрессо у Нади
-          </div>
-          <div className="mt-1 text-[11px] text-ink-muted">
-            Зерно прямого обжарова. Открыто с 8:00.
-          </div>
-          <div className="mt-3 grid grid-cols-3 gap-1.5">
-            {['Эспрессо', 'Капучино', 'Раф'].map((t) => (
-              <div
-                key={t}
-                className="rounded-md border border-amber-500/20 bg-amber-500/5 p-2 text-[10px] text-amber-100/80"
-              >
-                {t}
-              </div>
-            ))}
-          </div>
-          <div className="mt-2 inline-flex rounded-full bg-amber-400 px-3 py-1 text-[10px] text-[#1a120a]">
-            Забронировать столик
-          </div>
-        </div>
-      </div>
-    )
-  }
-  if (variant === 1) {
-    return (
-      <div className="h-full w-full bg-gradient-to-br from-emerald-500/10 via-canvas to-canvas p-4">
-        <div className="mx-auto max-w-[420px]">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-emerald-300/70">
-            Готовая бизнес-страница
-          </div>
-          <div
-            className="mt-1 text-[22px] leading-tight text-ink"
-            style={{ fontWeight: 590 }}
-          >
-            Меню, бронь, доставка
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-1.5">
-            <div className="rounded-md border border-line bg-white/[0.03] p-2">
-              <div className="h-1.5 w-12 rounded-full bg-white/15" />
-              <div className="mt-1 h-1.5 w-20 rounded-full bg-white/10" />
-            </div>
-            <div className="rounded-md border border-line bg-white/[0.03] p-2">
-              <div className="h-1.5 w-10 rounded-full bg-white/15" />
-              <div className="mt-1 h-1.5 w-16 rounded-full bg-white/10" />
-            </div>
-            <div className="col-span-2 rounded-md border border-emerald-400/20 bg-emerald-500/5 p-2">
-              <div className="text-[10px] text-emerald-200/80">
-                ✓ Forms, БД, авторизация — готовы
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-  return (
-    <div className="h-full w-full bg-gradient-to-b from-[#0a0b14] via-canvas to-canvas p-4">
-      <div className="mx-auto max-w-[420px]">
-        <div className="text-[10px] uppercase tracking-[0.2em] text-accent-glow">
-          Тёмная тема · откат на v3
-        </div>
-        <div
-          className="mt-1 text-[22px] leading-tight text-ink"
-          style={{ fontWeight: 590 }}
-        >
-          Эспрессо у Нади
-        </div>
-        <div className="mt-3 grid grid-cols-3 gap-1.5">
-          {['Эспрессо', 'Капучино', 'Раф'].map((t) => (
-            <div
-              key={t}
-              className="rounded-md border border-line bg-white/[0.03] p-2 text-[10px] text-ink-muted"
-            >
-              {t}
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 inline-flex rounded-full bg-accent px-3 py-1 text-[10px] text-white">
-          Забронировать столик
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* Hero                                                               */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pb-16 pt-32 md:pb-24 md:pt-36">
+    <section id="top" className="relative overflow-hidden pb-12 pt-28 md:pb-16 md:pt-32">
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
       <div className="container-x relative">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
           <span className="eyebrow">
             <Sparkles className="h-3 w-3 text-accent-glow" />
-            Российская vibe-coding платформа · pre-launch
+            Российская AI-платформа · pre-launch
           </span>
-          <h1 className="display-h1 mt-6">
+          <h1 className="display-h1 mt-5">
             <span className="text-gradient">Промпт. Сайт.</span>{' '}
-            <span className="accent-gradient">Готово.</span>
+            <span className="accent-gradient">Откат.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-ink-muted md:text-[18px]">
-            Сайт с backend, доменом и деплоем — за минуты. По одному чату. Откат
-            любой версии в один клик. Всё в рублях, без VPN и крипты.
+          <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-ink-muted md:text-[18px]">
+            Сайт с backend, доменом и SSL — за минуты по одному чату. И откат любой
+            версии в один клик, если AI что-то сломает.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+          <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row">
             <a
               href="#start"
               className="btn-primary text-[15px]"
               onClick={() => track('cta_click', { location: 'hero', label: 'Начать' })}
             >
-              Начать
+              Начать бесплатно
               <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#demo"
-              className="btn-ghost text-[15px]"
-              onClick={() => track('hero_demo')}
+              className="text-[14px] text-ink-muted transition hover:text-ink"
+              onClick={() => track('hero_demo_link')}
             >
-              <PlayCircle className="h-4 w-4" />
-              Посмотреть, как работает
+              ↓ Смотри живой пример
             </a>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-dim">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-dim">
             <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3 w-3 text-success" /> Без VPN и криптокошельков
+              <Check className="h-3 w-3 text-success" /> Без VPN и крипты
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Check className="h-3 w-3 text-success" /> Российские серверы
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3 w-3 text-success" /> ЮKassa и Tinkoff
+              <Check className="h-3 w-3 text-success" /> Оплата ₽ · ЮKassa
             </span>
           </div>
         </div>
 
-        <div id="demo" className="relative mx-auto mt-14 max-w-5xl">
+        {/* The demo — story-driven, the heart of the page */}
+        <div className="relative mx-auto mt-12 max-w-6xl">
           <HeroDemo />
-        </div>
-
-        <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-x-6 gap-y-4 text-center md:grid-cols-4">
-          {[
-            { k: 'минуты', v: 'до live-сайта' },
-            { k: '1 счёт', v: 'вместо пяти сервисов' },
-            { k: '1 клик', v: 'откат любой версии' },
-            { k: '₽', v: 'оплата и поддержка' },
-          ].map((s) => (
-            <div key={s.v} className="flex flex-col items-center gap-1">
-              <div className="text-2xl text-ink" style={{ fontWeight: 590 }}>
-                {s.k}
-              </div>
-              <div className="text-xs text-ink-dim">{s.v}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* Trust strip — partners & integrations                              */
+/* ================================================================== */
+
+function TrustStrip() {
+  const items = [
+    'SafeCloud',
+    'Reg.ru',
+    'ЮKassa',
+    'Tinkoff',
+    'YandexGPT',
+    'GigaChat',
+    'Claude',
+    'GPT-4',
+    'DeepSeek',
+  ]
+  return (
+    <section className="relative py-10">
+      <div className="container-x">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-line bg-elev1/40 px-4 py-5">
+          <div className="flex flex-col items-center gap-3 text-center md:flex-row md:justify-between md:text-left">
+            <div className="text-[12px] uppercase tracking-[0.22em] text-ink-dim">
+              Партнёры стека
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end">
+              {items.map((it, i) => (
+                <span
+                  key={it}
+                  className={
+                    'text-[13px] tracking-tight text-ink-muted ' +
+                    (i % 3 === 0 ? 'font-mono' : '')
+                  }
+                  style={{ fontWeight: i % 3 === 0 ? 510 : 590 }}
+                >
+                  {it}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
+/* Versioning closeup — the killer feature                             */
+/* ================================================================== */
+
+function VersioningSection() {
+  return (
+    <section id="versions" className="relative py-20 md:py-24">
+      <div className="container-x">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <Undo2 className="h-3 w-3 text-accent-glow" /> Главная фича
+          </span>
+          <h2 className="display-h2 mt-5 text-gradient">
+            AI-кодинг без страха —
+            <br className="hidden md:block" /> с кнопкой «вернуть как было»
+          </h2>
+          <p className="mt-5 text-ink-muted">
+            Конкуренты дают AI-чат и оставляют тебя с git'ом наедине. Мы делаем
+            снапшот после каждого промпта — с превью, как в галерее фото.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-5xl gap-4 lg:grid-cols-3">
+          {[
+            {
+              icon: GitBranch,
+              title: 'Снапшот после каждого промпта',
+              text: 'Автоматически. Код + БД + превью-скриншот. Лимит — 50/500/∞ по тарифу.',
+            },
+            {
+              icon: Eye,
+              title: 'Превью каждой версии',
+              text: 'Видишь, как сайт выглядел, до того как нажмёшь «вернуться сюда». Никаких неожиданностей.',
+            },
+            {
+              icon: Undo2,
+              title: 'Откат за один клик',
+              text: 'Без git, без терминала, без &laquo;ой, я не сохранил&raquo;. AI-кодинг становится безопасным.',
+            },
+          ].map((c, i) => (
+            <motion.div
+              key={c.title}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.45, delay: i * 0.08 }}
+              className="card-elev"
+            >
+              <div className="grid h-10 w-10 place-items-center rounded-lg border border-accent/30 bg-accent/10">
+                <c.icon className="h-4 w-4 text-accent-glow" />
+              </div>
+              <div
+                className="mt-4 text-[18px] text-ink"
+                style={{ fontWeight: 590 }}
+              >
+                {c.title}
+              </div>
+              <p
+                className="mt-2 text-[14px] text-ink-muted"
+                dangerouslySetInnerHTML={{ __html: c.text }}
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mx-auto mt-10 flex max-w-3xl items-start gap-3 rounded-2xl border border-accent/30 bg-accent/[0.06] p-5">
+          <Shield className="mt-0.5 h-5 w-5 flex-none text-accent-glow" />
+          <div className="text-[14px] text-ink">
+            Никто из конкурентов не делает версионирование с превью.
+            <span className="text-ink-muted">
+              {' '}
+              У Lovable и Bolt — git вручную. У Tilda — нет AI вообще. У агентств —
+              «пишите задачу в почту, ответим к четвергу».
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
 /* Problems                                                            */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 const PROBLEMS = [
   {
@@ -479,14 +984,14 @@ const PROBLEMS = [
   },
   {
     icon: Globe,
-    pain: 'Lovable, Bolt и v0 не работают для РФ',
+    pain: 'Lovable, Bolt, v0 не работают для РФ',
     solution: 'Рублёвая оплата, российские серверы, поддержка на русском.',
   },
 ]
 
 function ProblemsSection() {
   return (
-    <section className="relative py-20 md:py-28">
+    <section className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
@@ -506,7 +1011,7 @@ function ProblemsSection() {
           {PROBLEMS.map((p, i) => (
             <motion.div
               key={p.pain}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.45, delay: i * 0.08 }}
@@ -533,9 +1038,9 @@ function ProblemsSection() {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* How it works                                                        */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 const STEPS = [
   {
@@ -563,7 +1068,7 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section id="how" className="relative py-20 md:py-28">
+    <section id="how" className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
@@ -580,7 +1085,7 @@ function HowItWorks() {
           {STEPS.map((s, i) => (
             <motion.div
               key={s.n}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.45, delay: i * 0.08 }}
@@ -607,156 +1112,9 @@ function HowItWorks() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/* Versioning — flagship feature                                       */
-/* ------------------------------------------------------------------ */
-
-function VersioningSection() {
-  const versions = [
-    { id: 'v1', label: 'Стартовый шаблон', delta: '+ 312 строк', warm: true },
-    { id: 'v2', label: 'Добавили меню', delta: '+ 78 строк' },
-    { id: 'v3', label: 'Тёмная тема', delta: '~ 41 строка', highlight: true },
-    { id: 'v4', label: 'Подвинули CTA', delta: '~ 12 строк' },
-    { id: 'v5', label: 'Сломал AI промптом', delta: '− 88 строк', danger: true },
-  ]
-  return (
-    <section className="relative py-20 md:py-28">
-      <div className="container-x">
-        <div className="mx-auto grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <span className="eyebrow">
-              <Undo2 className="h-3 w-3 text-accent-glow" /> Главная фича
-            </span>
-            <h2 className="display-h2 mt-5 text-gradient">
-              AI-кодинг без страха —
-              <br className="hidden md:block" /> с кнопкой «вернуть как было»
-            </h2>
-            <p className="mt-5 max-w-xl text-ink-muted">
-              После каждого промпта мы делаем снапшот: код + превью-скриншот.
-              Сломал AI сайт неудачным промптом — открываешь ленту версий, выбираешь
-              нужную, нажимаешь один раз. Без git, без терминала, без &laquo;ой, я не
-              сохранил&raquo;.
-            </p>
-
-            <ul className="mt-7 space-y-3">
-              {[
-                'Снапшот после каждого изменения — автоматически',
-                'Превью каждой версии: видишь, как было, до отката',
-                'Откат в один клик, без потери текущей работы',
-                'История промптов — что именно изменили в тот раз',
-              ].map((t) => (
-                <li key={t} className="flex items-start gap-3 text-[15px] text-ink">
-                  <span className="mt-1 grid h-5 w-5 flex-none place-items-center rounded-full bg-accent/20 text-accent-glow">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8">
-              <a
-                href="#start"
-                className="btn-primary text-[15px]"
-                onClick={() =>
-                  track('cta_click', { location: 'versioning', label: 'Начать' })
-                }
-              >
-                Попробовать <ArrowRight className="h-4 w-4" />
-              </a>
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.55 }}
-            className="card-elev"
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[12px] text-ink-muted">
-                <GitBranch className="h-3.5 w-3.5" />
-                Лента версий проекта
-              </div>
-              <span className="rounded-md border border-line bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-ink-muted">
-                espressonadya.ru
-              </span>
-            </div>
-
-            <div className="divide-line overflow-hidden rounded-xl border border-line bg-canvas/60">
-              {versions.map((v) => (
-                <div
-                  key={v.id}
-                  className={
-                    'flex items-center gap-3 px-3 py-3 transition ' +
-                    (v.highlight ? 'bg-accent/[0.08]' : '')
-                  }
-                >
-                  <div
-                    className={
-                      'h-12 w-16 flex-none rounded-md border ' +
-                      (v.warm
-                        ? 'border-amber-500/20 bg-gradient-to-br from-amber-500/20 to-amber-500/0'
-                        : v.danger
-                          ? 'border-danger/30 bg-gradient-to-br from-danger/20 to-danger/0'
-                          : v.highlight
-                            ? 'border-accent/40 bg-gradient-to-br from-accent/30 to-accent/0'
-                            : 'border-line bg-white/[0.03]')
-                    }
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-ink-dim">
-                        {v.id}
-                      </span>
-                      <span
-                        className={
-                          'truncate text-[14px] ' +
-                          (v.danger ? 'text-danger' : 'text-ink')
-                        }
-                        style={{ fontWeight: 510 }}
-                      >
-                        {v.label}
-                      </span>
-                    </div>
-                    <div className="mt-0.5 font-mono text-[11px] text-ink-dim">
-                      {v.delta}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className={
-                      'rounded-full px-3 py-1 text-[11px] transition ' +
-                      (v.highlight
-                        ? 'bg-accent text-white'
-                        : 'border border-line bg-white/[0.02] text-ink-muted hover:text-ink')
-                    }
-                    tabIndex={-1}
-                  >
-                    {v.highlight ? 'Активна' : 'Вернуться сюда'}
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 flex items-start gap-3 rounded-xl border border-accent/30 bg-accent/[0.08] p-3 text-[13px] text-ink">
-              <Shield className="mt-0.5 h-4 w-4 flex-none text-accent-glow" />
-              <span>
-                Никто из конкурентов не делает версионирование с превью «в один клик».
-                У Lovable и Bolt — git вручную, у Tilda — нет AI вообще.
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/* Comparison                                                         */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* Comparison table                                                   */
+/* ================================================================== */
 
 const COMPARISON = [
   {
@@ -780,7 +1138,7 @@ const COMPARISON_FEATURES = [
 
 function ComparisonSection() {
   return (
-    <section className="relative py-20 md:py-28">
+    <section className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
@@ -850,9 +1208,9 @@ function ComparisonSection() {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* Features grid                                                       */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 const FEATURES = [
   {
@@ -868,12 +1226,12 @@ const FEATURES = [
   {
     icon: Globe,
     title: 'Домен и SSL',
-    desc: 'Регистрация .ru/.рф автоматом, Let\'s Encrypt без настроек.',
+    desc: 'Регистрация .ru/.рф автоматом, Lets Encrypt без настроек.',
   },
   {
     icon: Server,
     title: 'Российские серверы',
-    desc: 'Стратегический партнёр SafeCloud / CORTEL. 152-ФЗ — из коробки.',
+    desc: 'Стратегический партнёр SafeCloud / CORTEL. 152-ФЗ из коробки.',
   },
   {
     icon: GitBranch,
@@ -899,15 +1257,13 @@ const FEATURES = [
 
 function FeaturesSection() {
   return (
-    <section id="features" className="relative py-20 md:py-28">
+    <section id="features" className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
             <Sparkles className="h-3 w-3 text-accent-glow" /> Возможности
           </span>
-          <h2 className="display-h2 mt-5 text-gradient">
-            Всё под одной крышей
-          </h2>
+          <h2 className="display-h2 mt-5 text-gradient">Всё под одной крышей</h2>
           <p className="mt-5 text-ink-muted">
             У конкурентов клиент собирает 4–5 сервисов сам. У нас — одна платформа,
             один счёт, одна поддержка.
@@ -941,9 +1297,9 @@ function FeaturesSection() {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* Pricing                                                             */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 const TIERS = [
   {
@@ -996,18 +1352,16 @@ const TIERS = [
 
 function PricingSection() {
   return (
-    <section id="pricing" className="relative py-20 md:py-28">
+    <section id="pricing" className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
             <Wallet className="h-3 w-3 text-accent-glow" /> Тарифы
           </span>
-          <h2 className="display-h2 mt-5 text-gradient">
-            Один счёт. Никаких сюрпризов.
-          </h2>
+          <h2 className="display-h2 mt-5 text-gradient">Один счёт. Без сюрпризов.</h2>
           <p className="mt-5 text-ink-muted">
-            Хостинг, AI-токены, домен и поддержка — в одной подписке. Можно
-            докупать токены отдельно, можно менять модель LLM на лету.
+            Хостинг, AI-токены, домен и поддержка — в одной подписке. Можно менять
+            модель LLM на лету. Первые 100 клиентов фиксируют цену на год.
           </p>
         </div>
 
@@ -1073,18 +1427,14 @@ function PricingSection() {
             </div>
           ))}
         </div>
-
-        <p className="mt-6 text-center text-[12px] text-ink-dim">
-          На pre-launch фиксируем цену для первых 100 клиентов.
-        </p>
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* FAQ                                                                 */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 const FAQ = [
   {
@@ -1116,7 +1466,7 @@ const FAQ = [
 function FaqSection() {
   const [open, setOpen] = useState(0)
   return (
-    <section id="faq" className="relative py-20 md:py-28">
+    <section id="faq" className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
@@ -1172,9 +1522,9 @@ function FaqSection() {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* Final CTA + email capture                                           */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 function FinalCTA() {
   const [email, setEmail] = useState('')
@@ -1192,7 +1542,7 @@ function FinalCTA() {
   }
 
   return (
-    <section id="start" className="relative py-20 md:py-28">
+    <section id="start" className="relative py-20 md:py-24">
       <div className="container-x">
         <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-accent/[0.12] via-elev1 to-canvas px-6 py-14 md:px-12 md:py-20">
           <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 glow-orb opacity-90" />
@@ -1203,12 +1553,12 @@ function FinalCTA() {
               <Rocket className="h-3 w-3 text-accent-glow" /> Pre-launch waitlist
             </span>
             <h2 className="display-h2 mt-5">
-              <span className="text-gradient">Готовы попробовать </span>
-              <span className="accent-gradient">первыми?</span>
+              <span className="text-gradient">Хочешь быть </span>
+              <span className="accent-gradient">первым?</span>
             </h2>
             <p className="mt-5 text-ink-muted">
               Оставь email — получишь приглашение в закрытую бету и зафиксируешь
-              стартовую цену для первых 100 клиентов.
+              стартовую цену 6 990 ₽ / мес для первых 100 клиентов.
             </p>
 
             {!sent ? (
@@ -1232,7 +1582,7 @@ function FinalCTA() {
                     track('cta_click', { location: 'final', label: 'Начать' })
                   }
                 >
-                  Начать <ArrowRight className="h-4 w-4" />
+                  Получить доступ <ArrowRight className="h-4 w-4" />
                 </button>
                 {touched && !valid && email.length > 0 && (
                   <div className="absolute mt-14 w-full text-center text-[12px] text-danger sm:mt-16">
@@ -1260,9 +1610,9 @@ function FinalCTA() {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* Footer                                                              */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 function Footer() {
   return (
@@ -1276,18 +1626,12 @@ function Footer() {
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <a href="#how" className="hover:text-ink">
-            Как работает
-          </a>
-          <a href="#features" className="hover:text-ink">
-            Возможности
-          </a>
-          <a href="#pricing" className="hover:text-ink">
-            Тарифы
-          </a>
-          <a href="#faq" className="hover:text-ink">
-            Вопросы
-          </a>
+          <a href="#demo" className="hover:text-ink">Демо</a>
+          <a href="#versions" className="hover:text-ink">Версии</a>
+          <a href="#how" className="hover:text-ink">Как работает</a>
+          <a href="#features" className="hover:text-ink">Возможности</a>
+          <a href="#pricing" className="hover:text-ink">Тарифы</a>
+          <a href="#faq" className="hover:text-ink">Вопросы</a>
           <a
             href="https://github.com/zeuszcz/constructor"
             target="_blank"
@@ -1304,9 +1648,9 @@ function Footer() {
   )
 }
 
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 /* App root                                                           */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
 
 export default function App() {
   useEffect(() => {
@@ -1318,9 +1662,10 @@ export default function App() {
       <NavBar />
       <main>
         <Hero />
+        <TrustStrip />
+        <VersioningSection />
         <ProblemsSection />
         <HowItWorks />
-        <VersioningSection />
         <ComparisonSection />
         <FeaturesSection />
         <PricingSection />
