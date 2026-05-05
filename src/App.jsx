@@ -57,6 +57,7 @@ import {
   ShoppingBag,
   Camera,
   LineChart,
+  ArrowDown,
 } from 'lucide-react'
 import { track } from './lib/track.js'
 
@@ -2003,18 +2004,25 @@ function SegmentsSection() {
 /* ROI calculator                                                      */
 /* ================================================================== */
 
-function Slider({ label, value, onChange, min, max, step, format }) {
+function Slider({ label, hint, value, onChange, min, max, step, format }) {
   return (
     <div>
-      <div className="mb-2 flex items-baseline justify-between">
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <div className="min-w-0">
+          <div
+            className="truncate text-[12px] uppercase tracking-[0.14em] text-ink-muted"
+            style={{ fontWeight: 510 }}
+          >
+            {label}
+          </div>
+          {hint && (
+            <div className="mt-0.5 truncate text-[10.5px] text-ink-dim">
+              {hint}
+            </div>
+          )}
+        </div>
         <span
-          className="text-[12.5px] uppercase tracking-[0.16em] text-ink-muted"
-          style={{ fontWeight: 510 }}
-        >
-          {label}
-        </span>
-        <span
-          className="font-mono text-[14px] text-ink"
+          className="flex-none font-mono text-[16px] text-ink"
           style={{ fontWeight: 590 }}
         >
           {format(value)}
@@ -2027,8 +2035,9 @@ function Slider({ label, value, onChange, min, max, step, format }) {
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full cursor-pointer accent-accent"
+        className="w-full cursor-pointer"
         style={{ accentColor: '#7170ff' }}
+        aria-label={label}
       />
       <div className="mt-1 flex justify-between text-[10px] text-ink-dim">
         <span>{format(min)}</span>
@@ -2040,16 +2049,25 @@ function Slider({ label, value, onChange, min, max, step, format }) {
 
 function ROICalculator() {
   const [hosting, setHosting] = useState(1500)
-  const [dev, setDev] = useState(8000)
-  const [hours, setHours] = useState(8)
+  const [dev, setDev] = useState(5000)
+  const [hours, setHours] = useState(5)
 
-  // current monthly spend = hosting + dev retainer + hourly rate * hours
   const HOUR_RATE = 2500
-  const monthlySpend = hosting + dev + hours * HOUR_RATE
-  const omniaPrice = 7990 // Pro tier
-  const monthlySaving = Math.max(0, monthlySpend - omniaPrice)
+  const PRO_PRICE = 7990
+
+  const hoursCost = hours * HOUR_RATE
+  const breakdown = [
+    { label: 'Хостинг и сервисы', value: hosting },
+    { label: 'Подрядчик / агентство', value: dev },
+    { label: `Часы на правки · ${hours} ч × ${HOUR_RATE.toLocaleString('ru-RU')} ₽`, value: hoursCost },
+  ]
+  const monthlySpend = hosting + dev + hoursCost
+  const monthlySaving = Math.max(0, monthlySpend - PRO_PRICE)
   const yearlySaving = monthlySaving * 12
-  const hourSaving = Math.round(hours * 0.85) // assumed 85% time-saving
+  const hourSaving = Math.round(hours * 0.85)
+  const cheaperThanPro = monthlySpend < PRO_PRICE
+
+  const fmtRub = (v) => v.toLocaleString('ru-RU') + ' ₽'
 
   return (
     <section id="roi" className="relative py-20 md:py-24">
@@ -2060,16 +2078,16 @@ function ROICalculator() {
           </span>
           <h2 className="display-h2 mt-5 text-gradient">
             Сколько ты{' '}
-            <span className="accent-gradient">экономишь</span> на Omnia?
+            <span className="accent-gradient">экономишь</span> с Omnia?
           </h2>
           <p className="mt-5 text-ink-muted">
-            Подвинь ползунки под свою реальную ситуацию — увидишь экономию по
-            сравнению с тарифом Pro (7 990 ₽).
+            Подвинь три ползунка под свою ситуацию. Справа покажем, что у тебя
+            уходит сейчас и насколько это меньше с тарифом Pro (7 990 ₽).
           </p>
         </div>
 
         <div className="mx-auto mt-12 grid max-w-5xl gap-4 lg:grid-cols-[1fr_1fr]">
-          {/* Sliders */}
+          {/* Inputs */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2077,44 +2095,45 @@ function ROICalculator() {
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="rounded-2xl border border-line bg-elev1/50 p-6"
           >
-            <div className="space-y-6">
+            <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-dim" style={{ fontWeight: 510 }}>
+              Твоя ситуация сейчас
+            </div>
+            <div className="mt-4 space-y-6">
               <Slider
-                label="Хостинг сейчас, ₽/мес"
+                label="Хостинг и сервисы, ₽/мес"
+                hint="VPS, Tilda, плагины — что платишь регулярно"
                 value={hosting}
                 onChange={setHosting}
                 min={0}
                 max={10000}
                 step={100}
-                format={(v) => v.toLocaleString('ru-RU') + ' ₽'}
+                format={fmtRub}
               />
               <Slider
-                label="Разработчик / агентство, ₽/мес"
+                label="Подрядчик / агентство, ₽/мес"
+                hint="Месячный retainer фрилансеру или студии"
                 value={dev}
                 onChange={setDev}
                 min={0}
-                max={100000}
+                max={30000}
                 step={500}
-                format={(v) => v.toLocaleString('ru-RU') + ' ₽'}
+                format={fmtRub}
               />
               <Slider
                 label="Часов на правки в месяц"
+                hint={`Считаем по средней ставке ${HOUR_RATE.toLocaleString('ru-RU')} ₽/час`}
                 value={hours}
                 onChange={setHours}
                 min={0}
-                max={40}
+                max={20}
                 step={1}
                 format={(v) => v + ' ч'}
               />
             </div>
-            <div className="mt-6 flex items-center justify-between border-t border-line pt-4 text-[12px]">
-              <span className="text-ink-muted">Сейчас тратишь</span>
-              <span
-                className="font-mono text-[16px] text-ink"
-                style={{ fontWeight: 590 }}
-              >
-                {monthlySpend.toLocaleString('ru-RU')} ₽/мес
-              </span>
-            </div>
+            <p className="mt-6 text-[10.5px] text-ink-dim">
+              Подсказка: если у тебя пока нет сайта вообще, посмотри секцию
+              «5 минут vs 60 дней» — там сравнение с агентством с нуля.
+            </p>
           </motion.div>
 
           {/* Result */}
@@ -2123,78 +2142,149 @@ function ROICalculator() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.10] via-elev1/60 to-canvas p-6 shadow-glow"
+            className="relative flex flex-col overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.10] via-elev1/60 to-canvas p-6 shadow-glow"
           >
             <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 glow-orb opacity-70" />
+
             <div className="relative">
-              <div
-                className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/15 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-accent-glow"
-                style={{ fontWeight: 590 }}
-              >
-                <TrendingDown className="h-3 w-3" />
-                Экономия с тарифом Pro
+              {/* Сейчас тратишь */}
+              <div className="rounded-xl border border-line bg-canvas/50 p-4">
+                <div
+                  className="text-[10.5px] uppercase tracking-[0.22em] text-ink-dim"
+                  style={{ fontWeight: 510 }}
+                >
+                  Сейчас тратишь в мес
+                </div>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span
+                    className="font-mono text-[34px] text-ink leading-none"
+                    style={{ fontWeight: 590, letterSpacing: '-0.02em' }}
+                  >
+                    <CountUp value={monthlySpend} duration={0.4} />
+                  </span>
+                  <span className="text-[13px] text-ink-muted">₽</span>
+                </div>
+                <div className="mt-3 space-y-1 text-[12px]">
+                  {breakdown.map((b) => (
+                    <div
+                      key={b.label}
+                      className="flex items-baseline justify-between gap-2"
+                    >
+                      <span className="truncate text-ink-muted">{b.label}</span>
+                      <span
+                        className="flex-none font-mono text-ink-muted"
+                        style={{ fontWeight: 510 }}
+                      >
+                        {b.value.toLocaleString('ru-RU')} ₽
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="mt-5 flex items-baseline gap-2">
-                <span
-                  className="accent-gradient text-[56px] leading-none"
-                  style={{ fontWeight: 600, letterSpacing: '-0.025em' }}
-                >
-                  <CountUp
-                    value={monthlySaving}
-                    duration={0.6}
-                    format={(n) =>
-                      Math.round(n).toLocaleString('ru-RU')
-                    }
-                  />
-                </span>
-                <span className="text-[16px] text-ink-muted">₽/мес</span>
-              </div>
-              <div className="mt-1 text-[13px] text-ink-muted">
-                <span
-                  className="font-mono text-ink"
-                  style={{ fontWeight: 590 }}
-                >
-                  <CountUp
-                    value={yearlySaving}
-                    duration={0.6}
-                    format={(n) => Math.round(n).toLocaleString('ru-RU')}
-                  />{' '}
-                  ₽
-                </span>{' '}
-                в год · и{' '}
-                <span
-                  className="font-mono text-ink"
-                  style={{ fontWeight: 590 }}
-                >
-                  <CountUp value={hourSaving} duration={0.6} />{' '}
-                  ч
-                </span>{' '}
-                свободного времени в месяц
+              {/* arrow */}
+              <div className="my-3 flex items-center justify-center">
+                <div className="grid h-7 w-7 place-items-center rounded-full border border-accent/30 bg-accent/15 text-accent-glow">
+                  <ArrowDown className="h-3.5 w-3.5" strokeWidth={2.4} />
+                </div>
               </div>
 
-              <div className="mt-6 grid gap-2 text-[12.5px]">
-                <div className="flex items-start gap-2.5">
-                  <Check className="mt-0.5 h-4 w-4 flex-none text-success" />
+              {/* С Omnia Pro */}
+              <div className="rounded-xl border border-accent/30 bg-accent/[0.07] p-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <div>
+                    <div
+                      className="text-[10.5px] uppercase tracking-[0.22em] text-accent-glow"
+                      style={{ fontWeight: 590 }}
+                    >
+                      С тарифом Pro
+                    </div>
+                    <div className="mt-0.5 text-[11.5px] text-ink-muted">
+                      хостинг + домен + SSL + бэкапы + AI-чат — в одной подписке
+                    </div>
+                  </div>
+                  <div className="flex flex-none items-baseline gap-1">
+                    <span
+                      className="font-mono text-[28px] text-ink leading-none"
+                      style={{ fontWeight: 590, letterSpacing: '-0.02em' }}
+                    >
+                      7 990
+                    </span>
+                    <span className="text-[12px] text-ink-muted">₽</span>
+                  </div>
+                </div>
+
+                {/* savings highlight */}
+                <div className="mt-4 border-t border-accent/15 pt-4">
+                  <div
+                    className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/15 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-accent-glow"
+                    style={{ fontWeight: 590 }}
+                  >
+                    <TrendingDown className="h-3 w-3" />
+                    Экономия в месяц
+                  </div>
+                  {cheaperThanPro ? (
+                    <div className="mt-3 text-[13px] text-ink-muted">
+                      Pro дороже твоих текущих трат — но это и есть экономия:
+                      ты получаешь AI-чат, бэкапы, версионирование и rollback,
+                      которых сейчас нет ни за какие деньги.
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mt-2 flex items-baseline gap-2">
+                        <span
+                          className="accent-gradient text-[48px] leading-none"
+                          style={{ fontWeight: 600, letterSpacing: '-0.02em' }}
+                        >
+                          <CountUp value={monthlySaving} duration={0.4} />
+                        </span>
+                        <span className="text-[14px] text-ink-muted">
+                          ₽/мес
+                        </span>
+                      </div>
+                      <div className="mt-1.5 text-[12.5px] text-ink-muted">
+                        <span
+                          className="font-mono text-ink"
+                          style={{ fontWeight: 590 }}
+                        >
+                          <CountUp value={yearlySaving} duration={0.4} /> ₽
+                        </span>{' '}
+                        в год · и{' '}
+                        <span
+                          className="font-mono text-ink"
+                          style={{ fontWeight: 590 }}
+                        >
+                          <CountUp value={hourSaving} duration={0.4} /> ч
+                        </span>{' '}
+                        свободного времени в месяц
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-1.5 text-[12.5px]">
+                <div className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-success" />
                   <span className="text-ink-muted">
-                    Хостинг, домен, SSL, бэкапы — уже включены в Pro
+                    Хостинг, домен, SSL, бэкапы — уже включены
                   </span>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <Check className="mt-0.5 h-4 w-4 flex-none text-success" />
+                <div className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-success" />
                   <span className="text-ink-muted">
                     Правки через AI-чат, без подрядчика и тикетов
                   </span>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <Check className="mt-0.5 h-4 w-4 flex-none text-success" />
+                <div className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-success" />
                   <span className="text-ink-muted">
                     Откат любой версии в один клик
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-5">
                 <MagneticButton
                   href="#pricing"
                   className="btn-primary w-full text-[14px]"
