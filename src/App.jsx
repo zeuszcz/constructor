@@ -187,510 +187,365 @@ function VersionPill({ version, active }) {
 /* Preview surfaces — 5 visually distinct mocks                        */
 /* ------------------------------------------------------------------ */
 
-/* Polished, real-cafe-looking previews. Each variant has a `full` design
-   and an `abstract mini` rendered into timeline thumbnails. The mini is
-   intentionally NOT a scaled-down full — at thumb size, real text becomes
-   illegible, so the mini uses geometric blocks that are recognisable in
-   one glance (warm vs dark vs broken vs restored). */
+/* Editorial cafe previews — built with the same design discipline as the
+   main landing: one solid surface, one accent, massive serif type, generous
+   whitespace, single focal element. Mini variants in the timeline use a
+   dedicated abstract render because actual text becomes illegible at 16%. */
 
 const MENU_ITEMS = [
-  { name: 'Эспрессо', desc: 'двойной, 30 мл', price: '200 ₽', tag: null },
-  { name: 'Капучино', desc: 'с тёртым какао', price: '320 ₽', tag: 'хит' },
-  { name: 'Раф ванильный', desc: 'на кокосе', price: '380 ₽', tag: null },
-  { name: 'Латте', desc: 'тройной, с молоком', price: '350 ₽', tag: null },
+  { name: 'Эспрессо', desc: 'двойной, 30 мл', price: '200', tag: null },
+  { name: 'Капучино', desc: 'с тёртым какао', price: '320', tag: 'хит' },
+  { name: 'Раф ванильный', desc: 'на кокосе', price: '380', tag: null },
+  { name: 'Латте', desc: 'тройной, с молоком', price: '350', tag: null },
 ]
 
-function MenuFull({ accent = 'warm', muted = false }) {
-  const isWarm = accent === 'warm'
-  return (
-    <div className={'mt-3 ' + (muted ? 'opacity-25' : '')}>
-      <div className="mb-2 flex items-center gap-2">
-        <span className={'h-px flex-1 ' + (isWarm ? 'bg-amber-900/20' : 'bg-amber-200/15')} />
-        <span
-          className={
-            'font-serif text-[12px] italic ' +
-            (isWarm ? 'text-amber-800' : 'text-amber-200/70')
-          }
-        >
-          меню осени
-        </span>
-        <span className={'h-px flex-1 ' + (isWarm ? 'bg-amber-900/20' : 'bg-amber-200/15')} />
-      </div>
-      <div
-        className={
-          'rounded-xl border px-3 py-2.5 backdrop-blur-sm ' +
-          (isWarm
-            ? 'border-amber-900/15 bg-amber-50/55'
-            : 'border-amber-200/10 bg-white/[0.025]')
-        }
-      >
-        {MENU_ITEMS.map((it, i) => (
-          <div
-            key={it.name}
-            className={'flex items-baseline gap-2 ' + (i > 0 ? 'mt-1.5' : '')}
-          >
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span
-                  className={
-                    'text-[12.5px] ' +
-                    (isWarm ? 'text-amber-950' : 'text-amber-50')
-                  }
-                  style={{ fontWeight: 590 }}
-                >
-                  {it.name}
-                </span>
-                {it.tag && (
-                  <span
-                    className={
-                      'rounded-full px-1.5 py-0 text-[8.5px] uppercase tracking-wider ' +
-                      (isWarm
-                        ? 'bg-amber-700 text-amber-50'
-                        : 'bg-amber-300 text-amber-950')
-                    }
-                    style={{ fontWeight: 590 }}
-                  >
-                    {it.tag}
-                  </span>
-                )}
-              </div>
-              <div
-                className={
-                  'text-[10px] italic ' +
-                  (isWarm ? 'text-amber-800/60' : 'text-amber-200/45')
-                }
-              >
-                {it.desc}
-              </div>
-            </div>
-            <div
-              className={
-                'mb-0.5 flex-1 self-end border-b border-dotted ' +
-                (isWarm ? 'border-amber-900/25' : 'border-amber-200/20')
-              }
-            />
-            <div
-              className={
-                'font-mono text-[12.5px] ' +
-                (isWarm ? 'text-amber-900' : 'text-amber-200/90')
-              }
-              style={{ fontWeight: 590 }}
-            >
-              {it.price}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+const PALETTE = {
+  warm: {
+    surface: '#faf6ec',
+    ink: '#1a0f08',
+    inkSoft: 'rgba(26, 15, 8, 0.62)',
+    inkDim: 'rgba(26, 15, 8, 0.42)',
+    line: 'rgba(26, 15, 8, 0.10)',
+    accent: '#a3501e',
+    photoBase: '#3a1d0c',
+    photoMid: '#7a4218',
+    photoLight: '#c4843a',
+    photoCaption: 'rgba(255, 243, 210, 0.85)',
+  },
+  dark: {
+    surface: '#0c0a08',
+    ink: '#f4ebd9',
+    inkSoft: 'rgba(244, 235, 217, 0.62)',
+    inkDim: 'rgba(244, 235, 217, 0.38)',
+    line: 'rgba(244, 235, 217, 0.10)',
+    accent: '#d8a673',
+    photoBase: '#1f1208',
+    photoMid: '#7a4218',
+    photoLight: '#d8a673',
+    photoCaption: 'rgba(216, 166, 115, 0.92)',
+  },
 }
 
-function NavMockWarm() {
-  return (
-    <div className="relative z-10 flex items-center justify-between border-b border-amber-900/15 px-5 py-2.5">
-      <div className="flex items-center gap-2">
-        <div className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-amber-700 to-amber-950 text-amber-50 shadow-sm">
-          <Coffee className="h-3.5 w-3.5" strokeWidth={2} />
-        </div>
-        <span
-          className="text-[12px] tracking-[0.18em] text-amber-950"
-          style={{ fontWeight: 590 }}
-        >
-          НАДЯ
-        </span>
-      </div>
-      <div className="hidden items-center gap-4 text-[10px] uppercase tracking-[0.18em] text-amber-800/60 md:flex">
-        <span style={{ fontWeight: 510 }}>Меню</span>
-        <span style={{ fontWeight: 510 }}>О нас</span>
-        <span style={{ fontWeight: 510 }}>Бронь</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        <div className="h-1 w-1 rounded-full bg-amber-900/50" />
-        <div className="h-1 w-1 rounded-full bg-amber-900/50" />
-        <div className="h-1 w-1 rounded-full bg-amber-900/50" />
-      </div>
-    </div>
-  )
-}
+/* ---------- Reusable building blocks ---------- */
 
-function NavMockDark({ broken = false }) {
+function CafeNav({ p, broken }) {
   return (
-    <div className="relative z-10 flex items-center justify-between border-b border-amber-200/10 px-5 py-2.5">
-      <div className="flex items-center gap-2">
-        <div className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-amber-400 to-amber-700 text-amber-950 shadow-[0_0_15px_rgba(255,193,107,0.4)]">
-          <Coffee className="h-3.5 w-3.5" strokeWidth={2} />
+    <div
+      className="flex flex-none items-center justify-between px-7 py-3.5"
+      style={{ borderBottom: `1px solid ${p.line}` }}
+    >
+      <div className="flex items-center gap-2.5">
+        <div
+          className="grid h-6 w-6 place-items-center rounded-full"
+          style={{ background: p.accent, color: p.surface }}
+        >
+          <Coffee className="h-3 w-3" strokeWidth={2.2} />
         </div>
         <span
-          className="text-[12px] tracking-[0.18em] text-amber-100"
-          style={{ fontWeight: 590 }}
+          className="font-serif text-[13px] tracking-[0.04em]"
+          style={{ fontWeight: 600, color: p.ink }}
         >
-          НАДЯ
+          Эспрессо у Нади
         </span>
       </div>
-      <div className="hidden items-center gap-4 text-[10px] uppercase tracking-[0.18em] text-amber-200/55 md:flex">
-        <span style={{ fontWeight: 510 }}>Меню</span>
-        <span style={{ fontWeight: 510 }}>О нас</span>
-        <span style={{ fontWeight: 510 }}>Бронь</span>
+      <div className="hidden items-center gap-5 text-[10px] uppercase tracking-[0.24em] md:flex">
+        <span style={{ fontWeight: 510, color: p.inkSoft }}>Меню</span>
+        <span style={{ fontWeight: 510, color: p.inkSoft }}>О кофейне</span>
+        <span style={{ fontWeight: 510, color: p.inkSoft }}>Бронь</span>
       </div>
       {broken ? (
-        <div className="inline-flex items-center gap-1.5 rounded-md border border-danger/40 bg-danger/10 px-2 py-1 font-mono text-[10px] text-danger">
+        <span
+          className="inline-flex items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-[10px]"
+          style={{
+            borderColor: 'rgba(239, 68, 68, 0.4)',
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: '#ef4444',
+          }}
+        >
           <AlertTriangle className="h-3 w-3 animate-pulse" />
           error
-        </div>
+        </span>
       ) : (
-        <div className="flex items-center gap-1.5">
-          <div className="h-1 w-1 rounded-full bg-amber-300/60" />
-          <div className="h-1 w-1 rounded-full bg-amber-300/60" />
-          <div className="h-1 w-1 rounded-full bg-amber-300/60" />
+        <span
+          className="text-[10px] uppercase tracking-[0.24em]"
+          style={{ fontWeight: 510, color: p.inkSoft }}
+        >
+          Москва
+        </span>
+      )}
+    </div>
+  )
+}
+
+function CafePhoto({ p, large = false }) {
+  return (
+    <div
+      className="relative h-full w-full overflow-hidden rounded-2xl"
+      style={{
+        background: `radial-gradient(circle at 32% 30%, ${p.photoLight} 0%, ${p.photoMid} 45%, ${p.photoBase} 100%)`,
+        boxShadow:
+          '0 30px 60px -20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
+      }}
+    >
+      {/* coffee swirl ring (cup top-down) */}
+      <svg
+        className="absolute inset-[14%]"
+        viewBox="0 0 100 100"
+        fill="none"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <ellipse
+          cx="50"
+          cy="50"
+          rx="45"
+          ry="45"
+          fill="rgba(0,0,0,0.18)"
+        />
+        <path
+          d="M22 50 Q35 30 50 50 Q65 70 78 50"
+          stroke="rgba(255,221,178,0.32)"
+          strokeWidth="1.6"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <path
+          d="M30 55 Q42 40 50 50 Q58 60 70 45"
+          stroke="rgba(255,221,178,0.22)"
+          strokeWidth="1.2"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <ellipse
+          cx="42"
+          cy="40"
+          rx="3"
+          ry="2"
+          fill="rgba(255,221,178,0.25)"
+        />
+      </svg>
+
+      {large && (
+        <div
+          className="absolute bottom-3 left-3 text-[9px] uppercase tracking-[0.26em]"
+          style={{ fontWeight: 590, color: p.photoCaption }}
+        >
+          ─ Эфиопия · Сидамо
         </div>
       )}
     </div>
   )
 }
 
-function HeroCardWarm() {
+function CafeMenuStrip({ p, muted = false }) {
   return (
-    <div className="relative grid place-items-center pr-1">
-      <div
-        className="relative grid h-[92px] w-[92px] place-items-center rounded-2xl"
-        style={{
-          background:
-            'linear-gradient(135deg, #c4842d 0%, #8b4f1e 50%, #4d2810 100%)',
-          boxShadow:
-            '0 24px 40px -14px rgba(80,40,10,0.4), inset 0 1px 0 rgba(255,255,255,0.14)',
-        }}
-      >
-        <Coffee className="h-11 w-11 text-amber-50/95" strokeWidth={1.3} />
-        <svg
-          className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-70"
-          width="46"
-          height="22"
-          viewBox="0 0 46 22"
-          fill="none"
-        >
-          <path
-            d="M10 21 Q12 13 8 7 Q4 1 11 -2"
-            stroke="rgba(255,243,210,0.85)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M23 21 Q21 13 25 7 Q29 1 22 -2"
-            stroke="rgba(255,243,210,0.85)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M36 21 Q38 13 34 7 Q30 1 37 -2"
-            stroke="rgba(255,243,210,0.85)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
-      {/* coffee bean accent */}
-      <svg
-        className="absolute -bottom-2 -left-2 h-7 w-7 rotate-12 text-amber-900/35"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <ellipse cx="12" cy="12" rx="6" ry="9" stroke="currentColor" strokeWidth="1.4" />
-        <path d="M12 5 Q14 12 12 19" stroke="currentColor" strokeWidth="1.4" />
-      </svg>
-    </div>
-  )
-}
-
-function HeroCardDark() {
-  return (
-    <div className="relative grid place-items-center pr-1">
-      <div
-        className="relative grid h-[92px] w-[92px] place-items-center rounded-2xl"
-        style={{
-          background:
-            'linear-gradient(135deg, #d18b34 0%, #8b4f1e 50%, #3a1d0c 100%)',
-          boxShadow:
-            '0 0 50px -12px rgba(255,193,107,0.35), 0 24px 40px -14px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.14)',
-        }}
-      >
-        <Coffee className="h-11 w-11 text-amber-50/95" strokeWidth={1.3} />
-        <svg
-          className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-80"
-          width="46"
-          height="22"
-          viewBox="0 0 46 22"
-          fill="none"
-        >
-          <path
-            d="M10 21 Q12 13 8 7 Q4 1 11 -2"
-            stroke="rgba(255,213,160,0.85)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M23 21 Q21 13 25 7 Q29 1 22 -2"
-            stroke="rgba(255,213,160,0.85)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M36 21 Q38 13 34 7 Q30 1 37 -2"
-            stroke="rgba(255,213,160,0.85)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
-      <svg
-        className="absolute -bottom-2 -left-2 h-7 w-7 rotate-12 text-amber-200/30"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <ellipse cx="12" cy="12" rx="6" ry="9" stroke="currentColor" strokeWidth="1.4" />
-        <path d="M12 5 Q14 12 12 19" stroke="currentColor" strokeWidth="1.4" />
-      </svg>
-    </div>
-  )
-}
-
-/* ---------- Full mock: WARM ---------- */
-
-function WarmFull({ withMenu }) {
-  return (
-    <div className="relative h-full w-full overflow-hidden font-sans">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(180deg, #fdf4e3 0%, #f3dfba 60%, #ddc090 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-50 mix-blend-multiply"
-        style={{
-          backgroundImage: `radial-gradient(circle at 15% 0%, rgba(180,130,50,0.18), transparent 50%), radial-gradient(circle at 90% 100%, rgba(120,70,20,0.16), transparent 50%)`,
-        }}
-      />
-
-      <NavMockWarm />
-
-      <div className="relative z-10 px-5 pb-3 pt-3.5">
-        <div className="grid grid-cols-[1fr_auto] items-start gap-4">
-          <div className="space-y-1.5">
-            <div
-              className="inline-flex items-center gap-2 rounded-full border border-amber-900/15 bg-amber-50/40 px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-amber-900/80 backdrop-blur"
-              style={{ fontWeight: 590 }}
+    <div
+      className={'grid flex-none gap-x-6 gap-y-2.5 px-7 py-4 sm:grid-cols-2 ' + (muted ? 'opacity-25' : '')}
+      style={{ borderTop: `1px solid ${p.line}` }}
+    >
+      {MENU_ITEMS.map((it) => (
+        <div key={it.name} className="flex items-baseline gap-2">
+          <div className="flex flex-1 items-baseline gap-2">
+            <span
+              className="font-serif text-[13px]"
+              style={{ fontWeight: 500, color: p.ink, letterSpacing: '-0.005em' }}
             >
-              <span className="h-1 w-1 rounded-full bg-amber-700" />
-              Кофейня · Патрики
-              <span className="h-1 w-1 rounded-full bg-amber-700" />
-            </div>
-            <h1
-              className="font-serif leading-[0.92] text-amber-950"
-              style={{
-                fontWeight: 600,
-                letterSpacing: '-0.025em',
-                fontSize: '40px',
-              }}
-            >
-              Эспрессо
-              <br />
-              <span className="italic text-amber-800">у Нади</span>
-            </h1>
-            <p className="max-w-[260px] text-[12px] leading-snug text-amber-900/80">
-              Зерно прямого обжарова с ферм Эфиопии и Бразилии. Каждое утро —
-              свежее.
-            </p>
-            <div className="flex items-center gap-1.5 pt-0.5">
+              {it.name}
+            </span>
+            {it.tag && (
               <span
-                className="text-[14px] text-amber-700"
-                style={{ letterSpacing: '-0.04em' }}
-              >
-                ★★★★★
-              </span>
-              <span
-                className="text-[11px] text-amber-950"
-                style={{ fontWeight: 590 }}
-              >
-                4.9
-              </span>
-              <span className="text-[10px] text-amber-900/55">
-                · 1 247 отзывов
-              </span>
-            </div>
-          </div>
-
-          <HeroCardWarm />
-        </div>
-
-        {!withMenu ? (
-          <div className="mt-3.5 grid grid-cols-3 gap-2">
-            <div className="rounded-xl border border-amber-900/15 bg-amber-50/55 p-2 backdrop-blur-sm">
-              <div
-                className="flex items-center gap-1 text-[9px] uppercase tracking-[0.16em] text-amber-700/75"
-                style={{ fontWeight: 590 }}
-              >
-                <Clock className="h-2.5 w-2.5" />
-                открыто
-              </div>
-              <div
-                className="mt-0.5 text-[12px] text-amber-950"
-                style={{ fontWeight: 590 }}
-              >
-                8:00–22:00
-              </div>
-              <div className="text-[9.5px] text-amber-900/60">пн – вс</div>
-            </div>
-            <div className="rounded-xl border border-amber-900/15 bg-amber-50/55 p-2 backdrop-blur-sm">
-              <div
-                className="flex items-center gap-1 text-[9px] uppercase tracking-[0.16em] text-amber-700/75"
-                style={{ fontWeight: 590 }}
-              >
-                <MapPin className="h-2.5 w-2.5" />
-                адрес
-              </div>
-              <div
-                className="mt-0.5 text-[12px] text-amber-950"
-                style={{ fontWeight: 590 }}
-              >
-                М. Бронная, 12
-              </div>
-              <div className="text-[9.5px] text-amber-900/60">м. Тверская</div>
-            </div>
-            <div
-              className="grid place-items-center rounded-xl bg-gradient-to-br from-amber-700 to-amber-950 p-2 text-center text-[11px] text-amber-50 shadow-lg"
-              style={{ fontWeight: 590 }}
-            >
-              <span>Забронировать</span>
-              <ArrowRight className="mt-0.5 h-3 w-3" />
-            </div>
-          </div>
-        ) : (
-          <MenuFull accent="warm" />
-        )}
-      </div>
-    </div>
-  )
-}
-
-/* ---------- Full mock: DARK (also broken & restored states) ---------- */
-
-function DarkFull({ broken = false, restored = false }) {
-  return (
-    <div className="relative h-full w-full overflow-hidden font-sans">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(180deg, #1a1208 0%, #0c0d10 60%, #08090a 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,193,107,0.10) 0%, transparent 60%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-60"
-        style={{
-          backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
-
-      <NavMockDark broken={broken} />
-
-      <div className="relative z-10 px-5 pb-3 pt-3.5">
-        <div className="grid grid-cols-[1fr_auto] items-start gap-4">
-          <div className="space-y-1.5">
-            <div
-              className="inline-flex items-center gap-2 rounded-full border border-amber-300/15 bg-amber-300/[0.06] px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-amber-200/75 backdrop-blur"
-              style={{ fontWeight: 590 }}
-            >
-              <span className="h-1 w-1 rounded-full bg-amber-300" />
-              Кофейня · Патрики
-              <span className="h-1 w-1 rounded-full bg-amber-300" />
-            </div>
-            <div className="relative">
-              {broken && (
-                <div
-                  className="absolute -left-2 -top-2 z-10 inline-flex items-center gap-1 rounded-md border border-danger/40 bg-danger/15 px-2 py-1 font-serif"
-                  style={{
-                    fontWeight: 600,
-                    color: '#fda4af',
-                    fontSize: '18px',
-                  }}
-                >
-                  ☕ Надя
-                </div>
-              )}
-              <h1
-                className={
-                  'font-serif leading-[0.92] ' +
-                  (broken
-                    ? 'text-amber-50/40 line-through decoration-danger/70'
-                    : 'text-amber-50')
-                }
+                className="rounded-full px-1.5 py-0 text-[8.5px] uppercase tracking-wider"
                 style={{
-                  fontWeight: 600,
-                  letterSpacing: '-0.025em',
-                  fontSize: '40px',
+                  background: p.accent,
+                  color: p.surface,
+                  fontWeight: 590,
                 }}
               >
-                Эспрессо
-                <br />
-                <span className={'italic ' + (broken ? '' : 'text-amber-200')}>
-                  у Нади
-                </span>
-              </h1>
-            </div>
-            <p
-              className={
-                'max-w-[260px] text-[12px] leading-snug ' +
-                (broken ? 'text-amber-100/30' : 'text-amber-100/65')
-              }
-            >
-              Зерно прямого обжарова с ферм Эфиопии и Бразилии. Каждое утро —
-              свежее.
-            </p>
-            <div
-              className={
-                'flex items-center gap-1.5 pt-0.5 ' + (broken ? 'opacity-40' : '')
-              }
-            >
-              <span
-                className="text-[14px] text-amber-300"
-                style={{ letterSpacing: '-0.04em' }}
-              >
-                ★★★★★
+                {it.tag}
               </span>
-              <span
-                className="text-[11px] text-amber-100"
-                style={{ fontWeight: 590 }}
-              >
-                4.9
-              </span>
-              <span className="text-[10px] text-amber-200/45">
-                · 1 247 отзывов
-              </span>
-            </div>
+            )}
+            <span
+              className="flex-1 self-end border-b border-dotted"
+              style={{ borderColor: p.line, marginBottom: 4 }}
+            />
           </div>
+          <span
+            className="font-mono text-[12px] tabular-nums"
+            style={{ fontWeight: 510, color: p.ink }}
+          >
+            {it.price} ₽
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
-          <HeroCardDark />
+function CafeFootStrip({ p }) {
+  return (
+    <div
+      className="flex flex-none items-center justify-between gap-4 px-7 py-3.5"
+      style={{ borderTop: `1px solid ${p.line}` }}
+    >
+      <div className="flex items-center gap-5 text-[11px]">
+        <span
+          className="inline-flex items-center gap-1.5"
+          style={{ color: p.inkSoft }}
+        >
+          <Clock className="h-3 w-3" style={{ color: p.accent }} />
+          <span style={{ fontWeight: 510 }}>8:00 – 22:00</span>
+        </span>
+        <span
+          className="inline-flex items-center gap-1.5"
+          style={{ color: p.inkSoft }}
+        >
+          <MapPin className="h-3 w-3" style={{ color: p.accent }} />
+          <span style={{ fontWeight: 510 }}>М. Бронная, 12</span>
+        </span>
+      </div>
+      <a
+        className="inline-flex items-center gap-1 rounded-full px-3.5 py-1.5 text-[11px]"
+        style={{
+          background: p.accent,
+          color: p.surface,
+          fontWeight: 590,
+        }}
+      >
+        Забронировать
+        <ArrowRight className="h-3 w-3" />
+      </a>
+    </div>
+  )
+}
+
+/* ---------- Full mocks: editorial cafe layout ---------- */
+
+function CafeHero({ p, broken = false, large = true }) {
+  const heroFontSize = large ? 56 : 40
+  return (
+    <div className="grid flex-1 grid-cols-[1.15fr_1fr] items-stretch gap-6 px-7 py-6">
+      <div className="flex flex-col justify-between">
+        <div className="space-y-3">
+          <div
+            className="text-[10px] uppercase tracking-[0.32em]"
+            style={{ fontWeight: 590, color: p.accent }}
+          >
+            ─── Кофейня · Патрики
+          </div>
+          <div className="relative">
+            {broken && (
+              <div
+                className="absolute -left-3 -top-3 z-10 inline-flex items-center gap-1 rounded-md border px-2 py-1 font-serif"
+                style={{
+                  fontWeight: 600,
+                  fontSize: '20px',
+                  color: '#fda4af',
+                  borderColor: 'rgba(239, 68, 68, 0.4)',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                }}
+              >
+                ☕ Надя
+              </div>
+            )}
+            <h1
+              className="font-serif"
+              style={{
+                fontSize: heroFontSize,
+                lineHeight: 0.9,
+                letterSpacing: '-0.025em',
+                fontWeight: 500,
+                color: broken ? p.inkDim : p.ink,
+                textDecoration: broken ? 'line-through' : 'none',
+                textDecorationColor: broken ? 'rgba(239, 68, 68, 0.7)' : undefined,
+              }}
+            >
+              Зерно
+              <br />
+              <span className="italic">с любовью</span>.
+            </h1>
+          </div>
+          <p
+            className="max-w-[260px] text-[12.5px] leading-relaxed"
+            style={{ color: broken ? p.inkDim : p.inkSoft }}
+          >
+            Прямой контракт с фермерами Эфиопии и Гватемалы. Обжарова — в день
+            поставки.
+          </p>
         </div>
 
-        <MenuFull accent="dark" muted={broken} />
+        <div className="flex items-end justify-between gap-3 pt-4">
+          <a
+            className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-[12px]"
+            style={{
+              background: p.ink,
+              color: p.surface,
+              fontWeight: 590,
+            }}
+          >
+            Забронировать
+            <ArrowRight className="h-3 w-3" />
+          </a>
+          <div className="text-right">
+            <div
+              className="text-[14px]"
+              style={{ color: p.accent, letterSpacing: '-0.04em' }}
+            >
+              ★★★★★
+            </div>
+            <div
+              className="text-[10px] uppercase tracking-[0.16em]"
+              style={{ color: p.inkDim, fontWeight: 510 }}
+            >
+              4.9 · 1 247 отзывов
+            </div>
+          </div>
+        </div>
       </div>
+
+      <CafePhoto p={p} large />
+    </div>
+  )
+}
+
+function WarmFull({ withMenu }) {
+  const p = PALETTE.warm
+  return (
+    <div
+      className="relative flex h-full w-full flex-col overflow-hidden font-sans"
+      style={{ background: p.surface, color: p.ink }}
+    >
+      <CafeNav p={p} />
+      <CafeHero p={p} large />
+      {withMenu ? <CafeMenuStrip p={p} /> : <CafeFootStrip p={p} />}
+    </div>
+  )
+}
+
+function DarkFull({ broken = false, restored = false }) {
+  const p = PALETTE.dark
+  return (
+    <div
+      className="relative flex h-full w-full flex-col overflow-hidden font-sans"
+      style={{ background: p.surface, color: p.ink }}
+    >
+      {/* warm aurora glow */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 90% 50% at 50% 0%, rgba(216,166,115,0.08) 0%, transparent 60%)',
+        }}
+      />
+      <CafeNav p={p} broken={broken} />
+      <CafeHero p={p} broken={broken} large />
+      <CafeMenuStrip p={p} muted={broken} />
 
       <AnimatePresence>
         {restored && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="absolute right-4 top-4 z-20 inline-flex items-center gap-2 rounded-lg border border-success/40 bg-success/15 px-3 py-2 text-[12px] text-success backdrop-blur"
+            className="absolute right-5 top-5 z-20 inline-flex items-center gap-2 rounded-lg border border-success/40 bg-success/15 px-3 py-2 text-[12px] text-success backdrop-blur"
             style={{ fontWeight: 510 }}
           >
             <CheckCircle2 className="h-3.5 w-3.5" />
@@ -704,145 +559,129 @@ function DarkFull({ broken = false, restored = false }) {
 
 /* ---------- Mini abstracts (timeline thumbnails) ---------- */
 
-function WarmMini({ withMenu }) {
+function MiniBase({ p, withMenu, broken, restored }) {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300/70 px-2 py-1.5">
-      {/* nav */}
-      <div className="flex items-center justify-between border-b border-amber-900/20 pb-1">
+    <div
+      className="relative flex h-full w-full flex-col overflow-hidden p-2"
+      style={{ background: p.surface }}
+    >
+      {/* nav strip */}
+      <div
+        className="flex items-center justify-between pb-1"
+        style={{ borderBottom: `1px solid ${p.line}` }}
+      >
         <div className="flex items-center gap-0.5">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-900" />
-          <div className="h-0.5 w-2 rounded-full bg-amber-900/70" />
+          <div
+            className="h-1.5 w-1.5 rounded-full"
+            style={{ background: p.accent }}
+          />
+          <div
+            className="h-0.5 w-3 rounded-full"
+            style={{ background: p.inkSoft }}
+          />
         </div>
         <div className="flex gap-0.5">
-          <div className="h-0.5 w-1.5 rounded-full bg-amber-900/40" />
-          <div className="h-0.5 w-1.5 rounded-full bg-amber-900/40" />
-          <div className="h-0.5 w-1.5 rounded-full bg-amber-900/40" />
+          <div
+            className="h-0.5 w-1.5 rounded-full"
+            style={{ background: p.inkDim }}
+          />
+          <div
+            className="h-0.5 w-1.5 rounded-full"
+            style={{ background: p.inkDim }}
+          />
+          <div
+            className="h-0.5 w-1.5 rounded-full"
+            style={{ background: p.inkDim }}
+          />
         </div>
       </div>
-      {/* hero */}
-      <div className="mt-1 flex items-start justify-between gap-1">
-        <div className="flex-1 space-y-0.5">
-          <div className="h-0.5 w-3 rounded-full bg-amber-700/50" />
-          <div className="h-1.5 w-10 rounded-sm bg-amber-950" />
-          <div className="h-1.5 w-7 rounded-sm bg-amber-800 italic" />
-          <div className="h-px w-9 rounded-full bg-amber-900/40" />
-          <div className="flex items-center gap-0.5">
-            <div className="h-0.5 w-3 rounded-sm bg-amber-700" />
-            <div className="h-0.5 w-1.5 rounded-sm bg-amber-900" />
+
+      {/* hero band */}
+      <div className="mt-1.5 grid flex-1 grid-cols-[1.1fr_1fr] items-start gap-1.5">
+        <div className="space-y-1">
+          <div
+            className="h-0.5 w-2.5 rounded-full"
+            style={{ background: p.accent }}
+          />
+          <div
+            className={'h-2 rounded-sm ' + (broken ? 'opacity-50' : '')}
+            style={{ background: p.ink, width: '78%' }}
+          />
+          <div
+            className={'h-2 rounded-sm italic ' + (broken ? 'opacity-50' : '')}
+            style={{ background: p.inkSoft, width: '52%' }}
+          />
+        </div>
+        <div
+          className="aspect-square w-full rounded-md"
+          style={{
+            background: `radial-gradient(circle at 32% 30%, ${p.photoLight} 0%, ${p.photoMid} 50%, ${p.photoBase} 100%)`,
+          }}
+        />
+      </div>
+
+      {/* bottom band — always show menu rows for consistent silhouette */}
+      <div
+        className={'mt-1.5 space-y-0.5 pt-1 ' + (broken ? 'opacity-40' : '')}
+        style={{ borderTop: `1px solid ${p.line}` }}
+      >
+        {(withMenu || broken || restored ? [0, 1, 2, 3] : [0, 1]).map((i) => (
+          <div key={i} className="flex items-center gap-1">
+            <div
+              className="h-0.5 rounded-full"
+              style={{
+                background: p.ink,
+                width: i === 1 ? '40%' : '30%',
+              }}
+            />
+            <div className="h-px flex-1" style={{ background: p.line }} />
+            <div
+              className="h-0.5 w-1.5 rounded-full"
+              style={{ background: p.inkSoft }}
+            />
           </div>
-        </div>
-        <div className="grid h-7 w-7 place-items-center rounded-xl bg-gradient-to-br from-amber-700 to-amber-950 shadow-md">
-          <div className="h-2.5 w-2 rounded-sm bg-amber-100/85" />
-        </div>
+        ))}
       </div>
-      {/* below */}
-      {withMenu ? (
-        <div className="mt-1 space-y-0.5">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center gap-1">
-              <div
-                className={
-                  'h-0.5 rounded-full bg-amber-950/70 ' +
-                  (i === 1 ? 'w-5' : 'w-4')
-                }
-              />
-              <div className="h-px flex-1 bg-amber-900/20" />
-              <div className="h-0.5 w-2 rounded-full bg-amber-900/70" />
-            </div>
-          ))}
+
+      {/* status pip */}
+      {broken && (
+        <div
+          className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full"
+          style={{
+            background: '#ef4444',
+            boxShadow: `0 0 0 2px ${p.surface}`,
+          }}
+        >
+          <X className="h-2 w-2 text-white" strokeWidth={3.5} />
         </div>
-      ) : (
-        <div className="mt-1 grid grid-cols-3 gap-0.5">
-          <div className="h-2.5 rounded-sm border border-amber-900/15 bg-white/40" />
-          <div className="h-2.5 rounded-sm border border-amber-900/15 bg-white/40" />
-          <div className="h-2.5 rounded-sm bg-amber-700" />
+      )}
+      {restored && (
+        <div
+          className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full"
+          style={{
+            background: '#27a644',
+            boxShadow: `0 0 0 2px ${p.surface}`,
+          }}
+        >
+          <Check className="h-2 w-2 text-white" strokeWidth={3.5} />
         </div>
       )}
     </div>
   )
 }
 
+function WarmMini({ withMenu }) {
+  return <MiniBase p={PALETTE.warm} withMenu={withMenu} />
+}
+
 function DarkMini({ broken, restored }) {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-gradient-to-b from-[#1a1208] via-[#0c0d10] to-[#08090a] px-2 py-1.5">
-      {/* warm glow */}
-      <div className="pointer-events-none absolute -top-2 left-1/2 h-4 w-12 -translate-x-1/2 rounded-full bg-amber-300/20 blur-md" />
-      {/* nav */}
-      <div className="relative flex items-center justify-between border-b border-white/10 pb-1">
-        <div className="flex items-center gap-0.5">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-300" />
-          <div className="h-0.5 w-2 rounded-full bg-amber-200/70" />
-        </div>
-        <div className="flex gap-0.5">
-          <div className="h-0.5 w-1.5 rounded-full bg-white/30" />
-          <div className="h-0.5 w-1.5 rounded-full bg-white/30" />
-          <div className="h-0.5 w-1.5 rounded-full bg-white/30" />
-        </div>
-      </div>
-      {/* hero */}
-      <div className="relative mt-1 flex items-start justify-between gap-1">
-        <div className="flex-1 space-y-0.5">
-          <div className="h-0.5 w-3 rounded-full bg-amber-300/55" />
-          <div className="relative">
-            {broken && (
-              <div className="absolute -left-0.5 -top-0.5 z-10 h-1.5 w-4 rounded-sm border border-danger/60 bg-danger/30" />
-            )}
-            <div
-              className={
-                'h-1.5 w-10 rounded-sm ' +
-                (broken ? 'bg-amber-50/30' : 'bg-amber-50')
-              }
-            />
-          </div>
-          <div
-            className={
-              'h-1.5 w-7 rounded-sm italic ' +
-              (broken ? 'bg-amber-50/30' : 'bg-amber-200/95')
-            }
-          />
-          <div className="h-px w-9 rounded-full bg-amber-200/30" />
-          <div className="flex items-center gap-0.5">
-            <div className="h-0.5 w-3 rounded-sm bg-amber-300" />
-            <div className="h-0.5 w-1.5 rounded-sm bg-amber-100" />
-          </div>
-        </div>
-        <div className="grid h-7 w-7 place-items-center rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 shadow-lg">
-          <div className="h-2.5 w-2 rounded-sm bg-amber-100/85" />
-        </div>
-      </div>
-      {/* menu rows */}
-      <div className="mt-1 space-y-0.5">
-        {[0, 1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className={
-              'flex items-center gap-1 ' +
-              (broken && i === 1 ? 'opacity-30' : '')
-            }
-          >
-            <div
-              className={
-                'h-0.5 rounded-full bg-amber-100/70 ' +
-                (i === 1 ? 'w-5' : 'w-4')
-              }
-            />
-            <div className="h-px flex-1 bg-white/10" />
-            <div className="h-0.5 w-2 rounded-full bg-amber-200/65" />
-          </div>
-        ))}
-      </div>
-      {/* status pip */}
-      {broken && (
-        <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-danger ring-2 ring-canvas">
-          <X className="h-2 w-2 text-white" strokeWidth={3.5} />
-        </div>
-      )}
-      {restored && (
-        <div className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full bg-success ring-2 ring-canvas">
-          <Check className="h-2 w-2 text-white" strokeWidth={3.5} />
-        </div>
-      )}
-    </div>
+    <MiniBase
+      p={PALETTE.dark}
+      withMenu
+      broken={broken}
+      restored={restored}
+    />
   )
 }
 
