@@ -35,7 +35,6 @@ import {
   Activity,
   Hourglass,
   Timer,
-  Terminal,
   Lock,
 } from 'lucide-react'
 import { track } from './lib/track.js'
@@ -1614,15 +1613,64 @@ const STACK_LAYERS = [
   },
 ]
 
-const BUILD_LOG = [
-  { ms: '0:01', tag: 'frontend', text: 'Сгенерирован Hero, меню, форма брони · 312 строк' },
-  { ms: '0:14', tag: 'database', text: 'Создана схема: users, bookings, menu_items' },
-  { ms: '0:23', tag: 'backend', text: 'API: POST /booking, GET /menu, JWT-auth ✓' },
-  { ms: '0:31', tag: 'domain', text: 'Зарегистрирован espressonadya.ru через Reg.ru API' },
-  { ms: '0:42', tag: 'ssl', text: 'SSL-сертификат от Lets Encrypt получен' },
-  { ms: '0:58', tag: 'deploy', text: 'Docker-образ собран, деплой на safecloud-vps-04' },
-  { ms: '1:12', tag: 'health', text: 'Health-check passed · 200 OK на всех маршрутах' },
-  { ms: '1:14', tag: 'live', text: 'Live: https://espressonadya.ru', highlight: true },
+const BUILD_STEPS = [
+  {
+    icon: Zap,
+    time: '0:01',
+    title: 'Дизайн и интерфейс',
+    desc: 'Hero, меню, форма брони — готовы',
+    detail: '312 строк · React 19 + Tailwind',
+  },
+  {
+    icon: Database,
+    time: '0:14',
+    title: 'База данных',
+    desc: 'Схема под пользователей и заказы',
+    detail: 'Postgres 16 · users · bookings · menu_items',
+  },
+  {
+    icon: Cpu,
+    time: '0:23',
+    title: 'API и авторизация',
+    desc: 'Эндпоинты для брони и меню',
+    detail: 'POST /booking · GET /menu · JWT-auth',
+  },
+  {
+    icon: Globe,
+    time: '0:31',
+    title: 'Домен',
+    desc: 'espressonadya.ru — зарегистрирован',
+    detail: 'через Reg.ru API · DNS настроен',
+  },
+  {
+    icon: Lock,
+    time: '0:42',
+    title: 'SSL-сертификат',
+    desc: 'Защищённое соединение HTTPS',
+    detail: "Let's Encrypt · авто-обновление",
+  },
+  {
+    icon: Rocket,
+    time: '0:58',
+    title: 'Развёртывание',
+    desc: 'Сайт уехал на боевой сервер',
+    detail: 'Docker · safecloud-vps-04',
+  },
+  {
+    icon: Activity,
+    time: '1:12',
+    title: 'Проверка здоровья',
+    desc: 'Все страницы и API отвечают',
+    detail: 'Health-check passed · 200 OK',
+  },
+  {
+    icon: CheckCircle2,
+    time: '1:14',
+    title: 'Сайт работает',
+    desc: 'espressonadya.ru',
+    detail: 'Готов принимать клиентов',
+    final: true,
+  },
 ]
 
 function BuildConsole() {
@@ -1632,80 +1680,172 @@ function BuildConsole() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="relative overflow-hidden rounded-2xl border border-line bg-canvas/80 shadow-cardLift backdrop-blur-xl"
+      className="relative overflow-hidden rounded-3xl border border-line bg-elev1/40 p-5 shadow-cardLift backdrop-blur-xl md:p-7"
     >
-      <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 glow-orb opacity-60" />
-      <div className="pointer-events-none absolute -right-8 bottom-0 h-40 w-40 glow-orb opacity-40" />
+      {/* glow orbs */}
+      <div className="pointer-events-none absolute -left-20 -top-16 h-56 w-56 glow-orb opacity-70" />
+      <div className="pointer-events-none absolute -right-12 bottom-0 h-56 w-56 glow-orb opacity-40" />
 
-      <div className="relative flex items-center gap-2 border-b border-line bg-elev1/80 px-4 py-2.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        <div className="ml-2 inline-flex items-center gap-1.5 font-mono text-[10.5px] text-ink-dim">
-          <Terminal className="h-3 w-3" />
-          omnia · build espressonadya.ru
+      {/* header */}
+      <div className="relative mb-6 flex items-end justify-between gap-3 border-b border-line pb-5">
+        <div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.22em] text-accent-glow" style={{ fontWeight: 590 }}>
+            <Sparkles className="h-3 w-3" />
+            AI-пайплайн
+          </div>
+          <div className="mt-2.5 text-[15px] leading-snug text-ink" style={{ fontWeight: 590 }}>
+            Сборка сайта espressonadya.ru
+          </div>
+          <div className="mt-0.5 text-[12px] text-ink-muted">
+            8 слоёв собраны и работают
+          </div>
         </div>
-        <div className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10.5px] text-success">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-50" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
-          </span>
-          building
-        </div>
-      </div>
-
-      <div className="relative space-y-2 px-5 py-5 font-mono text-[12.5px]">
-        {BUILD_LOG.map((line, i) => (
-          <motion.div
-            key={line.ms + line.tag}
-            initial={{ opacity: 0, x: -12 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.35, delay: 0.4 + i * 0.18 }}
-            className="flex items-baseline gap-2.5"
+        <div className="text-right">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-ink-dim" style={{ fontWeight: 510 }}>
+            всего занято
+          </div>
+          <div
+            className="mt-0.5 text-[26px] leading-none accent-gradient"
+            style={{ fontWeight: 600, letterSpacing: '-0.02em' }}
           >
-            <span className="text-ink-dim">{line.ms}</span>
-            <span
-              className="rounded-md border px-1.5 py-0 text-[10px] uppercase tracking-wider"
-              style={{
-                borderColor: line.highlight
-                  ? 'rgba(39, 166, 68, 0.4)'
-                  : 'rgba(113, 112, 255, 0.35)',
-                background: line.highlight
-                  ? 'rgba(39, 166, 68, 0.12)'
-                  : 'rgba(113, 112, 255, 0.10)',
-                color: line.highlight ? '#27a644' : '#8b8aff',
-                fontWeight: 590,
-              }}
-            >
-              {line.tag}
-            </span>
-            <span className={line.highlight ? 'text-ink' : 'text-ink-muted'}>
-              {line.text}
-            </span>
-            {line.highlight && (
-              <span className="ml-auto inline-flex items-center gap-1 text-[10.5px] text-success">
-                <CheckCircle2 className="h-3 w-3" />
-                done
-              </span>
-            )}
-          </motion.div>
-        ))}
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5, delay: 0.4 + BUILD_LOG.length * 0.18 + 0.4 }}
-          className="mt-4 flex items-center justify-between border-t border-line pt-3 text-[11px]"
-        >
-          <span className="inline-flex items-center gap-2 text-ink-muted">
-            <Hourglass className="h-3 w-3 text-accent-glow" />
-            Build complete · <span className="text-ink" style={{ fontWeight: 590 }}>1 мин 14 сек</span>
-          </span>
-          <span className="font-mono text-ink-dim">7 layers ✓</span>
-        </motion.div>
+            1:14
+          </div>
+          <div className="text-[10px] text-ink-dim">мин : сек</div>
+        </div>
       </div>
+
+      {/* steps */}
+      <div className="relative">
+        {/* vertical connector line */}
+        <div
+          className="absolute left-[19px] top-3 w-px"
+          style={{
+            bottom: 12,
+            background:
+              'linear-gradient(to bottom, rgba(113,112,255,0.55) 0%, rgba(113,112,255,0.30) 70%, rgba(39,166,68,0.55) 100%)',
+          }}
+        />
+
+        <div className="space-y-3">
+          {BUILD_STEPS.map((s, i) => (
+            <motion.div
+              key={s.title}
+              initial={{ opacity: 0, x: -14 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{
+                duration: 0.45,
+                delay: 0.25 + i * 0.11,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="relative flex items-start gap-3.5"
+            >
+              {/* icon circle */}
+              <div
+                className={
+                  'relative z-10 grid h-10 w-10 flex-none place-items-center rounded-full border ' +
+                  (s.final
+                    ? 'border-success/50 bg-gradient-to-br from-success/30 to-success/10 shadow-[0_0_25px_rgba(39,166,68,0.35)]'
+                    : 'border-accent/35 bg-gradient-to-br from-accent/20 to-accent/[0.04] shadow-[0_0_18px_rgba(113,112,255,0.18)]')
+                }
+              >
+                <s.icon
+                  className="h-4 w-4"
+                  style={{ color: s.final ? '#5cd97a' : '#8b8aff' }}
+                  strokeWidth={2}
+                />
+              </div>
+
+              {/* card */}
+              <div
+                className={
+                  'min-w-0 flex-1 rounded-xl border px-4 py-3 transition ' +
+                  (s.final
+                    ? 'border-success/35 bg-gradient-to-r from-success/[0.10] via-success/[0.04] to-canvas'
+                    : 'border-line bg-canvas/60 hover:border-white/15')
+                }
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span
+                    className="truncate text-[14px] text-ink"
+                    style={{ fontWeight: 590 }}
+                  >
+                    {s.title}
+                  </span>
+                  <div className="flex flex-none items-center gap-2">
+                    <span className="font-mono text-[10.5px] text-ink-dim">{s.time}</span>
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true, margin: '-100px' }}
+                      transition={{
+                        duration: 0.3,
+                        delay: 0.45 + i * 0.11,
+                        type: 'spring',
+                        stiffness: 220,
+                      }}
+                      className={
+                        'grid h-4.5 w-4.5 place-items-center rounded-full ' +
+                        (s.final
+                          ? 'bg-success text-canvas'
+                          : 'bg-success/15 text-success')
+                      }
+                      style={{ height: 18, width: 18 }}
+                    >
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </motion.div>
+                  </div>
+                </div>
+                <div className="mt-1 truncate text-[12.5px] text-ink-muted">
+                  {s.desc}
+                </div>
+                {s.detail && (
+                  <div className="mt-1.5 flex items-center gap-1.5 text-[10.5px] text-ink-dim">
+                    <span
+                      className="h-px w-3 flex-none"
+                      style={{
+                        background: s.final
+                          ? 'rgba(39,166,68,0.4)'
+                          : 'rgba(113,112,255,0.4)',
+                      }}
+                    />
+                    <span className="truncate">{s.detail}</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* footer */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{
+          duration: 0.5,
+          delay: 0.25 + BUILD_STEPS.length * 0.11 + 0.25,
+        }}
+        className="relative mt-6 flex items-center justify-between gap-3 border-t border-line pt-4"
+      >
+        <span className="inline-flex items-center gap-2 text-[12.5px] text-ink-muted">
+          <CheckCircle2 className="h-4 w-4 text-success" />
+          <span>
+            <span className="text-ink" style={{ fontWeight: 590 }}>
+              Готово
+            </span>{' '}
+            — клиент видит работающий сайт
+          </span>
+        </span>
+        <span
+          className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] text-accent-glow"
+          style={{ fontWeight: 590 }}
+        >
+          espressonadya.ru
+          <ArrowRight className="h-3 w-3" />
+        </span>
+      </motion.div>
     </motion.div>
   )
 }
