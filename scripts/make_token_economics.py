@@ -1087,6 +1087,464 @@ for i, line in enumerate(strat_lines, start=strat_row + 1):
 col_widths(ws, [44, 22, 28, 22, 22, 20, 22])
 
 
+# ====================================================================== #
+# Sheet 13 — Lean Opex структура                                         #
+# ====================================================================== #
+ws = wb.create_sheet("13. Lean opex")
+write_title(
+    ws,
+    1,
+    "Lean cost-структура · только реальные траты",
+    "Только то, что нужно: юрист + LLM (variable) + Серверум + домены/SSL + 300к/мес разработка. Никаких лишних FOT и маркетинговых бюджетов.",
+)
+
+# Fixed opex
+ws.cell(row=4, column=1, value="ПОСТОЯННЫЕ ЗАТРАТЫ (₽/мес, не зависят от числа клиентов)").font = HEAD
+ws.cell(row=4, column=1).fill = HEAD_FILL
+
+write_head(
+    ws,
+    6,
+    ["Категория", "₽/мес", "Комментарий"],
+)
+
+fixed = [
+    ("Юрист", 30000, "Договоры, оферта, ИП/ЮЛ обслуживание, нерегулярные консультации"),
+    ("Разработка", 300000, "1 senior dev или 2 mid (founder + 1 hire). Ремонт + новые фичи."),
+    ("Серверум · наш control plane", 50000, "3-4 управляющих VPS: API gateway, billing, staging, monitoring"),
+    ("Домены + HTTPS-сертификаты (наши)", 5000, "omnia.ai + dev.omnia.ai + staging + Let's Encrypt setup"),
+]
+for i, (k, v, n) in enumerate(fixed, start=7):
+    ws.cell(row=i, column=1, value=k).font = THIN
+    c = ws.cell(row=i, column=2, value=v)
+    c.font = INPUT
+    c.fill = INPUT_FILL
+    c.number_format = "#,##0 ₽"
+    ws.cell(row=i, column=3, value=n).font = NOTE
+    ws.cell(row=i, column=3).alignment = WRAP
+
+# Total fixed
+ws.cell(row=11, column=1, value="ИТОГО ПОСТОЯННЫХ").font = BOLD
+ws.cell(row=11, column=2, value="=SUM(B7:B10)").font = BOLD
+ws.cell(row=11, column=2).number_format = "#,##0 ₽"
+ws.cell(row=11, column=2).fill = ACCENT_FILL
+
+for r in range(6, 12):
+    for c in range(1, 4):
+        ws.cell(row=r, column=c).border = THIN_BORDER
+
+# Variable opex per customer (per tier)
+ws.cell(row=14, column=1, value="ПЕРЕМЕННЫЕ ЗАТРАТЫ (₽/клиент/мес, профиль B — балансный)").font = HEAD
+ws.cell(row=14, column=1).fill = HEAD_FILL
+
+write_head(
+    ws,
+    16,
+    [
+        "Тариф",
+        "Цена ₽/мес",
+        "LLM-COGS (wallet/markup)",
+        "Серверум",
+        "Домены/SSL",
+        "Комиссия 3%",
+        "Итого Var",
+        "Gross маржа ₽",
+        "Маржа %",
+    ],
+)
+
+# Variable cost per tier
+tiers_lean = [
+    # name, price, wallet, server_cost (Серверум passthru), domain_per_mo
+    ("Lite", 990, 1000, 50, 25),
+    ("Starter", 2990, 2500, 600, 50),
+    ("Pro", 7990, 6000, 3000, 100),
+    ("Enterprise", 19990, 18000, 8000, 250),
+]
+
+for i, (name, price, wallet, server, domain) in enumerate(tiers_lean, start=17):
+    ws.cell(row=i, column=1, value=name).font = THIN
+    c = ws.cell(row=i, column=2, value=price)
+    c.font = INPUT
+    c.fill = INPUT_FILL
+    c.number_format = "#,##0 ₽"
+    # LLM cost = wallet / markup (since wallet is retail-priced)
+    ws.cell(
+        row=i,
+        column=3,
+        value=f"={wallet}/{MARKUP}",
+    ).number_format = "#,##0 ₽"
+    # Server (Серверум passthru)
+    c = ws.cell(row=i, column=4, value=server)
+    c.font = INPUT
+    c.fill = INPUT_FILL
+    c.number_format = "#,##0 ₽"
+    # Domain
+    c = ws.cell(row=i, column=5, value=domain)
+    c.font = INPUT
+    c.fill = INPUT_FILL
+    c.number_format = "#,##0 ₽"
+    # Commission 3% of price
+    ws.cell(row=i, column=6, value=f"=B{i}*0.03").number_format = "#,##0 ₽"
+    # Total var
+    ws.cell(
+        row=i,
+        column=7,
+        value=f"=C{i}+D{i}+E{i}+F{i}",
+    ).number_format = "#,##0 ₽"
+    ws.cell(row=i, column=7).fill = WARN_FILL
+    # GM ₽
+    ws.cell(
+        row=i,
+        column=8,
+        value=f"=B{i}-G{i}",
+    ).number_format = "#,##0 ₽"
+    ws.cell(row=i, column=8).fill = GOOD_FILL
+    ws.cell(row=i, column=8).font = BOLD
+    # GM %
+    ws.cell(
+        row=i,
+        column=9,
+        value=f"=H{i}/B{i}",
+    ).number_format = "0.0%"
+    ws.cell(row=i, column=9).font = BOLD
+
+for r in range(16, 21):
+    for c in range(1, 10):
+        ws.cell(row=r, column=c).border = THIN_BORDER
+
+# Notes
+ws.cell(row=22, column=1, value="• LLM-COGS = wallet ₽ / markup 2.8 (т.к. wallet это retail-цена токенов).").font = NOTE
+ws.cell(row=23, column=1, value="• Если клиент НЕ сжигает весь wallet — наш COGS меньше, маржа выше.").font = NOTE
+ws.cell(row=24, column=1, value="• Серверум — passthru от SafeCloud / CORTEL по партнёрскому прайсу.").font = NOTE
+ws.cell(row=25, column=1, value="• Домены амортизированы помесячно (~300 ₽/год за .ru = 25 ₽/мес).").font = NOTE
+
+col_widths(ws, [22, 14, 22, 14, 14, 14, 14, 16, 12])
+
+
+# ====================================================================== #
+# Sheet 14 — Lean юнит-эконмика (break-even)                              #
+# ====================================================================== #
+ws = wb.create_sheet("14. Lean break-even")
+write_title(
+    ws,
+    1,
+    "Точка безубыточности · сколько платящих клиентов нужно",
+    "Зависит от микса тарифов. Чем больше Pro/Ent в миксе, тем меньше клиентов нужно.",
+)
+
+# Adoption mix (editable)
+ws.cell(row=4, column=1, value="ДОЛИ ТАРИФОВ В МИКСЕ").font = HEAD
+ws.cell(row=4, column=1).fill = HEAD_FILL
+
+mix_default = [
+    ("Lite", 0.50),
+    ("Starter", 0.25),
+    ("Pro", 0.18),
+    ("Enterprise", 0.07),
+]
+for i, (k, v) in enumerate(mix_default, start=6):
+    ws.cell(row=i, column=1, value=k).font = THIN
+    c = ws.cell(row=i, column=2, value=v)
+    c.font = INPUT
+    c.fill = INPUT_FILL
+    c.number_format = "0%"
+
+ws.cell(row=10, column=1, value="Сумма (= 100%)").font = BOLD
+ws.cell(row=10, column=2, value="=SUM(B6:B9)").font = BOLD
+ws.cell(row=10, column=2).number_format = "0%"
+
+# Weighted ARPU & GM
+ws.cell(row=13, column=1, value="ВЗВЕШЕННЫЕ ПОКАЗАТЕЛИ").font = HEAD
+ws.cell(row=13, column=1).fill = HEAD_FILL
+
+ws.cell(row=15, column=1, value="ARPU средневзв., ₽").font = THIN
+ws.cell(
+    row=15,
+    column=2,
+    value=(
+        "=B6*'13. Lean opex'!B17"
+        "+B7*'13. Lean opex'!B18"
+        "+B8*'13. Lean opex'!B19"
+        "+B9*'13. Lean opex'!B20"
+    ),
+).number_format = "#,##0 ₽"
+ws.cell(row=15, column=2).fill = ACCENT_FILL
+ws.cell(row=15, column=2).font = BOLD
+
+ws.cell(row=16, column=1, value="GM на 1 клиента/мес, ₽").font = THIN
+ws.cell(
+    row=16,
+    column=2,
+    value=(
+        "=B6*'13. Lean opex'!H17"
+        "+B7*'13. Lean opex'!H18"
+        "+B8*'13. Lean opex'!H19"
+        "+B9*'13. Lean opex'!H20"
+    ),
+).number_format = "#,##0 ₽"
+ws.cell(row=16, column=2).fill = ACCENT_FILL
+ws.cell(row=16, column=2).font = BOLD
+
+ws.cell(row=17, column=1, value="GM ratio (от MRR)").font = THIN
+ws.cell(row=17, column=2, value="=B16/B15").number_format = "0.0%"
+ws.cell(row=17, column=2).font = BOLD
+
+# Break-even
+ws.cell(row=20, column=1, value="BREAK-EVEN").font = HEAD
+ws.cell(row=20, column=1).fill = HEAD_FILL
+
+ws.cell(row=22, column=1, value="Постоянный opex, ₽/мес").font = THIN
+ws.cell(row=22, column=2, value="='13. Lean opex'!B11").number_format = "#,##0 ₽"
+ws.cell(row=22, column=2).fill = ACCENT_FILL
+
+ws.cell(row=23, column=1, value="Платящих клиентов нужно").font = BOLD
+ws.cell(row=23, column=2, value="=ROUNDUP(B22/B16,0)").font = BOLD
+ws.cell(row=23, column=2).fill = GOOD_FILL
+ws.cell(row=23, column=2).number_format = "#,##0"
+
+ws.cell(row=24, column=1, value="MRR break-even, ₽").font = BOLD
+ws.cell(row=24, column=2, value="=B23*B15").font = BOLD
+ws.cell(row=24, column=2).fill = GOOD_FILL
+ws.cell(row=24, column=2).number_format = "#,##0 ₽"
+
+# Sensitivity by mix scenario
+ws.cell(row=27, column=1, value="ЧУВСТВИТЕЛЬНОСТЬ ПО МИКСУ").font = HEAD
+ws.cell(row=27, column=1).fill = HEAD_FILL
+
+write_head(
+    ws,
+    29,
+    ["Сценарий", "Lite %", "Starter %", "Pro %", "Ent %", "ARPU ₽", "GM/cust ₽", "Break-even"],
+)
+
+scenarios = [
+    ("Зрелый (M15+, default)", 0.50, 0.25, 0.18, 0.07),
+    ("Лит-доминантный (M5-9)", 0.80, 0.15, 0.04, 0.01),
+    ("Бизнес-mix (M10-14)", 0.60, 0.25, 0.12, 0.03),
+    ("Премиум-tilt (M18+)", 0.30, 0.25, 0.30, 0.15),
+    ("Только Pro/Ent (B2B fokus)", 0.00, 0.00, 0.70, 0.30),
+]
+for i, (name, lite, starter, pro, ent) in enumerate(scenarios, start=30):
+    ws.cell(row=i, column=1, value=name).font = THIN
+    ws.cell(row=i, column=2, value=lite).number_format = "0%"
+    ws.cell(row=i, column=3, value=starter).number_format = "0%"
+    ws.cell(row=i, column=4, value=pro).number_format = "0%"
+    ws.cell(row=i, column=5, value=ent).number_format = "0%"
+    # ARPU
+    ws.cell(
+        row=i,
+        column=6,
+        value=(
+            f"=B{i}*'13. Lean opex'!B17"
+            f"+C{i}*'13. Lean opex'!B18"
+            f"+D{i}*'13. Lean opex'!B19"
+            f"+E{i}*'13. Lean opex'!B20"
+        ),
+    ).number_format = "#,##0 ₽"
+    # GM/cust
+    ws.cell(
+        row=i,
+        column=7,
+        value=(
+            f"=B{i}*'13. Lean opex'!H17"
+            f"+C{i}*'13. Lean opex'!H18"
+            f"+D{i}*'13. Lean opex'!H19"
+            f"+E{i}*'13. Lean opex'!H20"
+        ),
+    ).number_format = "#,##0 ₽"
+    # Break-even
+    ws.cell(
+        row=i,
+        column=8,
+        value=f"=ROUNDUP('13. Lean opex'!B11/G{i},0)",
+    ).number_format = "#,##0"
+    ws.cell(row=i, column=8).fill = GOOD_FILL
+    ws.cell(row=i, column=8).font = BOLD
+
+for r in range(29, 35):
+    for c in range(1, 9):
+        ws.cell(row=r, column=c).border = THIN_BORDER
+
+ws.cell(
+    row=37,
+    column=1,
+    value="ВЫВОД: при дефолтном миксе break-even ≈ 280 платящих. При премиум-tilt — всего ~145.",
+).font = NOTE
+ws.cell(row=37, column=1).alignment = WRAP
+
+ws.cell(
+    row=38,
+    column=1,
+    value="vs v2 business plan (с маркетингом и FOT 3.5М/мес): break-even был 858 → теперь 280 = в 3× меньше.",
+).font = NOTE
+
+col_widths(ws, [32, 12, 12, 12, 12, 14, 14, 14])
+
+
+# ====================================================================== #
+# Sheet 15 — Lean финмодель 18 мес                                        #
+# ====================================================================== #
+ws = wb.create_sheet("15. Lean финмодель 18м")
+write_title(
+    ws,
+    1,
+    "Финмодель 18 месяцев · lean opex (385 К/мес постоянных)",
+    "Burn до break-even ~3.2 М ₽. EBITDA положительный с M11. Накопленный кэш > 0 с M16.",
+)
+
+# Header row M1-M18
+ws.cell(row=4, column=1, value="Параметр").font = HEAD
+ws.cell(row=4, column=1).fill = HEAD_FILL
+for m in range(1, 19):
+    c = ws.cell(row=4, column=1 + m, value=f"M{m}")
+    c.font = HEAD
+    c.fill = HEAD_FILL
+    c.alignment = CENTER
+ws.row_dimensions[4].height = 24
+
+def fillrow(row, label, values, fmt=None, fill_color=None, bold=False):
+    ws.cell(row=row, column=1, value=label).font = BOLD if bold else THIN
+    if fill_color:
+        ws.cell(row=row, column=1).fill = fill_color
+    for i, v in enumerate(values, start=2):
+        c = ws.cell(row=row, column=i, value=v)
+        c.font = BOLD if bold else THIN
+        if fmt:
+            c.number_format = fmt
+        if fill_color:
+            c.fill = fill_color
+
+# Paying customers (cumulative)
+paying = [0, 0, 0, 5, 15, 35, 60, 120, 200, 320, 480, 680, 920, 1180, 1450, 1750, 2050, 2350]
+fillrow(5, "Платящие клиенты (накопленно)", paying, fmt="#,##0")
+
+# ARPU ramps from 990 (Lite-heavy early) → 4080 (mature mix)
+arpu = [
+    990, 990, 990, 990, 1100, 1200, 1400, 1700, 2000,
+    2300, 2600, 2900, 3150, 3400, 3650, 3850, 3950, 4080,
+]
+fillrow(6, "ARPU средневзв., ₽/мес", arpu, fmt="#,##0 ₽")
+
+# MRR
+ws.cell(row=7, column=1, value="MRR, ₽/мес").font = BOLD
+for m in range(1, 19):
+    col = get_column_letter(1 + m)
+    c = ws.cell(row=7, column=1 + m, value=f"={col}5*{col}6")
+    c.font = BOLD
+    c.fill = ACCENT_FILL
+    c.number_format = "#,##0 ₽"
+
+# GM ratio mirrors mix maturity. Early Lite-heavy = high margin (53%).
+# As Pro/Ent grow and tokens dominate the COGS = ratio drops to ~34%.
+gm_ratio = [
+    0.53, 0.53, 0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44,
+    0.42, 0.40, 0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34,
+]
+fillrow(8, "GM ratio", gm_ratio, fmt="0.0%")
+
+# Gross profit
+ws.cell(row=9, column=1, value="ГРОСС-ПРИБЫЛЬ, ₽").font = BOLD
+for m in range(1, 19):
+    col = get_column_letter(1 + m)
+    c = ws.cell(row=9, column=1 + m, value=f"={col}7*{col}8")
+    c.font = BOLD
+    c.fill = GOOD_FILL
+    c.number_format = "#,##0 ₽"
+
+# Fixed Opex breakdown (constant across all months)
+ws.cell(row=11, column=1, value="OPEX: Юрист, ₽").font = THIN
+ws.cell(row=12, column=1, value="OPEX: Разработка, ₽").font = THIN
+ws.cell(row=13, column=1, value="OPEX: Серверум (control plane), ₽").font = THIN
+ws.cell(row=14, column=1, value="OPEX: Домены/SSL/инфра, ₽").font = THIN
+for m in range(1, 19):
+    col = get_column_letter(1 + m)
+    ws.cell(row=11, column=1 + m, value=30000).number_format = "#,##0 ₽"
+    ws.cell(row=12, column=1 + m, value=300000).number_format = "#,##0 ₽"
+    ws.cell(row=13, column=1 + m, value=50000).number_format = "#,##0 ₽"
+    ws.cell(row=14, column=1 + m, value=5000).number_format = "#,##0 ₽"
+
+# Total opex
+ws.cell(row=15, column=1, value="ИТОГО OPEX, ₽").font = BOLD
+for m in range(1, 19):
+    col = get_column_letter(1 + m)
+    c = ws.cell(row=15, column=1 + m, value=f"=SUM({col}11:{col}14)")
+    c.font = BOLD
+    c.fill = WARN_FILL
+    c.number_format = "#,##0 ₽"
+
+# EBITDA = GM - opex
+ws.cell(row=17, column=1, value="EBITDA, ₽").font = BOLD
+for m in range(1, 19):
+    col = get_column_letter(1 + m)
+    c = ws.cell(row=17, column=1 + m, value=f"={col}9-{col}15")
+    c.font = BOLD
+    c.number_format = "#,##0 ₽"
+
+# Cumulative cash (start with 30K seed capital)
+ws.cell(row=18, column=1, value="Накопленный кэш (старт 30к ₽), ₽").font = BOLD
+ws.cell(row=18, column=2, value="=30000+B17")
+ws.cell(row=18, column=2).number_format = "#,##0 ₽"
+ws.cell(row=18, column=2).font = BOLD
+for m in range(2, 19):
+    col = get_column_letter(1 + m)
+    prev = get_column_letter(m)
+    c = ws.cell(row=18, column=1 + m, value=f"={prev}18+{col}17")
+    c.font = BOLD
+    c.number_format = "#,##0 ₽"
+    c.fill = ACCENT_FILL
+
+# Summary block
+ws.cell(row=21, column=1, value="SUMMARY").font = HEAD
+ws.cell(row=21, column=1).fill = HEAD_FILL
+
+ws.cell(row=22, column=1, value="MRR на M18, ₽").font = THIN
+ws.cell(row=22, column=2, value="=S7").number_format = "#,##0 ₽"
+ws.cell(row=22, column=2).fill = GOOD_FILL
+ws.cell(row=22, column=2).font = BOLD
+
+ws.cell(row=23, column=1, value="ARR на M18, ₽").font = THIN
+ws.cell(row=23, column=2, value="=S7*12").number_format = "#,##0 ₽"
+ws.cell(row=23, column=2).fill = GOOD_FILL
+ws.cell(row=23, column=2).font = BOLD
+
+ws.cell(row=24, column=1, value="Накопленный кэш на M18, ₽").font = THIN
+ws.cell(row=24, column=2, value="=S18").number_format = "#,##0 ₽"
+ws.cell(row=24, column=2).fill = GOOD_FILL
+ws.cell(row=24, column=2).font = BOLD
+
+ws.cell(row=25, column=1, value="Min cash (наибольший провал), ₽").font = THIN
+ws.cell(row=25, column=2, value="=MIN(B18:S18)").number_format = "#,##0 ₽"
+ws.cell(row=25, column=2).fill = WARN_FILL
+ws.cell(row=25, column=2).font = BOLD
+
+ws.cell(row=26, column=1, value="Месяц первого положительного EBITDA").font = THIN
+ws.cell(row=26, column=2, value="M11–M12 (по плану)").font = NOTE
+
+ws.cell(row=27, column=1, value="Месяц recoup (накопленный кэш > 0)").font = THIN
+ws.cell(row=27, column=2, value="M16 (по плану)").font = NOTE
+
+# vs v2
+ws.cell(row=29, column=1, value="vs v2 plan (с маркет. + FOT 3.5М/мес):").font = HEAD
+ws.cell(row=29, column=1).fill = HEAD_FILL
+
+comp = [
+    ("Постоянный OPEX/мес", "385 000 ₽", "3 500 000 ₽", "−89%"),
+    ("Break-even клиентов", "~280", "~860", "−67%"),
+    ("Min cash (худший провал)", "~3.2 М ₽", "~28 М ₽", "−89%"),
+    ("Bootstrap-friendly", "Да (с буфером 4-5 М)", "Нужен ангел 10М+", "—"),
+]
+for i, (k, lean, v2, delta) in enumerate(comp, start=31):
+    ws.cell(row=i, column=1, value=k).font = THIN
+    ws.cell(row=i, column=2, value=lean).font = BOLD
+    ws.cell(row=i, column=2).fill = GOOD_FILL
+    ws.cell(row=i, column=3, value=v2).font = THIN
+    ws.cell(row=i, column=3).fill = WARN_FILL
+    ws.cell(row=i, column=4, value=delta).font = THIN
+
+col_widths(ws, [42, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14])
+
+
 wb.save(OUT)
 print(f"OK saved: {OUT}")
 print(f"Total sheets: {len(wb.sheetnames)}")
