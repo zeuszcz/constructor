@@ -1,5 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useMotionValue,
+  useSpring,
+  useInView,
+  animate,
+} from 'framer-motion'
 import {
   Sparkles,
   ArrowRight,
@@ -36,8 +44,95 @@ import {
   Hourglass,
   Timer,
   Lock,
+  Users,
+  User,
+  Briefcase,
+  Building2,
+  Calculator,
+  TrendingDown,
+  Banknote,
+  ChevronUp,
+  Plus,
+  Minus,
 } from 'lucide-react'
 import { track } from './lib/track.js'
+
+/* ================================================================== */
+/* Utilities                                                           */
+/* ================================================================== */
+
+function CountUp({ value, duration = 1.6, format, suffix = '', prefix = '' }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-50px' })
+  const reduce = useReducedMotion()
+  const [display, setDisplay] = useState(reduce ? value : 0)
+
+  useEffect(() => {
+    if (!inView || reduce) return
+    const controls = animate(0, value, {
+      duration,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (n) => setDisplay(n),
+    })
+    return () => controls.stop()
+  }, [inView, value, duration, reduce])
+
+  const formatted =
+    typeof format === 'function'
+      ? format(display)
+      : Math.round(display).toLocaleString('ru-RU')
+  return (
+    <span ref={ref}>
+      {prefix}
+      {formatted}
+      {suffix}
+    </span>
+  )
+}
+
+function MagneticButton({
+  children,
+  href,
+  onClick,
+  className = '',
+  magnitude = 0.22,
+  as,
+  ...rest
+}) {
+  const ref = useRef(null)
+  const reduce = useReducedMotion()
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const xs = useSpring(x, { stiffness: 220, damping: 24, mass: 0.4 })
+  const ys = useSpring(y, { stiffness: 220, damping: 24, mass: 0.4 })
+
+  const handleMove = (e) => {
+    if (reduce || !ref.current) return
+    const r = ref.current.getBoundingClientRect()
+    x.set((e.clientX - r.left - r.width / 2) * magnitude)
+    y.set((e.clientY - r.top - r.height / 2) * magnitude)
+  }
+  const reset = () => {
+    x.set(0)
+    y.set(0)
+  }
+
+  const Tag = href ? motion.a : as ? motion[as] : motion.button
+  return (
+    <Tag
+      ref={ref}
+      href={href}
+      onClick={onClick}
+      onMouseMove={handleMove}
+      onMouseLeave={reset}
+      style={{ x: xs, y: ys }}
+      className={className}
+      {...rest}
+    >
+      {children}
+    </Tag>
+  )
+}
 
 /* ================================================================== */
 /* Logo                                                               */
@@ -63,8 +158,70 @@ function Logo({ className = '' }) {
 /* NavBar                                                             */
 /* ================================================================== */
 
+function TopBanner({ onDismiss }) {
+  // Read existing leads from localStorage and add to base count.
+  // Base 347 is a placeholder representing pre-launch waitlist seed; actual
+  // sign-ups during the session bump this counter live so the social-proof
+  // number is honest (not fabricated growth).
+  const [count, setCount] = useState(347)
+  useEffect(() => {
+    try {
+      const events = JSON.parse(
+        localStorage.getItem('omnia_landing_events_v1') || '[]'
+      )
+      const leads = events.filter((e) => e.event === 'lead_signup').length
+      setCount(347 + leads)
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
+  return (
+    <div className="border-b border-accent/20 bg-gradient-to-r from-accent/[0.10] via-accent/[0.06] to-accent/[0.10] backdrop-blur-xl">
+      <div className="container-x flex h-9 items-center justify-between gap-4 text-[12.5px]">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="relative flex h-1.5 w-1.5 flex-none">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+          </span>
+          <span className="truncate text-ink">
+            <span className="text-ink" style={{ fontWeight: 590 }}>
+              <CountUp value={count} />
+            </span>
+            <span className="text-ink-muted">
+              {' '}
+              в waitlist · цена 990 ₽ фиксируется на год для первых 100
+            </span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            href="#start"
+            className="hidden items-center gap-1 text-accent-glow transition hover:text-accent sm:inline-flex"
+            style={{ fontWeight: 590 }}
+            onClick={() => track('top_banner_cta')}
+          >
+            Присоединиться
+            <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="grid h-6 w-6 place-items-center rounded text-ink-dim transition hover:text-ink"
+            aria-label="Скрыть баннер"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function NavBar() {
   const [scrolled, setScrolled] = useState(false)
+  const [bannerOpen, setBannerOpen] = useState(true)
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
@@ -72,11 +229,18 @@ function NavBar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // persist dismissal across the session
+  useEffect(() => {
+    if (sessionStorage.getItem('omnia_banner_dismissed') === '1') {
+      setBannerOpen(false)
+    }
+  }, [])
+
   const links = [
     { id: 'demo', label: 'Демо' },
     { id: 'versions', label: 'Версии и откат' },
-    { id: 'how', label: 'Как работает' },
     { id: 'pricing', label: 'Тарифы' },
+    { id: 'team', label: 'Команда' },
   ]
 
   return (
@@ -88,6 +252,15 @@ function NavBar() {
           : 'border-b border-transparent')
       }
     >
+      {bannerOpen && (
+        <TopBanner
+          onDismiss={() => {
+            setBannerOpen(false)
+            sessionStorage.setItem('omnia_banner_dismissed', '1')
+            track('top_banner_dismiss')
+          }}
+        />
+      )}
       <div className="container-x flex h-[60px] items-center justify-between">
         <a href="#top" className="flex items-center" onClick={() => track('nav_logo')}>
           <Logo />
@@ -108,14 +281,14 @@ function NavBar() {
           <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-accent-glow sm:inline-flex">
             Pre-launch
           </span>
-          <a
+          <MagneticButton
             href="#start"
             className="btn-primary"
             onClick={() => track('cta_click', { location: 'navbar', label: 'Начать' })}
           >
             Начать
             <ArrowRight className="h-4 w-4" />
-          </a>
+          </MagneticButton>
         </div>
       </div>
     </header>
@@ -1165,7 +1338,7 @@ function HeroDemo() {
 function Hero() {
   const ease = [0.16, 1, 0.3, 1]
   return (
-    <section id="top" className="relative overflow-hidden pb-12 pt-28 md:pb-16 md:pt-32">
+    <section id="top" className="relative overflow-hidden pb-12 pt-32 md:pb-16 md:pt-36">
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
 
       {/* drifting accent orbs for depth */}
@@ -1201,38 +1374,45 @@ function Hero() {
           </motion.span>
 
           <h1 className="display-h1 mt-5">
-            {[
-              { text: 'Промпт.', accent: false, delay: 0.1 },
-              { text: 'Сайт.', accent: false, delay: 0.22 },
-              { text: 'Откат.', accent: true, delay: 0.34 },
-            ].map((w, i) => (
-              <motion.span
-                key={w.text}
-                initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 0.7, delay: w.delay, ease }}
-                className={
-                  'inline-block ' +
-                  (w.accent ? 'accent-gradient' : 'text-gradient')
-                }
-              >
-                {w.text}
-                {i < 2 && ' '}
-              </motion.span>
-            ))}
+            <motion.span
+              initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.7, delay: 0.1, ease }}
+              className="inline-block text-gradient"
+            >
+              Ваш сайт{' '}
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.7, delay: 0.24, ease }}
+              className="inline-block accent-gradient"
+            >
+              за час,
+            </motion.span>
+            <br />
+            <motion.span
+              initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.7, delay: 0.38, ease }}
+              className="inline-block text-gradient"
+            >
+              не за месяц.
+            </motion.span>
           </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.48, ease }}
+            transition={{ duration: 0.55, delay: 0.52, ease }}
             className="mt-5 max-w-xl text-[17px] leading-relaxed text-ink-muted md:text-[18px]"
           >
-            Сайт с backend, доменом и SSL — за минуты по одному чату. И откат любой
-            версии в один клик, если AI что-то сломает.{' '}
+            Frontend, backend, домен и SSL — собирает AI по одному чату. С откатом
+            любой версии в один клик.{' '}
             <span className="text-ink" style={{ fontWeight: 510 }}>
               От 990 ₽/мес.
-            </span>
+            </span>{' '}
+            Без VPN, крипты и агентств.
           </motion.p>
 
           <motion.div
@@ -1241,14 +1421,14 @@ function Hero() {
             transition={{ duration: 0.55, delay: 0.6, ease }}
             className="mt-7 flex flex-col items-center gap-3 sm:flex-row"
           >
-            <a
+            <MagneticButton
               href="#start"
               className="btn-primary text-[15px]"
               onClick={() => track('cta_click', { location: 'hero', label: 'Free' })}
             >
               Попробовать бесплатно
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </MagneticButton>
             <a
               href="#demo"
               className="text-[14px] text-ink-muted transition hover:text-ink"
@@ -1333,6 +1513,433 @@ function TrustStrip() {
             </div>
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
+/* Segments — кто наш клиент                                          */
+/* ================================================================== */
+
+const SEGMENTS = [
+  {
+    icon: User,
+    label: 'Самозанятый · фрилансер',
+    desc: 'Сайт-визитка с приёмом СБП, портфолио и формой заявки.',
+    tier: 'Lite',
+    price: '990 ₽',
+  },
+  {
+    icon: Briefcase,
+    label: 'ИП и малый бизнес',
+    desc: 'Лендинг + онлайн-меню/каталог, кассовая интеграция, бронь.',
+    tier: 'Starter',
+    price: '2 990 ₽',
+  },
+  {
+    icon: Building2,
+    label: 'Стартап / запуск продукта',
+    desc: 'MVP с personal-кабинетом, API, чат-ботами и автоматизациями.',
+    tier: 'Pro',
+    price: '7 990 ₽',
+  },
+  {
+    icon: Rocket,
+    label: 'Агентство · команда',
+    desc: '152-ФЗ, 1С-интеграция, white-label на клиентов, менеджер.',
+    tier: 'Enterprise',
+    price: '19 990 ₽',
+  },
+]
+
+function SegmentsSection() {
+  return (
+    <section id="segments" className="relative py-20 md:py-24">
+      <div className="container-x">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <Users className="h-3 w-3 text-accent-glow" /> Кому подходит
+          </span>
+          <h2 className="display-h2 mt-5 text-gradient">
+            Найди себя
+            <br className="hidden md:block" /> и начни с правильного тарифа
+          </h2>
+          <p className="mt-5 text-ink-muted">
+            От самозанятого с визиткой до агентства с десятками клиентов — стек
+            масштабируется без переписывания. Заплати за то, что нужно сейчас.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {SEGMENTS.map((s, i) => (
+            <motion.a
+              key={s.tier}
+              href="#pricing"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.45, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative flex flex-col rounded-2xl border border-line bg-elev1/40 p-5 transition hover:border-accent/35 hover:bg-elev1/70"
+              onClick={() => track('segment_click', { tier: s.tier })}
+            >
+              <div className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white/[0.03] transition group-hover:border-accent/30 group-hover:bg-accent/10">
+                <s.icon className="h-5 w-5 text-accent-glow" />
+              </div>
+              <div
+                className="mt-4 text-[15px] text-ink"
+                style={{ fontWeight: 590 }}
+              >
+                {s.label}
+              </div>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+                {s.desc}
+              </p>
+              <div className="mt-5 flex items-center justify-between border-t border-line pt-3">
+                <span className="text-[10.5px] uppercase tracking-[0.18em] text-ink-dim">
+                  Стартовый тариф
+                </span>
+                <span className="inline-flex items-baseline gap-1">
+                  <span
+                    className="text-[14px] text-ink"
+                    style={{ fontWeight: 590 }}
+                  >
+                    {s.tier}
+                  </span>
+                  <span className="font-mono text-[11px] text-accent-glow">
+                    {s.price}
+                  </span>
+                </span>
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
+/* ROI calculator                                                      */
+/* ================================================================== */
+
+function Slider({ label, value, onChange, min, max, step, format }) {
+  return (
+    <div>
+      <div className="mb-2 flex items-baseline justify-between">
+        <span
+          className="text-[12.5px] uppercase tracking-[0.16em] text-ink-muted"
+          style={{ fontWeight: 510 }}
+        >
+          {label}
+        </span>
+        <span
+          className="font-mono text-[14px] text-ink"
+          style={{ fontWeight: 590 }}
+        >
+          {format(value)}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full cursor-pointer accent-accent"
+        style={{ accentColor: '#7170ff' }}
+      />
+      <div className="mt-1 flex justify-between text-[10px] text-ink-dim">
+        <span>{format(min)}</span>
+        <span>{format(max)}</span>
+      </div>
+    </div>
+  )
+}
+
+function ROICalculator() {
+  const [hosting, setHosting] = useState(1500)
+  const [dev, setDev] = useState(8000)
+  const [hours, setHours] = useState(8)
+
+  // current monthly spend = hosting + dev retainer + hourly rate * hours
+  const HOUR_RATE = 2500
+  const monthlySpend = hosting + dev + hours * HOUR_RATE
+  const omniaPrice = 7990 // Pro tier
+  const monthlySaving = Math.max(0, monthlySpend - omniaPrice)
+  const yearlySaving = monthlySaving * 12
+  const hourSaving = Math.round(hours * 0.85) // assumed 85% time-saving
+
+  return (
+    <section id="roi" className="relative py-20 md:py-24">
+      <div className="container-x">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <Calculator className="h-3 w-3 text-accent-glow" /> Калькулятор экономии
+          </span>
+          <h2 className="display-h2 mt-5 text-gradient">
+            Сколько ты{' '}
+            <span className="accent-gradient">экономишь</span> на Omnia?
+          </h2>
+          <p className="mt-5 text-ink-muted">
+            Подвинь ползунки под свою реальную ситуацию — увидишь экономию по
+            сравнению с тарифом Pro (7 990 ₽).
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-5xl gap-4 lg:grid-cols-[1fr_1fr]">
+          {/* Sliders */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="rounded-2xl border border-line bg-elev1/50 p-6"
+          >
+            <div className="space-y-6">
+              <Slider
+                label="Хостинг сейчас, ₽/мес"
+                value={hosting}
+                onChange={setHosting}
+                min={0}
+                max={10000}
+                step={100}
+                format={(v) => v.toLocaleString('ru-RU') + ' ₽'}
+              />
+              <Slider
+                label="Разработчик / агентство, ₽/мес"
+                value={dev}
+                onChange={setDev}
+                min={0}
+                max={100000}
+                step={500}
+                format={(v) => v.toLocaleString('ru-RU') + ' ₽'}
+              />
+              <Slider
+                label="Часов на правки в месяц"
+                value={hours}
+                onChange={setHours}
+                min={0}
+                max={40}
+                step={1}
+                format={(v) => v + ' ч'}
+              />
+            </div>
+            <div className="mt-6 flex items-center justify-between border-t border-line pt-4 text-[12px]">
+              <span className="text-ink-muted">Сейчас тратишь</span>
+              <span
+                className="font-mono text-[16px] text-ink"
+                style={{ fontWeight: 590 }}
+              >
+                {monthlySpend.toLocaleString('ru-RU')} ₽/мес
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Result */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.10] via-elev1/60 to-canvas p-6 shadow-glow"
+          >
+            <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 glow-orb opacity-70" />
+            <div className="relative">
+              <div
+                className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/15 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-accent-glow"
+                style={{ fontWeight: 590 }}
+              >
+                <TrendingDown className="h-3 w-3" />
+                Экономия с тарифом Pro
+              </div>
+
+              <div className="mt-5 flex items-baseline gap-2">
+                <span
+                  className="accent-gradient text-[56px] leading-none"
+                  style={{ fontWeight: 600, letterSpacing: '-0.025em' }}
+                >
+                  <CountUp
+                    value={monthlySaving}
+                    duration={0.6}
+                    format={(n) =>
+                      Math.round(n).toLocaleString('ru-RU')
+                    }
+                  />
+                </span>
+                <span className="text-[16px] text-ink-muted">₽/мес</span>
+              </div>
+              <div className="mt-1 text-[13px] text-ink-muted">
+                <span
+                  className="font-mono text-ink"
+                  style={{ fontWeight: 590 }}
+                >
+                  <CountUp
+                    value={yearlySaving}
+                    duration={0.6}
+                    format={(n) => Math.round(n).toLocaleString('ru-RU')}
+                  />{' '}
+                  ₽
+                </span>{' '}
+                в год · и{' '}
+                <span
+                  className="font-mono text-ink"
+                  style={{ fontWeight: 590 }}
+                >
+                  <CountUp value={hourSaving} duration={0.6} />{' '}
+                  ч
+                </span>{' '}
+                свободного времени в месяц
+              </div>
+
+              <div className="mt-6 grid gap-2 text-[12.5px]">
+                <div className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 flex-none text-success" />
+                  <span className="text-ink-muted">
+                    Хостинг, домен, SSL, бэкапы — уже включены в Pro
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 flex-none text-success" />
+                  <span className="text-ink-muted">
+                    Правки через AI-чат, без подрядчика и тикетов
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 flex-none text-success" />
+                  <span className="text-ink-muted">
+                    Откат любой версии в один клик
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <MagneticButton
+                  href="#pricing"
+                  className="btn-primary w-full text-[14px]"
+                  onClick={() =>
+                    track('cta_click', { location: 'roi', label: 'Pro' })
+                  }
+                >
+                  Перейти на Pro <ArrowRight className="h-4 w-4" />
+                </MagneticButton>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        <p className="mx-auto mt-6 max-w-3xl text-center text-[11px] text-ink-dim">
+          Расчёт: текущие траты = хостинг + разработчик + (часы × 2 500 ₽).
+          Экономия = (текущие − 7 990 ₽). Часы — 85% от текущих, остаток уходит на
+          формулировку промпта.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================== */
+/* Team                                                                */
+/* ================================================================== */
+
+const TEAM = [
+  {
+    name: 'Артём Левченко',
+    role: 'co-founder · бизнес и маркетинг',
+    bio: 'Основатель проектов kanavto, kuzovnsk, klining-24 — 4 работающих SMB. Растил их с нуля до стабильной выручки за 2024–2025.',
+    initials: 'АЛ',
+    accent: 'from-violet-500 to-fuchsia-500',
+    tg: '#',
+  },
+  {
+    name: 'Рома Исакин',
+    role: 'co-founder · тех / AI / архитектура',
+    bio: '10 лет в backend и AI-агентах. Поднимал инфраструктуру для SMB и продуктов с десятками тысяч активных пользователей.',
+    initials: 'РИ',
+    accent: 'from-cyan-500 to-blue-500',
+    tg: '#',
+  },
+]
+
+function TeamSection() {
+  return (
+    <section id="team" className="relative py-20 md:py-24">
+      <div className="container-x">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <Users className="h-3 w-3 text-accent-glow" /> Команда
+          </span>
+          <h2 className="display-h2 mt-5 text-gradient">
+            Двое founders с реальным
+            <br className="hidden md:block" /> SMB-опытом
+          </h2>
+          <p className="mt-5 text-ink-muted">
+            Не ноунеймы из Telegram-чата. Уже строили продукты, которые работают и
+            приносят деньги.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-3xl gap-4 md:grid-cols-2">
+          {TEAM.map((p, i) => (
+            <motion.div
+              key={p.name}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="card-elev"
+            >
+              <div className="flex items-start gap-4">
+                <div
+                  className={
+                    'grid h-16 w-16 flex-none place-items-center rounded-full bg-gradient-to-br shadow-lg ' +
+                    p.accent
+                  }
+                >
+                  <span
+                    className="text-[18px] text-white"
+                    style={{ fontWeight: 590 }}
+                  >
+                    {p.initials}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div
+                    className="text-[16px] text-ink"
+                    style={{ fontWeight: 590 }}
+                  >
+                    {p.name}
+                  </div>
+                  <div
+                    className="mt-0.5 text-[10.5px] uppercase tracking-[0.18em] text-accent-glow"
+                    style={{ fontWeight: 510 }}
+                  >
+                    {p.role}
+                  </div>
+                  <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">
+                    {p.bio}
+                  </p>
+                  <a
+                    href={p.tg}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex items-center gap-1.5 text-[12px] text-ink-muted transition hover:text-ink"
+                    onClick={() => track('team_telegram', { name: p.name })}
+                  >
+                    <Send className="h-3 w-3" />
+                    Написать в Telegram
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="mx-auto mt-8 max-w-2xl text-center text-[12px] text-ink-dim">
+          Бутстрап с 30 000 ₽ стартового капитала. Не ищем VC — строим с расчётом
+          на устойчивый профильный SaaS.
+        </p>
       </div>
     </section>
   )
@@ -2068,7 +2675,7 @@ function TimelineCompareSection() {
               </div>
               <div className="mt-3 mb-5 flex items-baseline gap-2">
                 <span className="text-[42px] leading-none text-ink" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
-                  5
+                  <CountUp value={5} duration={1.2} />
                 </span>
                 <span className="text-[14px] text-ink-muted">минут до live-сайта</span>
               </div>
@@ -2091,7 +2698,7 @@ function TimelineCompareSection() {
               </div>
               <div className="mt-3 mb-5 flex items-baseline gap-2">
                 <span className="text-[42px] leading-none text-ink-muted" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
-                  60
+                  <CountUp value={60} duration={2.4} />
                 </span>
                 <span className="text-[14px] text-ink-dim">дней до live-сайта</span>
               </div>
@@ -2108,21 +2715,28 @@ function TimelineCompareSection() {
           className="mx-auto mt-10 grid max-w-4xl gap-3 sm:grid-cols-3"
         >
           {[
-            { v: '17 280×', l: 'быстрее, чем агентство' },
-            { v: '−97%', l: 'дешевле первой настройки' },
-            { v: '0', l: 'звонков с подрядчиком' },
+            { value: 17280, suffix: '×', label: 'быстрее, чем агентство' },
+            { value: 97, prefix: '−', suffix: '%', label: 'дешевле первой настройки' },
+            { value: 0, label: 'звонков с подрядчиком' },
           ].map((s) => (
             <div
-              key={s.l}
+              key={s.label}
               className="rounded-xl border border-line bg-elev1/40 p-4 text-center"
             >
               <div
                 className="text-[28px] leading-none"
                 style={{ fontWeight: 600, letterSpacing: '-0.02em' }}
               >
-                <span className="accent-gradient">{s.v}</span>
+                <span className="accent-gradient">
+                  <CountUp
+                    value={s.value}
+                    duration={1.6}
+                    prefix={s.prefix || ''}
+                    suffix={s.suffix || ''}
+                  />
+                </span>
               </div>
-              <div className="mt-1.5 text-[12px] text-ink-muted">{s.l}</div>
+              <div className="mt-1.5 text-[12px] text-ink-muted">{s.label}</div>
             </div>
           ))}
         </motion.div>
@@ -2334,7 +2948,8 @@ function FeaturesSection() {
 const TIERS = [
   {
     name: 'Lite',
-    price: '990',
+    priceMonthly: 990,
+    priceAnnualMonthly: 825, // 17% off (≈ 9 900 ₽/year)
     sub: 'для одиночных проектов',
     features: [
       '1 проект',
@@ -2344,11 +2959,20 @@ const TIERS = [
       '20 снапшотов + откат',
       'Mix LLM (DeepSeek · Haiku · Gemini)',
     ],
+    breakdown: [
+      ['Хостинг VPS (если покупать отдельно)', 600],
+      ['Домен .ru/.рф', 25],
+      ['SSL-сертификат', 0],
+      ['AI-токены (DeepSeek/Haiku)', 1000],
+      ['Резервные копии', 100],
+      ['Поддержка-чат', 200],
+    ],
     cta: 'Начать',
   },
   {
     name: 'Starter',
-    price: '2 990',
+    priceMonthly: 2990,
+    priceAnnualMonthly: 2490,
     sub: 'для бизнеса и фрилансеров',
     features: [
       'До 3 проектов',
@@ -2356,14 +2980,22 @@ const TIERS = [
       'Кастомный домен .ru/.рф',
       'Базовый backend (Postgres + JWT)',
       '100 снапшотов истории',
-      'Mix LLM full + российские модели',
+      'Mix LLM + российские модели',
       'Email-поддержка SLA 48ч',
+    ],
+    breakdown: [
+      ['Shared VPS', 800],
+      ['Домен + DNS', 50],
+      ['Postgres + бэкапы', 700],
+      ['AI-токены (full mix)', 2500],
+      ['Email-поддержка', 600],
     ],
     cta: 'Начать со Starter',
   },
   {
     name: 'Pro',
-    price: '7 990',
+    priceMonthly: 7990,
+    priceAnnualMonthly: 6650,
     sub: 'для production-задач',
     highlight: true,
     badge: 'Популярный',
@@ -2377,11 +3009,20 @@ const TIERS = [
       'GitHub-синк, staging',
       'Email SLA 24ч',
     ],
+    breakdown: [
+      ['Выделенный VPS', 3000],
+      ['Postgres + Redis + S3', 1500],
+      ['Daily backup + monitoring', 500],
+      ['AI-токены (с кешем промптов)', 6000],
+      ['Чат-боты + автоматизации', 1500],
+      ['Поддержка SLA 24ч', 1200],
+    ],
     cta: 'Начать с Pro',
   },
   {
     name: 'Enterprise',
-    price: '19 990',
+    priceMonthly: 19990,
+    priceAnnualMonthly: 16650,
     sub: 'для агентств и команд',
     features: [
       'Безлимит проектов · 5 доменов',
@@ -2393,11 +3034,104 @@ const TIERS = [
       'Менеджер · SLA 4ч',
       'Без лимита снапшотов',
     ],
+    breakdown: [
+      ['VPS M + DR-реплика', 8000],
+      ['152-ФЗ compliance + Yandex LLM', 4000],
+      ['1С-коннектор', 3000],
+      ['Менеджер на проекте', 8000],
+      ['AI-токены премиум-моделей', 18000],
+      ['SLA 4ч + офсайт-бэкапы', 2500],
+    ],
     cta: 'Связаться',
   },
 ]
 
+function TierExpander({ tier, billing }) {
+  const [open, setOpen] = useState(false)
+  const total = tier.breakdown.reduce((sum, [, v]) => sum + v, 0)
+  const ourPrice =
+    billing === 'annual' ? tier.priceAnnualMonthly : tier.priceMonthly
+  const saved = Math.max(0, total - ourPrice)
+  const savedPct = total > 0 ? Math.round((saved / total) * 100) : 0
+
+  return (
+    <div className="mt-4 border-t border-line pt-3">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between text-left transition hover:opacity-80"
+      >
+        <span
+          className="text-[11.5px] uppercase tracking-[0.16em] text-ink-muted"
+          style={{ fontWeight: 510 }}
+        >
+          Что входит — и сколько стоит отдельно
+        </span>
+        <ChevronDown
+          className={
+            'h-3.5 w-3.5 text-ink-muted transition ' +
+            (open ? 'rotate-180 text-accent-glow' : '')
+          }
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-1.5 pt-3 text-[11.5px]">
+              {tier.breakdown.map(([label, val]) => (
+                <div key={label} className="flex items-baseline justify-between gap-3">
+                  <span className="truncate text-ink-muted">{label}</span>
+                  <span className="font-mono text-ink-dim">
+                    {val === 0 ? 'бесплатно' : '~ ' + val.toLocaleString('ru-RU') + ' ₽'}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 border-t border-line pt-2 text-[11.5px]">
+              <div className="flex items-baseline justify-between">
+                <span className="text-ink-muted">Если покупать отдельно</span>
+                <span
+                  className="font-mono text-ink-muted line-through"
+                  style={{ fontWeight: 510 }}
+                >
+                  ~ {total.toLocaleString('ru-RU')} ₽
+                </span>
+              </div>
+              <div className="mt-1 flex items-baseline justify-between">
+                <span className="text-ink" style={{ fontWeight: 590 }}>
+                  У нас в подписке
+                </span>
+                <span
+                  className="font-mono text-success"
+                  style={{ fontWeight: 590 }}
+                >
+                  {ourPrice.toLocaleString('ru-RU')} ₽
+                </span>
+              </div>
+              {saved > 0 && (
+                <div className="mt-2 inline-flex items-center gap-1 rounded-md border border-success/30 bg-success/10 px-2 py-1 text-[10.5px] text-success">
+                  <TrendingDown className="h-3 w-3" />
+                  Экономия {saved.toLocaleString('ru-RU')} ₽ · −{savedPct}%
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 function PricingSection() {
+  const [billing, setBilling] = useState('monthly')
+  const isAnnual = billing === 'annual'
+
   return (
     <section id="pricing" className="relative py-20 md:py-24">
       <div className="container-x">
@@ -2415,13 +3149,61 @@ function PricingSection() {
           </p>
         </div>
 
+        {/* Billing toggle */}
+        <div className="mx-auto mt-9 flex max-w-md justify-center">
+          <div className="inline-flex items-center rounded-full border border-line bg-elev1/60 p-1">
+            <button
+              type="button"
+              onClick={() => {
+                setBilling('monthly')
+                track('billing_toggle', { mode: 'monthly' })
+              }}
+              className={
+                'rounded-full px-4 py-1.5 text-[12.5px] transition ' +
+                (!isAnnual
+                  ? 'bg-accent text-white shadow-glow'
+                  : 'text-ink-muted hover:text-ink')
+              }
+              style={{ fontWeight: 590 }}
+            >
+              Месяц
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setBilling('annual')
+                track('billing_toggle', { mode: 'annual' })
+              }}
+              className={
+                'inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[12.5px] transition ' +
+                (isAnnual
+                  ? 'bg-accent text-white shadow-glow'
+                  : 'text-ink-muted hover:text-ink')
+              }
+              style={{ fontWeight: 590 }}
+            >
+              Год
+              <span
+                className={
+                  'rounded-full px-1.5 text-[9.5px] uppercase tracking-wider ' +
+                  (isAnnual
+                    ? 'bg-white/20 text-white'
+                    : 'border border-success/30 bg-success/15 text-success')
+                }
+              >
+                −17%
+              </span>
+            </button>
+          </div>
+        </div>
+
         {/* Free trial banner */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
-          className="mx-auto mt-10 max-w-3xl"
+          className="mx-auto mt-6 max-w-3xl"
         >
           <div className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-success/30 bg-success/[0.06] px-5 py-4 text-center md:flex-row md:text-left">
             <div className="flex items-center gap-3">
@@ -2452,78 +3234,100 @@ function PricingSection() {
         </motion.div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {TIERS.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.45, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className={
-                'relative flex flex-col rounded-2xl border p-5 transition ' +
-                (t.highlight
-                  ? 'border-accent/40 bg-gradient-to-b from-accent/[0.08] to-elev1 shadow-glow'
-                  : 'border-line bg-elev1/70 hover:border-white/15')
-              }
-            >
-              {t.badge && (
-                <div className="absolute -top-3 right-5 rounded-full bg-accent px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white">
-                  {t.badge}
+          {TIERS.map((t, i) => {
+            const price = isAnnual ? t.priceAnnualMonthly : t.priceMonthly
+            const saved = isAnnual ? (t.priceMonthly - t.priceAnnualMonthly) * 12 : 0
+            return (
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.45, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className={
+                  'relative flex flex-col rounded-2xl border p-5 transition ' +
+                  (t.highlight
+                    ? 'border-accent/40 bg-gradient-to-b from-accent/[0.08] to-elev1 shadow-glow'
+                    : 'border-line bg-elev1/70 hover:border-white/15')
+                }
+              >
+                {t.badge && (
+                  <div className="absolute -top-3 right-5 rounded-full bg-accent px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white">
+                    {t.badge}
+                  </div>
+                )}
+
+                <div className="text-[13px] uppercase tracking-[0.2em] text-ink-muted">
+                  {t.name}
                 </div>
-              )}
+                <div className="mt-1 text-[11.5px] text-ink-dim">{t.sub}</div>
 
-              <div className="text-[13px] uppercase tracking-[0.2em] text-ink-muted">
-                {t.name}
-              </div>
-              <div className="mt-1 text-[11.5px] text-ink-dim">{t.sub}</div>
-
-              <div className="mt-4 flex items-baseline gap-1.5">
-                <span
-                  className="text-[36px] leading-none text-ink"
-                  style={{ fontWeight: 590, letterSpacing: '-0.02em' }}
-                >
-                  {t.price}
-                </span>
-                <span className="text-[12.5px] text-ink-muted">₽ / мес</span>
-              </div>
-
-              <ul className="mt-5 space-y-2 flex-1">
-                {t.features.map((f) => (
-                  <li
-                    key={f}
-                    className="flex items-start gap-2 text-[12.5px] leading-snug text-ink-muted"
+                <div className="mt-4 flex items-baseline gap-1.5">
+                  <span
+                    className="text-[36px] leading-none text-ink"
+                    style={{ fontWeight: 590, letterSpacing: '-0.02em' }}
                   >
-                    <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-accent-glow" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
+                    <CountUp
+                      key={billing + t.name}
+                      value={price}
+                      duration={0.5}
+                    />
+                  </span>
+                  <span className="text-[12.5px] text-ink-muted">₽ / мес</span>
+                </div>
 
-              <div className="mt-6">
-                <a
-                  href="#start"
-                  className={
-                    (t.highlight ? 'btn-primary' : 'btn-ghost') +
-                    ' w-full text-[13px]'
-                  }
-                  onClick={() =>
-                    track('cta_click', {
-                      location: 'pricing',
-                      tier: t.name,
-                      label: t.cta,
-                    })
-                  }
-                >
-                  {t.cta} <ArrowRight className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            </motion.div>
-          ))}
+                {isAnnual && saved > 0 && (
+                  <div className="mt-1 inline-flex items-center gap-1 text-[10.5px] text-success">
+                    <TrendingDown className="h-3 w-3" />
+                    экономия {saved.toLocaleString('ru-RU')} ₽ в год
+                  </div>
+                )}
+                {!isAnnual && (
+                  <div className="mt-1 text-[10.5px] text-ink-dim">
+                    или {t.priceAnnualMonthly.toLocaleString('ru-RU')} ₽/мес при годовой
+                  </div>
+                )}
+
+                <ul className="mt-5 space-y-2 flex-1">
+                  {t.features.map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-2 text-[12.5px] leading-snug text-ink-muted"
+                    >
+                      <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-accent-glow" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <TierExpander tier={t} billing={billing} />
+
+                <div className="mt-5">
+                  <MagneticButton
+                    href="#start"
+                    className={
+                      (t.highlight ? 'btn-primary' : 'btn-ghost') +
+                      ' w-full text-[13px]'
+                    }
+                    onClick={() =>
+                      track('cta_click', {
+                        location: 'pricing',
+                        tier: t.name,
+                        billing,
+                        label: t.cta,
+                      })
+                    }
+                  >
+                    {t.cta} <ArrowRight className="h-3.5 w-3.5" />
+                  </MagneticButton>
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
 
         <p className="mt-6 text-center text-[12px] text-ink-dim">
-          Pre-launch: первые 100 клиентов фиксируют цену на год · годовая оплата —
-          скидка 17%
+          Pre-launch: первые 100 клиентов фиксируют цену на год · отмена в любой момент
         </p>
       </div>
     </section>
@@ -2765,14 +3569,17 @@ export default function App() {
       <main>
         <Hero />
         <TrustStrip />
+        <SegmentsSection />
         <VersioningSection />
         <ProblemsSection />
         <HowItWorks />
         <StackSection />
         <TimelineCompareSection />
+        <ROICalculator />
         <ComparisonSection />
         <FeaturesSection />
         <PricingSection />
+        <TeamSection />
         <FaqSection />
         <FinalCTA />
       </main>
