@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-feature-settings: "cv01", "ss03", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  background: #08090a;
+  color: #f7f8f8;
+  font-family: "Inter Variable", Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Selection */
+::selection {
+  background: rgba(113, 112, 255, 0.45);
+  color: #fff;
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1180px] px-5 sm:px-8;
+  }
+  .display-h1 {
+    @apply font-sans text-[44px] leading-[1.04] tracking-tight3 sm:text-[64px] md:text-[80px];
+    font-weight: 590;
+  }
+  .display-h2 {
+    @apply font-sans text-[32px] leading-[1.08] tracking-tight2 sm:text-[44px] md:text-[56px];
+    font-weight: 590;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.02] px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink-muted;
+    font-weight: 510;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm text-white shadow-glow transition;
+    font-weight: 510;
+  }
+  .btn-primary:hover {
+    background: #8b8aff;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white/[0.02] px-6 py-3 text-sm text-ink transition;
+    font-weight: 510;
+  }
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-white/[0.02] p-6;
+  }
+  .card-elev {
+    @apply rounded-2xl border border-line bg-elev1 p-6 shadow-cardLift;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black, transparent 70%);
+  }
+  .glow-orb {
+    background: radial-gradient(closest-side, rgba(113, 112, 255, 0.35), transparent);
+    filter: blur(40px);
+  }
+  .text-gradient {
+    background: linear-gradient(180deg, #ffffff 0%, #b3b4bd 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .accent-gradient {
+    background: linear-gradient(135deg, #8b8aff 0%, #5e6ad2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite;
+  }
+  .divide-line > * + * {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
