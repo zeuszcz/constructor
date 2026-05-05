@@ -54,6 +54,9 @@ import {
   ChevronUp,
   Plus,
   Minus,
+  ShoppingBag,
+  Camera,
+  LineChart,
 } from 'lucide-react'
 import { track } from './lib/track.js'
 
@@ -299,44 +302,28 @@ function NavBar() {
 /* Demo story — 5 versions of the same coffee-shop site               */
 /* ================================================================== */
 
-const STORY = [
-  {
-    user: 'Сделай лендинг для кофейни «Эспрессо у Нади» на Патриках',
-    ai: 'Беру тёплую палитру и serif-шрифт. Подключаю карту, часы, форму брони.',
-    diff: { kind: 'add', text: '+ 312 строк · шаблон, hero, контакты' },
-    version: { id: 'v1', label: 'Стартовый шаблон', tone: 'warm' },
-    preview: 'warm-template',
-  },
-  {
-    user: 'Добавь онлайн-меню с ценами',
-    ai: 'Создаю секцию меню. Поднимаю Postgres под будущие заказы и БД клиентов.',
-    diff: { kind: 'add', text: '+ 78 строк · меню (4 позиции) + БД' },
-    version: { id: 'v2', label: 'Меню добавлено', tone: 'warm' },
-    preview: 'warm-menu',
-  },
-  {
-    user: 'Поставь тёмную тему — клиент попросил',
-    ai: 'Перевожу палитру в тёмные оттенки. Контраст по AAA, акценты — тёплый янтарь.',
-    diff: { kind: 'mod', text: '~ 41 строка · цветовая схема' },
-    version: { id: 'v3', label: 'Тёмная тема', tone: 'dark' },
-    preview: 'dark-menu',
-  },
-  {
-    user: 'Замени логотип на «☕ Надя»',
-    ai: 'Применяю… Хм, новый логотип не помещается в шапку, layout сломался.',
-    diff: { kind: 'err', text: '× Сломалась шапка · 88 строк' },
-    version: { id: 'v4', label: 'AI сломал шапку', tone: 'broken' },
-    preview: 'broken',
-  },
-  {
-    user: '[Откат на v3]',
-    ai: 'Готово — за 1 клик откатил на v3. Логотип не трогаю, остальное на месте.',
-    diff: { kind: 'ok', text: '✓ Откат · восстановлено за 0.4 сек' },
-    version: { id: 'v5', label: 'Откат на v3', tone: 'restored' },
-    preview: 'dark-restored',
-    rollback: true,
-  },
+/* Stories share the same 5-step narrative arc across all verticals:
+   v1 sparse template → v2 content added → v3 dark theme → v4 logo
+   broken → v5 rollback. Only chat copy and project name vary. */
+
+const STORY_VERSIONS = [
+  { id: 'v1', label: 'Стартовый шаблон', tone: 'warm', preview: 'warm-template', diff: { kind: 'add', text: '+ 312 строк · шаблон, hero, контакты' } },
+  { id: 'v2', label: 'Контент добавлен', tone: 'warm', preview: 'warm-menu', diff: { kind: 'add', text: '+ 78 строк · 4 позиции + БД' } },
+  { id: 'v3', label: 'Тёмная тема', tone: 'dark', preview: 'dark-menu', diff: { kind: 'mod', text: '~ 41 строка · цветовая схема' } },
+  { id: 'v4', label: 'AI сломал шапку', tone: 'broken', preview: 'broken', diff: { kind: 'err', text: '× Сломалась шапка · 88 строк' } },
+  { id: 'v5', label: 'Откат на v3', tone: 'restored', preview: 'dark-restored', rollback: true, diff: { kind: 'ok', text: '✓ Откат · восстановлено за 0.4 сек' } },
 ]
+
+function buildStory(turns) {
+  return STORY_VERSIONS.map((v, i) => ({
+    user: turns[i].user,
+    ai: turns[i].ai,
+    diff: turns[i].diff || v.diff,
+    version: { id: v.id, label: turns[i].label || v.label, tone: v.tone },
+    preview: v.preview,
+    rollback: v.rollback,
+  }))
+}
 
 /* ------------------------------------------------------------------ */
 /* Mini-version label / id chip                                       */
@@ -372,43 +359,300 @@ function VersionPill({ version, active }) {
    whitespace, single focal element. Mini variants in the timeline use a
    dedicated abstract render because actual text becomes illegible at 16%. */
 
-const MENU_ITEMS = [
-  { name: 'Эспрессо', desc: 'двойной, 30 мл', price: '200', tag: null },
-  { name: 'Капучино', desc: 'с тёртым какао', price: '320', tag: 'хит' },
-  { name: 'Раф ванильный', desc: 'на кокосе', price: '380', tag: null },
-  { name: 'Латте', desc: 'тройной, с молоком', price: '350', tag: null },
-]
+/* Vertical configs — drive every cafe-specific string in mocks.
+   Each vertical has its own palette pair (warm / dark), brand, copy,
+   item list, and 5-step chat story. The visual layout is shared. */
 
-const PALETTE = {
-  warm: {
-    surface: '#faf6ec',
-    ink: '#1a0f08',
-    inkSoft: 'rgba(26, 15, 8, 0.62)',
-    inkDim: 'rgba(26, 15, 8, 0.42)',
-    line: 'rgba(26, 15, 8, 0.10)',
-    accent: '#a3501e',
-    photoBase: '#3a1d0c',
-    photoMid: '#7a4218',
-    photoLight: '#c4843a',
-    photoCaption: 'rgba(255, 243, 210, 0.85)',
+const VERTICALS = {
+  cafe: {
+    id: 'cafe',
+    label: 'Кофейня',
+    tabIcon: Coffee,
+    brand: { mark: 'НАДЯ', Icon: Coffee },
+    url: 'espressonadya.ru',
+    eyebrow: 'Кофейня · Патрики',
+    locationMeta: 'Москва',
+    headline: {
+      centered: { main: 'Эспрессо', sub: 'у Нади', italicSub: false },
+      split: { main: 'Зерно', sub: 'с любовью.', italicSub: true },
+    },
+    desc: {
+      sparse: 'Скоро открытие на Малой Бронной. Зерно прямого обжарова, бариста и тишина.',
+      full: 'Прямой контракт с фермерами Эфиопии и Гватемалы. Обжарова в день поставки.',
+    },
+    cta: { sparse: 'Записаться на открытие', foot: 'Забронировать' },
+    foot: { hours: '8:00 – 22:00', address: 'М. Бронная, 12' },
+    items: [
+      { name: 'Эспрессо', desc: 'двойной, 30 мл', price: '200', tag: null },
+      { name: 'Капучино', desc: 'с тёртым какао', price: '320', tag: 'хит' },
+      { name: 'Раф ванильный', desc: 'на кокосе', price: '380', tag: null },
+      { name: 'Латте', desc: 'тройной, с молоком', price: '350', tag: null },
+    ],
+    itemPriceSuffix: ' ₽',
+    menuTitle: 'меню осени',
+    photoCaption: '─ Эфиопия · Сидамо',
+    rating: { value: '4.9', reviews: '· 1 247 отзывов' },
+    palette: {
+      warm: {
+        surface: '#faf6ec', ink: '#1a0f08',
+        inkSoft: 'rgba(26,15,8,0.62)', inkDim: 'rgba(26,15,8,0.42)',
+        line: 'rgba(26,15,8,0.10)', accent: '#a3501e',
+        photoBase: '#3a1d0c', photoMid: '#7a4218', photoLight: '#c4843a',
+        photoCaption: 'rgba(255,243,210,0.85)',
+      },
+      dark: {
+        surface: '#0c0a08', ink: '#f4ebd9',
+        inkSoft: 'rgba(244,235,217,0.62)', inkDim: 'rgba(244,235,217,0.38)',
+        line: 'rgba(244,235,217,0.10)', accent: '#d8a673',
+        photoBase: '#1f1208', photoMid: '#7a4218', photoLight: '#d8a673',
+        photoCaption: 'rgba(216,166,115,0.92)',
+      },
+    },
+    story: buildStory([
+      {
+        user: 'Сделай лендинг для кофейни «Эспрессо у Нади» на Патриках',
+        ai: 'Беру тёплую палитру и serif-шрифт. Подключаю карту, часы, форму брони.',
+      },
+      {
+        user: 'Добавь онлайн-меню с ценами',
+        ai: 'Создаю секцию меню. Поднимаю Postgres под будущие заказы и БД клиентов.',
+      },
+      {
+        user: 'Поставь тёмную тему — клиент попросил',
+        ai: 'Перевожу палитру в тёмные оттенки. Контраст AAA, акценты — тёплый янтарь.',
+      },
+      {
+        user: 'Замени логотип на «☕ Надя»',
+        ai: 'Применяю… Хм, новый логотип не помещается в шапку, layout сломался.',
+      },
+      {
+        user: '[Откат на v3]',
+        ai: 'Готово — за 1 клик откатил на v3. Логотип не трогаю, остальное на месте.',
+      },
+    ]),
   },
-  dark: {
-    surface: '#0c0a08',
-    ink: '#f4ebd9',
-    inkSoft: 'rgba(244, 235, 217, 0.62)',
-    inkDim: 'rgba(244, 235, 217, 0.38)',
-    line: 'rgba(244, 235, 217, 0.10)',
-    accent: '#d8a673',
-    photoBase: '#1f1208',
-    photoMid: '#7a4218',
-    photoLight: '#d8a673',
-    photoCaption: 'rgba(216, 166, 115, 0.92)',
+
+  shop: {
+    id: 'shop',
+    label: 'Магазин',
+    tabIcon: ShoppingBag,
+    brand: { mark: 'ATELIER', Icon: ShoppingBag },
+    url: 'atelier92.ru',
+    eyebrow: 'Кашемир · ручная вязка',
+    locationMeta: 'Москва',
+    headline: {
+      centered: { main: 'Atelier', sub: '92', italicSub: false },
+      split: { main: 'Тепло', sub: 'кашемира.', italicSub: true },
+    },
+    desc: {
+      sparse: 'Скоро открытие. Кашемир из Монголии, ручная вязка в Костроме.',
+      full: 'Кашемир из Монголии. Ручная вязка в Костроме. Доставка по РФ от 3 дней.',
+    },
+    cta: { sparse: 'Записаться на запуск', foot: 'В корзину' },
+    foot: { hours: 'Доставка 24/7', address: 'м. Электрозаводская' },
+    items: [
+      { name: 'Свитер «Бисер»', desc: '100% кашемир, оверсайз', price: '12 900', tag: 'хит' },
+      { name: 'Кардиган «Морозко»', desc: 'кашемир + шёлк', price: '15 900', tag: null },
+      { name: 'Шарф «Иней»', desc: 'кашемир, 220 см', price: '4 900', tag: null },
+      { name: 'Варежки «Метель»', desc: 'кашемир + мерино', price: '2 900', tag: null },
+    ],
+    itemPriceSuffix: ' ₽',
+    menuTitle: 'коллекция · зима',
+    photoCaption: '─ Кострома · ручная вязка',
+    rating: { value: '4.8', reviews: '· 892 отзыва' },
+    palette: {
+      warm: {
+        surface: '#f5efe5', ink: '#1c1814',
+        inkSoft: 'rgba(28,24,20,0.62)', inkDim: 'rgba(28,24,20,0.42)',
+        line: 'rgba(28,24,20,0.10)', accent: '#7a4818',
+        photoBase: '#2a1a0c', photoMid: '#6a4830', photoLight: '#b88a5a',
+        photoCaption: 'rgba(255,240,220,0.85)',
+      },
+      dark: {
+        surface: '#0e0c0a', ink: '#eee2ce',
+        inkSoft: 'rgba(238,226,206,0.62)', inkDim: 'rgba(238,226,206,0.38)',
+        line: 'rgba(238,226,206,0.10)', accent: '#c89968',
+        photoBase: '#1c1208', photoMid: '#5a4030', photoLight: '#c89968',
+        photoCaption: 'rgba(200,153,104,0.92)',
+      },
+    },
+    story: buildStory([
+      {
+        user: 'Сделай интернет-магазин кашемировых свитеров «Atelier 92»',
+        ai: 'Подбираю кремовый serif и бежевую палитру. Hero с фото изделия, форма самовывоза.',
+      },
+      {
+        user: 'Добавь каталог из 4 моделей с ценами',
+        ai: 'Создаю секцию каталога. Поднимаю Postgres под заказы и подключаю ЮKassa.',
+      },
+      {
+        user: 'Поставь тёмную тему как у премиум-брендов',
+        ai: 'Делаю glamorous-dark с warm-gold акцентами. Контраст AAA, премиум-look.',
+      },
+      {
+        user: 'Замени логотип на новый монограмм',
+        ai: 'Применяю… Логотип конфликтует с шапкой, верхняя строка съехала.',
+      },
+      {
+        user: '[Откат на v3]',
+        ai: 'Откатил на v3 за 0.4 сек. Логотип не трогаю, остальное на месте.',
+      },
+    ]),
+  },
+
+  portfolio: {
+    id: 'portfolio',
+    label: 'Портфолио',
+    tabIcon: Camera,
+    brand: { mark: 'ОРЛОВА', Icon: Camera },
+    url: 'ninaorlova.ru',
+    eyebrow: 'Фотограф · Москва',
+    locationMeta: 'Студия',
+    headline: {
+      centered: { main: 'Нина', sub: 'Орлова', italicSub: false },
+      split: { main: 'Тишина', sub: 'в кадре.', italicSub: true },
+    },
+    desc: {
+      sparse: 'Снимаю портреты, lookbook и семейные истории на плёнку и цифру.',
+      full: 'Портреты, лукбуки и семейный док. Москва + выезды по РФ.',
+    },
+    cta: { sparse: 'Запросить съёмку', foot: 'Связаться' },
+    foot: { hours: 'Консультации 10–22', address: 'Студия: Винзавод' },
+    items: [
+      { name: 'Lookbook · Marina K.', desc: 'fashion · 2024', price: 'кейс', tag: 'новый' },
+      { name: 'Портрет на плёнку', desc: 'студия · 60 мин', price: 'от 18к', tag: null },
+      { name: 'Свадьба Подмосковье', desc: 'выезд · 12 ч', price: 'от 90к', tag: null },
+      { name: 'Семейная история', desc: 'дома · 90 мин', price: 'от 24к', tag: null },
+    ],
+    itemPriceSuffix: '',
+    menuTitle: 'избранные работы',
+    photoCaption: '─ Винзавод · студия 4',
+    rating: { value: '5.0', reviews: '· 247 отзывов' },
+    palette: {
+      warm: {
+        surface: '#f6f3ed', ink: '#181715',
+        inkSoft: 'rgba(24,23,21,0.62)', inkDim: 'rgba(24,23,21,0.42)',
+        line: 'rgba(24,23,21,0.12)', accent: '#3a3a3a',
+        photoBase: '#2a2520', photoMid: '#6a5a4a', photoLight: '#b0a090',
+        photoCaption: 'rgba(255,250,240,0.85)',
+      },
+      dark: {
+        surface: '#0a0a0a', ink: '#f0ece5',
+        inkSoft: 'rgba(240,236,229,0.60)', inkDim: 'rgba(240,236,229,0.36)',
+        line: 'rgba(240,236,229,0.10)', accent: '#bfb7a8',
+        photoBase: '#0e0c08', photoMid: '#4a3a2a', photoLight: '#bfb7a8',
+        photoCaption: 'rgba(191,183,168,0.92)',
+      },
+    },
+    story: buildStory([
+      {
+        user: 'Сделай сайт фотографа Нины Орловой — портреты и lookbook',
+        ai: 'Беру минималистичный шрифт и серый фон. Hero с большим именем, ссылки на проекты.',
+      },
+      {
+        user: 'Добавь блок с 4 избранными работами',
+        ai: 'Создаю grid из проектов. Подключаю headless-CMS под обновление портфолио.',
+      },
+      {
+        user: 'Поставь тёмную тему — fashion-вайб',
+        ai: 'Делаю pure-black с тёплыми акцентами. Подсветка в стиле журнала.',
+      },
+      {
+        user: 'Замени логотип на монограмм «НО»',
+        ai: 'Применяю… Hm, новый logo накладывается на меню — пропорции сломались.',
+      },
+      {
+        user: '[Откат на v3]',
+        ai: 'Откатил на v3. Layout восстановлен. Монограмм добавим в следующий заход.',
+      },
+    ]),
+  },
+
+  saas: {
+    id: 'saas',
+    label: 'SaaS / MVP',
+    tabIcon: LineChart,
+    brand: { mark: 'PULSE', Icon: LineChart },
+    url: 'pulseapi.io',
+    eyebrow: 'API monitoring · для команд',
+    locationMeta: 'РФ хостинг',
+    headline: {
+      centered: { main: 'Pulse', sub: 'API', italicSub: false },
+      split: { main: 'Метрики', sub: 'в реальном.', italicSub: true },
+    },
+    desc: {
+      sparse: 'Мониторинг API. Алёрты в Telegram. Бесплатно до 5 проектов.',
+      full: 'p50/p95/p99 латентность, uptime, SLO в реальном времени. Алёрты в TG / Slack.',
+    },
+    cta: { sparse: 'Попробовать 14 дней', foot: 'Запустить' },
+    foot: { hours: 'Поддержка 24/7', address: 'РФ + DR-реплика' },
+    items: [
+      { name: 'Real-time monitoring', desc: 'p50 / p95 / p99', price: 'Free', tag: null },
+      { name: 'Smart alerts', desc: 'TG · Slack · VK Teams', price: 'Free', tag: 'хит' },
+      { name: 'Status pages', desc: 'кастом-домен + SLA', price: 'Pro', tag: null },
+      { name: 'On-call rotation', desc: 'PagerDuty-style', price: 'Pro', tag: null },
+    ],
+    itemPriceSuffix: '',
+    menuTitle: 'возможности',
+    photoCaption: '─ realtime · 47 мс p99',
+    rating: { value: '4.9', reviews: '· 412 команд' },
+    palette: {
+      warm: {
+        surface: '#f4f6fb', ink: '#0c1426',
+        inkSoft: 'rgba(12,20,38,0.62)', inkDim: 'rgba(12,20,38,0.42)',
+        line: 'rgba(12,20,38,0.10)', accent: '#5e6ad2',
+        photoBase: '#0c1426', photoMid: '#3a4880', photoLight: '#7170ff',
+        photoCaption: 'rgba(220,225,255,0.85)',
+      },
+      dark: {
+        surface: '#080a14', ink: '#e8eaf5',
+        inkSoft: 'rgba(232,234,245,0.62)', inkDim: 'rgba(232,234,245,0.38)',
+        line: 'rgba(232,234,245,0.10)', accent: '#7170ff',
+        photoBase: '#080a14', photoMid: '#3a4880', photoLight: '#7170ff',
+        photoCaption: 'rgba(139,138,255,0.92)',
+      },
+    },
+    story: buildStory([
+      {
+        user: 'Сделай лендинг для Pulse — мониторинг API с алёртами',
+        ai: 'Беру cool-grey палитру и Inter. Hero с метрикой как анимацией.',
+      },
+      {
+        user: 'Добавь блок из 4 фич с тэгами Free / Pro',
+        ai: 'Создаю feature-grid. API-эндпоинты для самоподписки на email.',
+      },
+      {
+        user: 'Поставь тёмную тему — это же tech-продукт',
+        ai: 'Делаю Linear-style dark с indigo accent. Контраст AAA.',
+      },
+      {
+        user: 'Замени логотип на новый pulse-icon',
+        ai: 'Применяю… Иконка не вписывается, navbar поплыл.',
+      },
+      {
+        user: '[Откат на v3]',
+        ai: 'Откатил за 0.4 сек. Логотип отложили на следующую итерацию.',
+      },
+    ]),
   },
 }
 
+const VERTICAL_LIST = ['cafe', 'shop', 'portfolio', 'saas']
+const DEFAULT_VERTICAL = VERTICALS.cafe
+
 /* ---------- Reusable building blocks ---------- */
 
-function CafeNav({ p, broken }) {
+function CafeNav({ p, v, broken }) {
+  const BrandIcon = v.brand.Icon
+  // Generic nav-link labels per vertical (kept short to fit in mock width)
+  const navLinks =
+    v.id === 'cafe'
+      ? ['Меню', 'О кофейне', 'Бронь']
+      : v.id === 'shop'
+        ? ['Каталог', 'Доставка', 'О бренде']
+        : v.id === 'portfolio'
+          ? ['Работы', 'Услуги', 'Контакты']
+          : ['Возможности', 'Тарифы', 'Документация']
   return (
     <div
       className="flex flex-none items-center justify-between px-7 py-3.5"
@@ -419,19 +663,21 @@ function CafeNav({ p, broken }) {
           className="grid h-6 w-6 place-items-center rounded-full"
           style={{ background: p.accent, color: p.surface }}
         >
-          <Coffee className="h-3 w-3" strokeWidth={2.2} />
+          <BrandIcon className="h-3 w-3" strokeWidth={2.2} />
         </div>
         <span
           className="font-serif text-[13px] tracking-[0.04em]"
           style={{ fontWeight: 600, color: p.ink }}
         >
-          Эспрессо у Нади
+          {v.brand.mark}
         </span>
       </div>
       <div className="hidden items-center gap-5 text-[10px] uppercase tracking-[0.24em] md:flex">
-        <span style={{ fontWeight: 510, color: p.inkSoft }}>Меню</span>
-        <span style={{ fontWeight: 510, color: p.inkSoft }}>О кофейне</span>
-        <span style={{ fontWeight: 510, color: p.inkSoft }}>Бронь</span>
+        {navLinks.map((l) => (
+          <span key={l} style={{ fontWeight: 510, color: p.inkSoft }}>
+            {l}
+          </span>
+        ))}
       </div>
       {broken ? (
         <span
@@ -450,14 +696,19 @@ function CafeNav({ p, broken }) {
           className="text-[10px] uppercase tracking-[0.24em]"
           style={{ fontWeight: 510, color: p.inkSoft }}
         >
-          Москва
+          {v.locationMeta}
         </span>
       )}
     </div>
   )
 }
 
-function CafePhoto({ p, large = false }) {
+function CafePhoto({ p, v, large = false }) {
+  // Each vertical gets a different abstract motif overlaid on the gradient:
+  // cafe → swirl ring (coffee cup top-down)
+  // shop → diagonal weave lines (knitting texture)
+  // portfolio → 3 horizontal slats (film strip / aperture)
+  // saas → grid + 3 ascending bar marks (chart vibes)
   return (
     <div
       className="relative h-full w-full overflow-hidden rounded-2xl"
@@ -467,62 +718,124 @@ function CafePhoto({ p, large = false }) {
           '0 30px 60px -20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
       }}
     >
-      {/* coffee swirl ring (cup top-down) */}
-      <svg
-        className="absolute inset-[14%]"
-        viewBox="0 0 100 100"
-        fill="none"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <ellipse
-          cx="50"
-          cy="50"
-          rx="45"
-          ry="45"
-          fill="rgba(0,0,0,0.18)"
-        />
-        <path
-          d="M22 50 Q35 30 50 50 Q65 70 78 50"
-          stroke="rgba(255,221,178,0.32)"
-          strokeWidth="1.6"
+      {v.id === 'cafe' && (
+        <svg
+          className="absolute inset-[14%]"
+          viewBox="0 0 100 100"
           fill="none"
-          strokeLinecap="round"
-        />
-        <path
-          d="M30 55 Q42 40 50 50 Q58 60 70 45"
-          stroke="rgba(255,221,178,0.22)"
-          strokeWidth="1.2"
-          fill="none"
-          strokeLinecap="round"
-        />
-        <ellipse
-          cx="42"
-          cy="40"
-          rx="3"
-          ry="2"
-          fill="rgba(255,221,178,0.25)"
-        />
-      </svg>
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <ellipse cx="50" cy="50" rx="45" ry="45" fill="rgba(0,0,0,0.18)" />
+          <path d="M22 50 Q35 30 50 50 Q65 70 78 50" stroke="rgba(255,221,178,0.32)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+          <path d="M30 55 Q42 40 50 50 Q58 60 70 45" stroke="rgba(255,221,178,0.22)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+          <ellipse cx="42" cy="40" rx="3" ry="2" fill="rgba(255,221,178,0.25)" />
+        </svg>
+      )}
+      {v.id === 'shop' && (
+        <svg className="absolute inset-[10%]" viewBox="0 0 100 100" fill="none" preserveAspectRatio="xMidYMid slice">
+          <rect x="0" y="0" width="100" height="100" fill="rgba(0,0,0,0.10)" />
+          {[...Array(8)].map((_, i) => (
+            <line
+              key={i}
+              x1={i * 14 - 30}
+              y1="0"
+              x2={i * 14 + 30}
+              y2="100"
+              stroke="rgba(255,235,200,0.18)"
+              strokeWidth="1.2"
+            />
+          ))}
+          {[...Array(8)].map((_, i) => (
+            <line
+              key={'b' + i}
+              x1={i * 14 + 30}
+              y1="0"
+              x2={i * 14 - 30}
+              y2="100"
+              stroke="rgba(255,235,200,0.10)"
+              strokeWidth="1"
+            />
+          ))}
+        </svg>
+      )}
+      {v.id === 'portfolio' && (
+        <svg className="absolute inset-[12%]" viewBox="0 0 100 100" fill="none" preserveAspectRatio="xMidYMid slice">
+          <rect x="0" y="0" width="100" height="100" fill="rgba(0,0,0,0.20)" />
+          {[26, 50, 74].map((y) => (
+            <rect
+              key={y}
+              x="14"
+              y={y - 4}
+              width="72"
+              height="8"
+              rx="1"
+              fill="rgba(245,240,228,0.10)"
+              stroke="rgba(245,240,228,0.18)"
+              strokeWidth="0.6"
+            />
+          ))}
+          <circle cx="50" cy="50" r="6" fill="none" stroke="rgba(245,240,228,0.32)" strokeWidth="0.8" />
+          <circle cx="50" cy="50" r="2.5" fill="rgba(245,240,228,0.22)" />
+        </svg>
+      )}
+      {v.id === 'saas' && (
+        <svg className="absolute inset-0" viewBox="0 0 100 100" fill="none" preserveAspectRatio="none">
+          {/* faint grid */}
+          {[...Array(10)].map((_, i) => (
+            <line
+              key={'h' + i}
+              x1="0"
+              y1={i * 10}
+              x2="100"
+              y2={i * 10}
+              stroke="rgba(220,225,255,0.06)"
+              strokeWidth="0.4"
+            />
+          ))}
+          {[...Array(10)].map((_, i) => (
+            <line
+              key={'vl' + i}
+              x1={i * 10}
+              y1="0"
+              x2={i * 10}
+              y2="100"
+              stroke="rgba(220,225,255,0.06)"
+              strokeWidth="0.4"
+            />
+          ))}
+          {/* ascending line chart */}
+          <polyline
+            points="10,80 25,72 38,68 52,55 65,42 78,38 90,28"
+            fill="none"
+            stroke="rgba(220,225,255,0.7)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="90" cy="28" r="2.4" fill="rgba(255,255,255,0.95)" />
+          <circle cx="90" cy="28" r="6" fill="rgba(255,255,255,0.18)" />
+        </svg>
+      )}
 
       {large && (
         <div
           className="absolute bottom-3 left-3 text-[9px] uppercase tracking-[0.26em]"
           style={{ fontWeight: 590, color: p.photoCaption }}
         >
-          ─ Эфиопия · Сидамо
+          {v.photoCaption}
         </div>
       )}
     </div>
   )
 }
 
-function CafeMenuStrip({ p, muted = false }) {
+function CafeMenuStrip({ p, v, muted = false }) {
   return (
     <div
       className={'grid flex-none gap-x-6 gap-y-2.5 px-7 py-4 sm:grid-cols-2 ' + (muted ? 'opacity-25' : '')}
       style={{ borderTop: `1px solid ${p.line}` }}
     >
-      {MENU_ITEMS.map((it) => (
+      {v.items.map((it) => (
         <div key={it.name} className="flex items-baseline gap-2">
           <div className="flex flex-1 items-baseline gap-2">
             <span
@@ -552,7 +865,8 @@ function CafeMenuStrip({ p, muted = false }) {
             className="font-mono text-[12px] tabular-nums"
             style={{ fontWeight: 510, color: p.ink }}
           >
-            {it.price} ₽
+            {it.price}
+            {v.itemPriceSuffix}
           </span>
         </div>
       ))}
@@ -560,7 +874,7 @@ function CafeMenuStrip({ p, muted = false }) {
   )
 }
 
-function CafeFootStrip({ p }) {
+function CafeFootStrip({ p, v }) {
   return (
     <div
       className="flex flex-none items-center justify-between gap-4 px-7 py-3.5"
@@ -572,14 +886,14 @@ function CafeFootStrip({ p }) {
           style={{ color: p.inkSoft }}
         >
           <Clock className="h-3 w-3" style={{ color: p.accent }} />
-          <span style={{ fontWeight: 510 }}>8:00 – 22:00</span>
+          <span style={{ fontWeight: 510 }}>{v.foot.hours}</span>
         </span>
         <span
           className="inline-flex items-center gap-1.5"
           style={{ color: p.inkSoft }}
         >
           <MapPin className="h-3 w-3" style={{ color: p.accent }} />
-          <span style={{ fontWeight: 510 }}>М. Бронная, 12</span>
+          <span style={{ fontWeight: 510 }}>{v.foot.address}</span>
         </span>
       </div>
       <a
@@ -590,7 +904,7 @@ function CafeFootStrip({ p }) {
           fontWeight: 590,
         }}
       >
-        Забронировать
+        {v.cta.foot}
         <ArrowRight className="h-3 w-3" />
       </a>
     </div>
@@ -599,19 +913,15 @@ function CafeFootStrip({ p }) {
 
 /* ---------- Full mocks: each step swaps layout AND content ---------- */
 
-const HEADLINES = {
-  name: { main: 'Эспрессо', sub: 'у Нади', italicSub: false },
-  poetic: { main: 'Зерно', sub: 'с любовью.', italicSub: true },
-}
-
-function CafeHeroCentered({ p, headline }) {
+function CafeHeroCentered({ p, v }) {
+  const headline = v.headline.centered
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center gap-4 px-7 py-6 text-center">
       <div
         className="text-[10px] uppercase tracking-[0.34em]"
         style={{ fontWeight: 590, color: p.accent }}
       >
-        — Кофейня · Патрики —
+        — {v.eyebrow} —
       </div>
       <h1
         className="font-serif"
@@ -631,20 +941,30 @@ function CafeHeroCentered({ p, headline }) {
         className="max-w-[280px] text-[12.5px] leading-relaxed"
         style={{ color: p.inkSoft }}
       >
-        Скоро открытие на Малой Бронной. Зерно прямого обжарова, бариста и тишина.
+        {v.desc.sparse}
       </p>
       <a
         className="mt-1 inline-flex items-center gap-1 rounded-full px-5 py-2.5 text-[12.5px]"
         style={{ background: p.ink, color: p.surface, fontWeight: 590 }}
       >
-        Записаться на открытие
+        {v.cta.sparse}
         <ArrowRight className="h-3.5 w-3.5" />
       </a>
     </div>
   )
 }
 
-function CafeHeroSplit({ p, headline, broken }) {
+function CafeHeroSplit({ p, v, broken }) {
+  const headline = v.headline.split
+  // Broken-state overlay: synthetic "new logo" overlapping the real headline
+  const brokenLogo =
+    v.id === 'cafe'
+      ? '☕ Надя'
+      : v.id === 'shop'
+        ? '◆ Atelier'
+        : v.id === 'portfolio'
+          ? '◯ НО'
+          : '⚡ Pulse'
   return (
     <div className="grid flex-1 grid-cols-[1.15fr_1fr] items-stretch gap-6 px-7 py-6">
       <div className="flex flex-col justify-between">
@@ -653,7 +973,7 @@ function CafeHeroSplit({ p, headline, broken }) {
             className="text-[10px] uppercase tracking-[0.32em]"
             style={{ fontWeight: 590, color: p.accent }}
           >
-            ─── Кофейня · Патрики
+            ─── {v.eyebrow}
           </div>
           <div className="relative">
             {broken && (
@@ -667,7 +987,7 @@ function CafeHeroSplit({ p, headline, broken }) {
                   background: 'rgba(239, 68, 68, 0.15)',
                 }}
               >
-                ☕ Надя
+                {brokenLogo}
               </div>
             )}
             <h1
@@ -693,8 +1013,7 @@ function CafeHeroSplit({ p, headline, broken }) {
             className="max-w-[260px] text-[12px] leading-relaxed"
             style={{ color: broken ? p.inkDim : p.inkSoft }}
           >
-            Прямой контракт с фермерами Эфиопии и Гватемалы. Обжарова в день
-            поставки.
+            {v.desc.full}
           </p>
         </div>
 
@@ -703,7 +1022,7 @@ function CafeHeroSplit({ p, headline, broken }) {
             className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-[12px]"
             style={{ background: p.ink, color: p.surface, fontWeight: 590 }}
           >
-            Забронировать
+            {v.cta.foot}
             <ArrowRight className="h-3 w-3" />
           </a>
           <div className="text-right">
@@ -717,42 +1036,42 @@ function CafeHeroSplit({ p, headline, broken }) {
               className="text-[10px] uppercase tracking-[0.16em]"
               style={{ color: p.inkDim, fontWeight: 510 }}
             >
-              4.9 · 1 247 отзывов
+              {v.rating.value} {v.rating.reviews}
             </div>
           </div>
         </div>
       </div>
 
-      <CafePhoto p={p} large />
+      <CafePhoto p={p} v={v} large />
     </div>
   )
 }
 
-function WarmFull({ withMenu }) {
-  const p = PALETTE.warm
+function WarmFull({ v = DEFAULT_VERTICAL, withMenu }) {
+  const p = v.palette.warm
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden font-sans"
       style={{ background: p.surface, color: p.ink }}
     >
-      <CafeNav p={p} />
+      <CafeNav p={p} v={v} />
       {withMenu ? (
         <>
-          <CafeHeroSplit p={p} headline={HEADLINES.name} />
-          <CafeMenuStrip p={p} />
+          <CafeHeroSplit p={p} v={v} />
+          <CafeMenuStrip p={p} v={v} />
         </>
       ) : (
         <>
-          <CafeHeroCentered p={p} headline={HEADLINES.name} />
-          <CafeFootStrip p={p} />
+          <CafeHeroCentered p={p} v={v} />
+          <CafeFootStrip p={p} v={v} />
         </>
       )}
     </div>
   )
 }
 
-function DarkFull({ broken = false, restored = false }) {
-  const p = PALETTE.dark
+function DarkFull({ v = DEFAULT_VERTICAL, broken = false, restored = false }) {
+  const p = v.palette.dark
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden font-sans"
@@ -761,13 +1080,12 @@ function DarkFull({ broken = false, restored = false }) {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            'radial-gradient(ellipse 90% 50% at 50% 0%, rgba(216,166,115,0.08) 0%, transparent 60%)',
+          background: `radial-gradient(ellipse 90% 50% at 50% 0%, ${p.photoLight}1A 0%, transparent 60%)`,
         }}
       />
-      <CafeNav p={p} broken={broken} />
-      <CafeHeroSplit p={p} headline={HEADLINES.poetic} broken={broken} />
-      <CafeMenuStrip p={p} muted={broken} />
+      <CafeNav p={p} v={v} broken={broken} />
+      <CafeHeroSplit p={p} v={v} broken={broken} />
+      <CafeMenuStrip p={p} v={v} muted={broken} />
 
       {/* broken-state: scattered error chips */}
       <AnimatePresence>
@@ -963,18 +1281,17 @@ function MiniSplit({ p, headlineWidths, broken, restored }) {
   )
 }
 
-function WarmMini({ withMenu }) {
-  if (!withMenu) return <MiniCentered p={PALETTE.warm} />
-  return (
-    <MiniSplit p={PALETTE.warm} headlineWidths={['72%', '50%']} />
-  )
+function WarmMini({ v = DEFAULT_VERTICAL, withMenu }) {
+  const p = v.palette.warm
+  if (!withMenu) return <MiniCentered p={p} />
+  return <MiniSplit p={p} headlineWidths={['72%', '50%']} />
 }
 
-function DarkMini({ broken, restored }) {
+function DarkMini({ v = DEFAULT_VERTICAL, broken, restored }) {
   // dark uses different (poetic) headline word lengths to feel distinct from v2
   return (
     <MiniSplit
-      p={PALETTE.dark}
+      p={v.palette.dark}
       headlineWidths={['52%', '78%']}
       broken={broken}
       restored={restored}
@@ -984,30 +1301,34 @@ function DarkMini({ broken, restored }) {
 
 /* ---------- Adapters ---------- */
 
-function MockWarm({ withMenu = false, mini = false }) {
-  return mini ? <WarmMini withMenu={withMenu} /> : <WarmFull withMenu={withMenu} />
+function MockWarm({ v = DEFAULT_VERTICAL, withMenu = false, mini = false }) {
+  return mini ? (
+    <WarmMini v={v} withMenu={withMenu} />
+  ) : (
+    <WarmFull v={v} withMenu={withMenu} />
+  )
 }
 
-function MockDark({ broken = false, restored = false, mini = false }) {
+function MockDark({ v = DEFAULT_VERTICAL, broken = false, restored = false, mini = false }) {
   return mini ? (
-    <DarkMini broken={broken} restored={restored} />
+    <DarkMini v={v} broken={broken} restored={restored} />
   ) : (
-    <DarkFull broken={broken} restored={restored} />
+    <DarkFull v={v} broken={broken} restored={restored} />
   )
 }
 
 const PREVIEW_REGISTRY = {
-  'warm-template': (m) => <MockWarm mini={m} />,
-  'warm-menu': (m) => <MockWarm withMenu mini={m} />,
-  'dark-menu': (m) => <MockDark mini={m} />,
-  broken: (m) => <MockDark broken mini={m} />,
-  'dark-restored': (m) => <MockDark restored mini={m} />,
+  'warm-template': ({ v, mini }) => <MockWarm v={v} mini={mini} />,
+  'warm-menu': ({ v, mini }) => <MockWarm v={v} withMenu mini={mini} />,
+  'dark-menu': ({ v, mini }) => <MockDark v={v} mini={mini} />,
+  broken: ({ v, mini }) => <MockDark v={v} broken mini={mini} />,
+  'dark-restored': ({ v, mini }) => <MockDark v={v} restored mini={mini} />,
 }
 
-function PreviewMock({ variant, mini = false }) {
+function PreviewMock({ variant, v = DEFAULT_VERTICAL, mini = false }) {
   const Render = PREVIEW_REGISTRY[variant]
   if (!Render) return null
-  return Render(mini)
+  return Render({ v, mini })
 }
 
 /* ------------------------------------------------------------------ */
@@ -1033,10 +1354,10 @@ function DiffBadge({ diff }) {
   )
 }
 
-function ChatPanel({ step, paused, onTogglePause }) {
+function ChatPanel({ step, paused, onTogglePause, story }) {
   // show the last 2 turns, with the latest pulsing in
   const startIdx = Math.max(0, step - 1)
-  const visible = STORY.slice(startIdx, step + 1)
+  const visible = story.slice(startIdx, step + 1)
 
   return (
     <div className="flex flex-col gap-2 rounded-2xl border border-line bg-canvas/95 p-3">
@@ -1113,7 +1434,7 @@ function ChatPanel({ step, paused, onTogglePause }) {
 /* Preview panel                                                      */
 /* ------------------------------------------------------------------ */
 
-function PreviewPanel({ cur }) {
+function PreviewPanel({ cur, v }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-line bg-canvas">
       {/* Browser chrome */}
@@ -1122,10 +1443,10 @@ function PreviewPanel({ cur }) {
         <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
         <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
         <span className="ml-2 hidden truncate font-mono text-[11px] text-ink-dim sm:inline">
-          https://espressonadya.ru
+          https://{v.url}
         </span>
         <span className="ml-2 truncate font-mono text-[11px] text-ink-dim sm:hidden">
-          espressonadya.ru
+          {v.url}
         </span>
         <span className="ml-auto inline-flex items-center gap-1.5">
           <VersionPill version={cur.version} active />
@@ -1139,14 +1460,14 @@ function PreviewPanel({ cur }) {
       <div className="relative h-[300px] sm:h-[360px] lg:h-[400px]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={cur.preview + (cur.rollback ? '-r' : '')}
+            key={v.id + cur.preview + (cur.rollback ? '-r' : '')}
             initial={{ opacity: 0, scale: 0.99 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45 }}
             className="absolute inset-0"
           >
-            <PreviewMock variant={cur.preview} />
+            <PreviewMock variant={cur.preview} v={v} />
           </motion.div>
         </AnimatePresence>
 
@@ -1168,8 +1489,8 @@ function PreviewPanel({ cur }) {
 /* Timeline — 5 mini-previews + rollback control                      */
 /* ------------------------------------------------------------------ */
 
-function Timeline({ step, onSelect }) {
-  const isBroken = STORY[step]?.version.tone === 'broken'
+function Timeline({ step, onSelect, story, v }) {
+  const isBroken = story[step]?.version.tone === 'broken'
 
   return (
     <div className="rounded-2xl border border-line bg-elev1/60 p-3">
@@ -1185,7 +1506,7 @@ function Timeline({ step, onSelect }) {
       </div>
 
       <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-        {STORY.map((s, i) => {
+        {story.map((s, i) => {
           const active = i === step
           const isPast = i < step
           const tone = s.version.tone
@@ -1205,7 +1526,7 @@ function Timeline({ step, onSelect }) {
             >
               {/* mini preview */}
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-canvas">
-                <PreviewMock variant={s.preview} mini />
+                <PreviewMock variant={s.preview} v={v} mini />
                 {/* hover overlay */}
                 <div className="absolute inset-0 grid place-items-center bg-canvas/0 opacity-0 transition group-hover:bg-canvas/50 group-hover:opacity-100">
                   <span className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas/80 px-2 py-0.5 font-mono text-[10px] text-ink">
@@ -1289,28 +1610,77 @@ function Timeline({ step, onSelect }) {
 /* Hero demo (composed)                                               */
 /* ------------------------------------------------------------------ */
 
+function VerticalTabs({ activeId, onSelect }) {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-1.5 rounded-2xl border border-line bg-elev1/30 p-1.5 backdrop-blur-xl md:gap-2">
+      <span className="pl-2 pr-1 text-[10px] uppercase tracking-[0.2em] text-ink-dim md:pl-3" style={{ fontWeight: 510 }}>
+        пример:
+      </span>
+      {VERTICAL_LIST.map((id) => {
+        const v = VERTICALS[id]
+        const Icon = v.tabIcon
+        const active = id === activeId
+        return (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onSelect(id)}
+            className={
+              'group inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] transition ' +
+              (active
+                ? 'bg-accent text-white shadow-glow'
+                : 'border border-transparent text-ink-muted hover:border-line hover:bg-white/[0.03] hover:text-ink')
+            }
+            style={{ fontWeight: 590 }}
+          >
+            <Icon
+              className={
+                'h-3.5 w-3.5 ' + (active ? 'text-white' : 'text-accent-glow')
+              }
+              strokeWidth={2}
+            />
+            {v.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 function HeroDemo() {
   const reduce = useReducedMotion()
+  const [activeId, setActiveId] = useState('cafe')
   const [step, setStep] = useState(0)
   const [paused, setPaused] = useState(false)
 
+  const v = VERTICALS[activeId]
+  const story = v.story
+
   useEffect(() => {
     if (reduce || paused) return
-    const t = setTimeout(() => setStep((s) => (s + 1) % STORY.length), 4000)
+    const t = setTimeout(() => setStep((s) => (s + 1) % story.length), 4000)
     return () => clearTimeout(t)
-  }, [step, reduce, paused])
+  }, [step, reduce, paused, story.length])
 
-  const cur = STORY[step]
+  const cur = story[step]
 
   const onSeek = (i) => {
     setPaused(true)
     setStep(i)
-    track('demo_seek', { step: i, version: STORY[i].version.id })
+    track('demo_seek', { vertical: activeId, step: i, version: story[i].version.id })
   }
 
   const onTogglePause = () => {
     setPaused((p) => !p)
     track('demo_toggle_pause', { paused: !paused })
+  }
+
+  const onSelectVertical = (id) => {
+    if (id === activeId) return
+    setActiveId(id)
+    setStep(0)
+    setPaused(false)
+    track('demo_vertical_switch', { from: activeId, to: id })
   }
 
   return (
@@ -1319,13 +1689,23 @@ function HeroDemo() {
       <div className="pointer-events-none absolute -left-20 -top-16 h-72 w-72 glow-orb opacity-90" />
       <div className="pointer-events-none absolute -right-10 bottom-0 h-72 w-72 glow-orb opacity-60" />
 
+      {/* Vertical tabs */}
+      <div className="relative mb-3 flex justify-center">
+        <VerticalTabs activeId={activeId} onSelect={onSelectVertical} />
+      </div>
+
       <div className="relative space-y-3 rounded-3xl border border-line bg-elev1/40 p-3 backdrop-blur-xl md:p-4">
         <div className="grid gap-3 lg:grid-cols-[340px_1fr]">
-          <ChatPanel step={step} paused={paused} onTogglePause={onTogglePause} />
-          <PreviewPanel cur={cur} />
+          <ChatPanel
+            step={step}
+            paused={paused}
+            onTogglePause={onTogglePause}
+            story={story}
+          />
+          <PreviewPanel cur={cur} v={v} />
         </div>
 
-        <Timeline step={step} onSelect={onSeek} />
+        <Timeline step={step} onSelect={onSeek} story={story} v={v} />
       </div>
     </div>
   )
