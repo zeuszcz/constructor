@@ -417,10 +417,54 @@ function CafeFootStrip({ p }) {
   )
 }
 
-/* ---------- Full mocks: editorial cafe layout ---------- */
+/* ---------- Full mocks: each step swaps layout AND content ---------- */
 
-function CafeHero({ p, broken = false, large = true }) {
-  const heroFontSize = large ? 56 : 40
+const HEADLINES = {
+  name: { main: 'Эспрессо', sub: 'у Нади', italicSub: false },
+  poetic: { main: 'Зерно', sub: 'с любовью.', italicSub: true },
+}
+
+function CafeHeroCentered({ p, headline }) {
+  return (
+    <div className="relative flex flex-1 flex-col items-center justify-center gap-4 px-7 py-6 text-center">
+      <div
+        className="text-[10px] uppercase tracking-[0.34em]"
+        style={{ fontWeight: 590, color: p.accent }}
+      >
+        — Кофейня · Патрики —
+      </div>
+      <h1
+        className="font-serif"
+        style={{
+          fontSize: 60,
+          lineHeight: 0.92,
+          letterSpacing: '-0.03em',
+          fontWeight: 500,
+          color: p.ink,
+        }}
+      >
+        {headline.main}
+        <br />
+        <span className={headline.italicSub ? 'italic' : ''}>{headline.sub}</span>
+      </h1>
+      <p
+        className="max-w-[280px] text-[12.5px] leading-relaxed"
+        style={{ color: p.inkSoft }}
+      >
+        Скоро открытие на Малой Бронной. Зерно прямого обжарова, бариста и тишина.
+      </p>
+      <a
+        className="mt-1 inline-flex items-center gap-1 rounded-full px-5 py-2.5 text-[12.5px]"
+        style={{ background: p.ink, color: p.surface, fontWeight: 590 }}
+      >
+        Записаться на открытие
+        <ArrowRight className="h-3.5 w-3.5" />
+      </a>
+    </div>
+  )
+}
+
+function CafeHeroSplit({ p, headline, broken }) {
   return (
     <div className="grid flex-1 grid-cols-[1.15fr_1fr] items-stretch gap-6 px-7 py-6">
       <div className="flex flex-col justify-between">
@@ -449,25 +493,27 @@ function CafeHero({ p, broken = false, large = true }) {
             <h1
               className="font-serif"
               style={{
-                fontSize: heroFontSize,
+                fontSize: 48,
                 lineHeight: 0.9,
                 letterSpacing: '-0.025em',
                 fontWeight: 500,
                 color: broken ? p.inkDim : p.ink,
                 textDecoration: broken ? 'line-through' : 'none',
-                textDecorationColor: broken ? 'rgba(239, 68, 68, 0.7)' : undefined,
+                textDecorationColor: broken ? 'rgba(239,68,68,0.7)' : undefined,
               }}
             >
-              Зерно
+              {headline.main}
               <br />
-              <span className="italic">с любовью</span>.
+              <span className={headline.italicSub ? 'italic' : ''}>
+                {headline.sub}
+              </span>
             </h1>
           </div>
           <p
-            className="max-w-[260px] text-[12.5px] leading-relaxed"
+            className="max-w-[260px] text-[12px] leading-relaxed"
             style={{ color: broken ? p.inkDim : p.inkSoft }}
           >
-            Прямой контракт с фермерами Эфиопии и Гватемалы. Обжарова — в день
+            Прямой контракт с фермерами Эфиопии и Гватемалы. Обжарова в день
             поставки.
           </p>
         </div>
@@ -475,11 +521,7 @@ function CafeHero({ p, broken = false, large = true }) {
         <div className="flex items-end justify-between gap-3 pt-4">
           <a
             className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-[12px]"
-            style={{
-              background: p.ink,
-              color: p.surface,
-              fontWeight: 590,
-            }}
+            style={{ background: p.ink, color: p.surface, fontWeight: 590 }}
           >
             Забронировать
             <ArrowRight className="h-3 w-3" />
@@ -514,8 +556,17 @@ function WarmFull({ withMenu }) {
       style={{ background: p.surface, color: p.ink }}
     >
       <CafeNav p={p} />
-      <CafeHero p={p} large />
-      {withMenu ? <CafeMenuStrip p={p} /> : <CafeFootStrip p={p} />}
+      {withMenu ? (
+        <>
+          <CafeHeroSplit p={p} headline={HEADLINES.name} />
+          <CafeMenuStrip p={p} />
+        </>
+      ) : (
+        <>
+          <CafeHeroCentered p={p} headline={HEADLINES.name} />
+          <CafeFootStrip p={p} />
+        </>
+      )}
     </div>
   )
 }
@@ -527,7 +578,6 @@ function DarkFull({ broken = false, restored = false }) {
       className="relative flex h-full w-full flex-col overflow-hidden font-sans"
       style={{ background: p.surface, color: p.ink }}
     >
-      {/* warm aurora glow */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -536,8 +586,44 @@ function DarkFull({ broken = false, restored = false }) {
         }}
       />
       <CafeNav p={p} broken={broken} />
-      <CafeHero p={p} broken={broken} large />
+      <CafeHeroSplit p={p} headline={HEADLINES.poetic} broken={broken} />
       <CafeMenuStrip p={p} muted={broken} />
+
+      {/* broken-state: scattered error chips */}
+      <AnimatePresence>
+        {broken && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 z-10"
+          >
+            <div
+              className="absolute right-1/3 top-1/3 inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-[9px]"
+              style={{
+                borderColor: 'rgba(239,68,68,0.45)',
+                background: 'rgba(239,68,68,0.12)',
+                color: '#ef4444',
+                transform: 'rotate(-3deg)',
+              }}
+            >
+              <AlertTriangle className="h-2.5 w-2.5" />
+              z-index: -1
+            </div>
+            <div
+              className="absolute bottom-[44%] left-[42%] inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-[9px]"
+              style={{
+                borderColor: 'rgba(239,68,68,0.45)',
+                background: 'rgba(239,68,68,0.12)',
+                color: '#ef4444',
+                transform: 'rotate(2deg)',
+              }}
+            >
+              header collision
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {restored && (
@@ -559,45 +645,66 @@ function DarkFull({ broken = false, restored = false }) {
 
 /* ---------- Mini abstracts (timeline thumbnails) ---------- */
 
-function MiniBase({ p, withMenu, broken, restored }) {
+function MiniNav({ p }) {
+  return (
+    <div
+      className="flex flex-none items-center justify-between pb-1"
+      style={{ borderBottom: `1px solid ${p.line}` }}
+    >
+      <div className="flex items-center gap-0.5">
+        <div className="h-1.5 w-1.5 rounded-full" style={{ background: p.accent }} />
+        <div className="h-0.5 w-3 rounded-full" style={{ background: p.inkSoft }} />
+      </div>
+      <div className="flex gap-0.5">
+        <div className="h-0.5 w-1.5 rounded-full" style={{ background: p.inkDim }} />
+        <div className="h-0.5 w-1.5 rounded-full" style={{ background: p.inkDim }} />
+        <div className="h-0.5 w-1.5 rounded-full" style={{ background: p.inkDim }} />
+      </div>
+    </div>
+  )
+}
+
+function MiniCentered({ p }) {
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden p-2"
       style={{ background: p.surface }}
     >
-      {/* nav strip */}
-      <div
-        className="flex items-center justify-between pb-1"
-        style={{ borderBottom: `1px solid ${p.line}` }}
-      >
-        <div className="flex items-center gap-0.5">
-          <div
-            className="h-1.5 w-1.5 rounded-full"
-            style={{ background: p.accent }}
-          />
-          <div
-            className="h-0.5 w-3 rounded-full"
-            style={{ background: p.inkSoft }}
-          />
-        </div>
-        <div className="flex gap-0.5">
-          <div
-            className="h-0.5 w-1.5 rounded-full"
-            style={{ background: p.inkDim }}
-          />
-          <div
-            className="h-0.5 w-1.5 rounded-full"
-            style={{ background: p.inkDim }}
-          />
-          <div
-            className="h-0.5 w-1.5 rounded-full"
-            style={{ background: p.inkDim }}
-          />
-        </div>
+      <MiniNav p={p} />
+
+      <div className="flex flex-1 flex-col items-center justify-center gap-0.5 py-1">
+        <div className="h-0.5 w-3 rounded-full" style={{ background: p.accent }} />
+        <div className="h-2.5 w-12 rounded-sm" style={{ background: p.ink }} />
+        <div className="h-2.5 w-9 rounded-sm" style={{ background: p.inkSoft }} />
+        <div
+          className="mt-1 h-2 w-14 rounded-full"
+          style={{ background: p.ink }}
+        />
       </div>
 
-      {/* hero band */}
-      <div className="mt-1.5 grid flex-1 grid-cols-[1.1fr_1fr] items-start gap-1.5">
+      {/* foot strip */}
+      <div
+        className="flex flex-none items-center gap-1 pt-1"
+        style={{ borderTop: `1px solid ${p.line}` }}
+      >
+        <div className="h-1 w-3 rounded-full" style={{ background: p.inkSoft }} />
+        <div className="h-1 w-4 rounded-full" style={{ background: p.inkSoft }} />
+        <div className="ml-auto h-1.5 w-4 rounded-full" style={{ background: p.accent }} />
+      </div>
+    </div>
+  )
+}
+
+function MiniSplit({ p, headlineWidths, broken, restored }) {
+  return (
+    <div
+      className="relative flex h-full w-full flex-col overflow-hidden p-2"
+      style={{ background: p.surface }}
+    >
+      <MiniNav p={p} />
+
+      {/* hero: text left + photo right */}
+      <div className="mt-1.5 grid flex-none grid-cols-[1.1fr_1fr] items-start gap-1.5">
         <div className="space-y-1">
           <div
             className="h-0.5 w-2.5 rounded-full"
@@ -605,34 +712,32 @@ function MiniBase({ p, withMenu, broken, restored }) {
           />
           <div
             className={'h-2 rounded-sm ' + (broken ? 'opacity-50' : '')}
-            style={{ background: p.ink, width: '78%' }}
+            style={{ background: p.ink, width: headlineWidths[0] }}
           />
           <div
             className={'h-2 rounded-sm italic ' + (broken ? 'opacity-50' : '')}
-            style={{ background: p.inkSoft, width: '52%' }}
+            style={{ background: p.inkSoft, width: headlineWidths[1] }}
           />
         </div>
         <div
           className="aspect-square w-full rounded-md"
           style={{
             background: `radial-gradient(circle at 32% 30%, ${p.photoLight} 0%, ${p.photoMid} 50%, ${p.photoBase} 100%)`,
+            opacity: broken ? 0.5 : 1,
           }}
         />
       </div>
 
-      {/* bottom band — always show menu rows for consistent silhouette */}
+      {/* menu rows */}
       <div
-        className={'mt-1.5 space-y-0.5 pt-1 ' + (broken ? 'opacity-40' : '')}
+        className={'mt-1.5 flex-1 space-y-0.5 pt-1 ' + (broken ? 'opacity-30' : '')}
         style={{ borderTop: `1px solid ${p.line}` }}
       >
-        {(withMenu || broken || restored ? [0, 1, 2, 3] : [0, 1]).map((i) => (
+        {[0, 1, 2, 3].map((i) => (
           <div key={i} className="flex items-center gap-1">
             <div
               className="h-0.5 rounded-full"
-              style={{
-                background: p.ink,
-                width: i === 1 ? '40%' : '30%',
-              }}
+              style={{ background: p.ink, width: i === 1 ? '40%' : '30%' }}
             />
             <div className="h-px flex-1" style={{ background: p.line }} />
             <div
@@ -643,14 +748,25 @@ function MiniBase({ p, withMenu, broken, restored }) {
         ))}
       </div>
 
-      {/* status pip */}
+      {/* broken-state error markers */}
+      {broken && (
+        <>
+          <div
+            className="pointer-events-none absolute right-[28%] top-[36%] h-1 w-3 rounded-sm"
+            style={{ background: 'rgba(239,68,68,0.5)', transform: 'rotate(-3deg)' }}
+          />
+          <div
+            className="pointer-events-none absolute left-[12%] bottom-[32%] h-1 w-2 rounded-sm"
+            style={{ background: 'rgba(239,68,68,0.4)', transform: 'rotate(4deg)' }}
+          />
+        </>
+      )}
+
+      {/* status pip in corner */}
       {broken && (
         <div
           className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full"
-          style={{
-            background: '#ef4444',
-            boxShadow: `0 0 0 2px ${p.surface}`,
-          }}
+          style={{ background: '#ef4444', boxShadow: `0 0 0 2px ${p.surface}` }}
         >
           <X className="h-2 w-2 text-white" strokeWidth={3.5} />
         </div>
@@ -658,10 +774,7 @@ function MiniBase({ p, withMenu, broken, restored }) {
       {restored && (
         <div
           className="absolute right-1 top-1 grid h-3 w-3 place-items-center rounded-full"
-          style={{
-            background: '#27a644',
-            boxShadow: `0 0 0 2px ${p.surface}`,
-          }}
+          style={{ background: '#27a644', boxShadow: `0 0 0 2px ${p.surface}` }}
         >
           <Check className="h-2 w-2 text-white" strokeWidth={3.5} />
         </div>
@@ -671,14 +784,18 @@ function MiniBase({ p, withMenu, broken, restored }) {
 }
 
 function WarmMini({ withMenu }) {
-  return <MiniBase p={PALETTE.warm} withMenu={withMenu} />
+  if (!withMenu) return <MiniCentered p={PALETTE.warm} />
+  return (
+    <MiniSplit p={PALETTE.warm} headlineWidths={['72%', '50%']} />
+  )
 }
 
 function DarkMini({ broken, restored }) {
+  // dark uses different (poetic) headline word lengths to feel distinct from v2
   return (
-    <MiniBase
+    <MiniSplit
       p={PALETTE.dark}
-      withMenu
+      headlineWidths={['52%', '78%']}
       broken={broken}
       restored={restored}
     />
