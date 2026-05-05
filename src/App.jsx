@@ -1230,7 +1230,10 @@ function Hero() {
             className="mt-5 max-w-xl text-[17px] leading-relaxed text-ink-muted md:text-[18px]"
           >
             Сайт с backend, доменом и SSL — за минуты по одному чату. И откат любой
-            версии в один клик, если AI что-то сломает.
+            версии в один клик, если AI что-то сломает.{' '}
+            <span className="text-ink" style={{ fontWeight: 510 }}>
+              От 990 ₽/мес.
+            </span>
           </motion.p>
 
           <motion.div
@@ -1242,9 +1245,9 @@ function Hero() {
             <a
               href="#start"
               className="btn-primary text-[15px]"
-              onClick={() => track('cta_click', { location: 'hero', label: 'Начать' })}
+              onClick={() => track('cta_click', { location: 'hero', label: 'Free' })}
             >
-              Начать бесплатно
+              Попробовать бесплатно
               <ArrowRight className="h-4 w-4" />
             </a>
             <a
@@ -1263,13 +1266,16 @@ function Hero() {
             className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-dim"
           >
             <span className="inline-flex items-center gap-1.5">
+              <Check className="h-3 w-3 text-success" /> 5 дней без карты
+            </span>
+            <span className="inline-flex items-center gap-1.5">
               <Check className="h-3 w-3 text-success" /> Без VPN и крипты
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Check className="h-3 w-3 text-success" /> Российские серверы
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3 w-3 text-success" /> Оплата ₽ · ЮKassa
+              <Check className="h-3 w-3 text-success" /> 152-ФЗ из коробки
             </span>
           </motion.div>
         </div>
@@ -1993,20 +1999,22 @@ const COMPARISON = [
   {
     name: 'Omnia.AI',
     accent: true,
-    rows: [true, true, true, true, true, true],
+    rows: [true, true, true, true, true, true, true],
   },
-  { name: 'Lovable / v0 / Bolt', rows: [true, false, false, 'partial', false, false] },
-  { name: 'Tilda / Wix', rows: [false, true, false, true, false, false] },
-  { name: 'Студия / агентство', rows: [false, true, false, true, true, false] },
+  { name: 'Promto.ai', rows: [true, false, 'partial', false, true, false, true] },
+  { name: 'Lovable / v0 / Bolt', rows: [true, false, false, false, false, false, 'partial'] },
+  { name: 'Tilda / Wix', rows: [false, false, false, true, true, false, true] },
+  { name: 'Студия / агентство', rows: [false, false, true, true, true, false, true] },
 ]
 
 const COMPARISON_FEATURES = [
-  'AI-чат генерация',
-  'Российский рынок и рубли',
-  'Backend под ключ',
-  'Auto-deploy + SSL',
-  'Кастом-логика',
-  'Откат версий в 1 клик',
+  '★ Откат версий в 1 клик',
+  'Mix LLM (выбор модели)',
+  'Полный backend (Postgres + JWT)',
+  'Российские серверы + 152-ФЗ',
+  'Чат-боты + автоматизации',
+  'Free trial без карты',
+  'Минимальная цена в РФ',
 ]
 
 function ComparisonSection() {
@@ -2022,8 +2030,8 @@ function ComparisonSection() {
           </h2>
         </div>
 
-        <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-elev1/60">
-          <div className="grid grid-cols-[1.6fr_repeat(4,_1fr)] text-[12px] text-ink-muted">
+        <div className="mt-10 overflow-x-auto rounded-2xl border border-line bg-elev1/60">
+          <div className="grid min-w-[820px] grid-cols-[1.6fr_repeat(5,_1fr)] text-[12px] text-ink-muted">
             <div className="border-b border-line bg-canvas/60 px-4 py-3 text-left uppercase tracking-[0.18em]">
               Что важно
             </div>
@@ -2176,48 +2184,69 @@ function FeaturesSection() {
 
 const TIERS = [
   {
-    name: 'Starter',
-    price: '6 990',
-    sub: 'для физиков и портфолио',
+    name: 'Lite',
+    price: '990',
+    sub: 'для одиночных проектов',
+    promtoNote: 'Promto Старт — 690 ₽',
     features: [
-      'Сервер S (2 vCPU, 2 ГБ)',
-      'Кошелёк токенов 1 500 ₽',
-      'Домен .ru или .рф',
+      '1 проект',
+      'Кошелёк токенов 1 000 ₽',
+      'Домен или поддомен',
       'SSL автоматом',
-      'Auto-deploy',
-      '50 снапшотов истории',
+      '20 снапшотов + откат',
+      'Mix LLM (DeepSeek · Haiku · Gemini)',
     ],
     cta: 'Начать',
   },
   {
+    name: 'Starter',
+    price: '2 990',
+    sub: 'для бизнеса и фрилансеров',
+    promtoNote: 'Promto Про — 2 790 ₽',
+    features: [
+      'До 3 проектов',
+      'Кошелёк токенов 2 500 ₽',
+      'Кастомный домен .ru/.рф',
+      'Базовый backend (Postgres + JWT)',
+      '100 снапшотов истории',
+      'Mix LLM full + российские модели',
+      'Email-поддержка SLA 48ч',
+    ],
+    cta: 'Начать со Starter',
+  },
+  {
     name: 'Pro',
-    price: '17 990',
-    sub: 'для бизнеса и стартапов',
+    price: '7 990',
+    sub: 'для production-задач',
     highlight: true,
     badge: 'Популярный',
+    promtoNote: 'Promto Про Макс — 6 890 ₽',
     features: [
-      'Сервер M (4 vCPU, 8 ГБ)',
-      'Кошелёк токенов 5 000 ₽',
-      '2 домена + Let\'s Encrypt DV',
-      'Backend + Redis + S3',
-      'Staging + GitHub-синк',
+      'До 10 проектов · 2 домена',
+      'Кошелёк токенов 6 000 ₽',
+      'Выделенный VPS S (SafeCloud)',
+      'Полный backend + Redis + S3',
       '500 снапшотов + side-by-side',
-      'Email-поддержка SLA 24ч',
+      'Чат-боты TG/VK + автоматизации',
+      'GitHub-синк, staging',
+      'Email SLA 24ч',
     ],
     cta: 'Начать с Pro',
   },
   {
     name: 'Enterprise',
-    price: '34 990',
+    price: '19 990',
     sub: 'для агентств и команд',
+    promtoNote: 'У Promto такого тира нет',
     features: [
-      'Сервер L (8 vCPU, 16 ГБ)',
-      'Кошелёк токенов 15 000 ₽',
-      'До 5 доменов, OV/EV SSL',
-      'DR-реплика + офсайт-бэкапы',
-      'Приоритет очереди LLM',
+      'Безлимит проектов · 5 доменов',
+      'Кошелёк токенов 18 000 ₽',
+      'Выделенный VPS M',
+      '★ 152-ФЗ + российские LLM',
+      '★ 1С-интеграция',
+      'Часы инженеров со скидкой',
+      'Менеджер · SLA 4ч',
       'Без лимита снапшотов',
-      'Менеджер + SLA 4ч',
     ],
     cta: 'Связаться',
   },
@@ -2231,61 +2260,110 @@ function PricingSection() {
           <span className="eyebrow">
             <Wallet className="h-3 w-3 text-accent-glow" /> Тарифы
           </span>
-          <h2 className="display-h2 mt-5 text-gradient">Один счёт. Без сюрпризов.</h2>
+          <h2 className="display-h2 mt-5 text-gradient">
+            От <span className="accent-gradient">990 ₽</span>. Один счёт. Без сюрпризов.
+          </h2>
           <p className="mt-5 text-ink-muted">
-            Хостинг, AI-токены, домен и поддержка — в одной подписке. Можно менять
-            модель LLM на лету. Первые 100 клиентов фиксируют цену на год.
+            Цены в паритете с Promto.ai — но у нас mix LLM, выделенный VPS, реальный
+            backend, версионирование и 152-ФЗ. На каждом тире.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
-          {TIERS.map((t) => (
-            <div
+        {/* Free trial banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5 }}
+          className="mx-auto mt-10 max-w-3xl"
+        >
+          <div className="flex flex-col items-center justify-between gap-3 rounded-2xl border border-success/30 bg-success/[0.06] px-5 py-4 text-center md:flex-row md:text-left">
+            <div className="flex items-center gap-3">
+              <div className="grid h-10 w-10 flex-none place-items-center rounded-full bg-success/15 text-success">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <div>
+                <div className="text-[14.5px] text-ink" style={{ fontWeight: 590 }}>
+                  Free · 5 дней без карты
+                </div>
+                <div className="text-[12.5px] text-ink-muted">
+                  500 ₽ AI-токенов · 1 проект на поддомене omnia.ai · никаких обязательств
+                </div>
+              </div>
+            </div>
+            <a
+              href="#start"
+              className="inline-flex items-center gap-1.5 rounded-full border border-success/40 bg-success/15 px-4 py-2 text-[12.5px] text-success transition hover:bg-success/25"
+              style={{ fontWeight: 590 }}
+              onClick={() =>
+                track('cta_click', { location: 'pricing_free', label: 'Free trial' })
+              }
+            >
+              Попробовать бесплатно
+              <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </motion.div>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {TIERS.map((t, i) => (
+            <motion.div
               key={t.name}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.45, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
               className={
-                'relative flex flex-col rounded-2xl border p-6 transition ' +
+                'relative flex flex-col rounded-2xl border p-5 transition ' +
                 (t.highlight
                   ? 'border-accent/40 bg-gradient-to-b from-accent/[0.08] to-elev1 shadow-glow'
                   : 'border-line bg-elev1/70 hover:border-white/15')
               }
             >
               {t.badge && (
-                <div className="absolute -top-3 right-6 rounded-full bg-accent px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white">
+                <div className="absolute -top-3 right-5 rounded-full bg-accent px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white">
                   {t.badge}
                 </div>
               )}
 
-              <div className="text-[14px] uppercase tracking-[0.2em] text-ink-muted">
+              <div className="text-[13px] uppercase tracking-[0.2em] text-ink-muted">
                 {t.name}
               </div>
-              <div className="mt-1 text-[12px] text-ink-dim">{t.sub}</div>
+              <div className="mt-1 text-[11.5px] text-ink-dim">{t.sub}</div>
 
-              <div className="mt-5 flex items-baseline gap-1.5">
+              <div className="mt-4 flex items-baseline gap-1.5">
                 <span
-                  className="text-[44px] leading-none text-ink"
+                  className="text-[36px] leading-none text-ink"
                   style={{ fontWeight: 590, letterSpacing: '-0.02em' }}
                 >
                   {t.price}
                 </span>
-                <span className="text-[14px] text-ink-muted">₽ / мес</span>
+                <span className="text-[12.5px] text-ink-muted">₽ / мес</span>
               </div>
 
-              <ul className="mt-6 space-y-2.5">
+              <div className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-ink-dim">
+                vs {t.promtoNote}
+              </div>
+
+              <ul className="mt-5 space-y-2 flex-1">
                 {t.features.map((f) => (
                   <li
                     key={f}
-                    className="flex items-start gap-2.5 text-[13.5px] text-ink-muted"
+                    className="flex items-start gap-2 text-[12.5px] leading-snug text-ink-muted"
                   >
-                    <Check className="mt-0.5 h-4 w-4 flex-none text-accent-glow" />
-                    {f}
+                    <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-accent-glow" />
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-7">
+              <div className="mt-6">
                 <a
                   href="#start"
-                  className={t.highlight ? 'btn-primary w-full' : 'btn-ghost w-full'}
+                  className={
+                    (t.highlight ? 'btn-primary' : 'btn-ghost') +
+                    ' w-full text-[13px]'
+                  }
                   onClick={() =>
                     track('cta_click', {
                       location: 'pricing',
@@ -2294,12 +2372,17 @@ function PricingSection() {
                     })
                   }
                 >
-                  {t.cta} <ArrowRight className="h-4 w-4" />
+                  {t.cta} <ArrowRight className="h-3.5 w-3.5" />
                 </a>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
+
+        <p className="mt-6 text-center text-[12px] text-ink-dim">
+          Pre-launch: первые 100 клиентов фиксируют цену на год · годовая оплата —
+          скидка 17%
+        </p>
       </div>
     </section>
   )
@@ -2311,8 +2394,12 @@ function PricingSection() {
 
 const FAQ = [
   {
+    q: 'Чем вы отличаетесь от Promto.ai?',
+    a: 'Цены в паритете (990 ₽ vs 690 ₽ на entry, 7 990 ₽ vs 6 890 ₽ на топе), но у нас на каждом тире: (1) визуальный rollback после каждого промпта, (2) mix из 6 LLM включая YandexGPT/GigaChat для 152-ФЗ — Promto только Anthropic, (3) реальный backend на FastAPI + Postgres + JWT — у Promto «PHP до Redis» расплывчато, (4) выделенный VPS на Pro/Enterprise, (5) self-export ZIP/Docker без vendor lock-in, (6) 1С-интеграция и часы инженеров на Enterprise. Мы — production-инфраструктура, Promto — конструктор для прототипов.',
+  },
+  {
     q: 'А если AI сломает сайт неудачным промптом?',
-    a: 'Не сломает — каждый промпт создаёт новый снапшот, старая версия живёт. Откат в один клик через ленту версий, без git и терминала. Это главное, чем мы отличаемся от Lovable, Bolt и v0.',
+    a: 'Не сломает — каждый промпт создаёт новый снапшот, старая версия живёт. Откат в один клик через ленту версий, без git и терминала. Это главное, чем мы отличаемся от Lovable, Bolt, v0 и Promto.',
   },
   {
     q: 'А если ваш сервис закроется — мои сайты пропадут?',
