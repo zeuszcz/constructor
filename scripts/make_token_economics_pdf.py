@@ -165,8 +165,8 @@ story.append(Spacer(1, 25 * mm))
 
 # Cover key numbers
 key_nums = [
-    ["239", "−91%", "M11", "9.6 М ₽"],
-    ["платящих до break-even", "ниже OPEX чем v2 plan", "первый плюсовой месяц", "MRR на M18"],
+    ["M1", "M8", "M11", "16.3 М ₽"],
+    ["разработка завершена", "первый плюсовой EBITDA", "накоп. кэш > 0", "MRR на M18"],
 ]
 key_table = Table(key_nums, colWidths=[60 * mm] * 4)
 key_table.setStyle(TableStyle([
@@ -605,24 +605,27 @@ story.append(PageBreak())
 # ====================================================================== #
 page_title(
     "9. Финмодель 18 месяцев",
-    "Lean opex 330к/мес (только юрист + разработка). Сервера и домены клиентов — внутри подписки.",
+    "M1 — разработка продукта (только dev + юрист). M2 — запуск и маркетинг сразу. Bootstrap-friendly: max burn ~2 М ₽.",
 )
 
-paying = [0, 0, 0, 5, 15, 35, 60, 120, 200, 320, 480, 680, 920, 1180, 1450, 1750, 2050, 2350]
-arpus = [990, 990, 990, 990, 1100, 1200, 1400, 1700, 2000, 2300, 2600, 2900, 3150, 3400, 3650, 3850, 3950, 4080]
-gm_ratios = [0.53, 0.53, 0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44, 0.42, 0.40, 0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34]
+paying = [0, 30, 80, 150, 250, 380, 540, 720, 920, 1140, 1390, 1670, 1980, 2330, 2710, 3120, 3550, 4000]
+arpus = [0, 990, 990, 1100, 1200, 1400, 1700, 2000, 2300, 2600, 2900, 3150, 3400, 3650, 3850, 3950, 4030, 4080]
+gm_ratios = [0.0, 0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44, 0.42, 0.40, 0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34, 0.34]
+marketing_per_month = [0, 100000, 100000, 100000, 100000, 150000, 150000, 150000, 150000,
+                       200000, 200000, 200000, 200000, 200000, 250000, 250000, 250000, 250000]
 
 cum = 30000
 month_data = []
 for i in range(18):
     mrr = paying[i] * arpus[i]
     gm = mrr * gm_ratios[i]
-    ebitda = gm - total_fixed
+    opex = total_fixed + marketing_per_month[i]
+    ebitda = gm - opex
     cum += ebitda
-    month_data.append((i + 1, paying[i], arpus[i], mrr, gm_ratios[i], gm, ebitda, cum))
+    month_data.append((i + 1, paying[i], arpus[i], mrr, gm_ratios[i], gm, marketing_per_month[i], ebitda, cum))
 
-rows = [["M", "Платящих", "ARPU", "MRR", "GM%", "GM ₽", "EBITDA", "Накоп. кэш"]]
-for m, p, a, mrr, gr, gm, eb, c in month_data:
+rows = [["M", "Платящих", "ARPU", "MRR", "GM%", "GM ₽", "Маркетинг", "EBITDA", "Накоп. кэш"]]
+for m, p, a, mrr, gr, gm, mkt, eb, c in month_data:
     rows.append([
         f"M{m}",
         f"{p:,}".replace(",", " "),
@@ -630,14 +633,17 @@ for m, p, a, mrr, gr, gm, eb, c in month_data:
         fmt_rub(mrr),
         f"{gr*100:.0f}%",
         fmt_rub(gm),
+        fmt_rub(mkt),
         fmt_rub(eb),
         fmt_rub(c),
     ])
 
-t = Table(rows, colWidths=[14 * mm, 22 * mm, 22 * mm, 30 * mm, 16 * mm, 30 * mm, 30 * mm, 32 * mm])
-ts = header_style(rows, 8)
+t = Table(rows, colWidths=[12 * mm, 20 * mm, 20 * mm, 28 * mm, 14 * mm, 28 * mm, 24 * mm, 28 * mm, 30 * mm])
+ts = header_style(rows, 9)
 # Color rows by EBITDA sign
-for i, (_, _, _, _, _, _, eb, c) in enumerate(month_data, start=1):
+for i, entry in enumerate(month_data, start=1):
+    eb = entry[7]
+    c = entry[8]
     if eb < 0:
         ts.add("BACKGROUND", (-2, i), (-2, i), WARN_LIGHT)
     else:
@@ -652,30 +658,28 @@ story.append(Spacer(1, 4 * mm))
 
 # Summary
 m18 = month_data[-1]
-min_cash = min(c for *_, c in month_data)
-first_pos_eb = next((m for m, *_, eb, _ in month_data if eb > 0), None)
-first_pos_cash = next((m for *_, c in month_data if c > 0), None)
-
-# Find first positive ebitda
+min_cash = min(entry[8] for entry in month_data)
 first_pos_eb = None
 for entry in month_data:
-    if entry[6] > 0:
+    if entry[7] > 0:
         first_pos_eb = entry[0]
         break
 first_pos_cash = None
 for entry in month_data:
-    if entry[7] > 0:
+    if entry[8] > 0 and entry[0] > 1:
         first_pos_cash = entry[0]
         break
 
+mkt_total = sum(marketing_per_month)
 rows = [
     ["Метрика", "Значение"],
     ["MRR на M18", fmt_rub(m18[3])],
     ["ARR на M18", fmt_rub(m18[3] * 12)],
-    ["Накопленный кэш на M18", fmt_rub(m18[7])],
+    ["Накопленный кэш на M18", fmt_rub(m18[8])],
     ["Min cash (наибольший провал)", fmt_rub(min_cash)],
     ["Первый положительный EBITDA", f"M{first_pos_eb}"],
     ["Накопленный кэш > 0", f"M{first_pos_cash}"],
+    ["Маркетинг суммарно за 18 мес", fmt_rub(mkt_total)],
 ]
 t = Table(rows, colWidths=[80 * mm, 60 * mm])
 t.setStyle(header_style(rows, 2))
@@ -812,11 +816,11 @@ main_pts = [
     "Себестоимость одного сообщения: <b>0.28 → 9.60 ₽</b> в зависимости от AI-модели.",
     "200 сообщений в реальном миксе моделей стоят юзеру <b>≈ 1 000 ₽</b> = ровно Lite-кошелёк.",
     "На каждом платящем клиенте мы зарабатываем в среднем <b>1 385 ₽/мес</b>.",
-    "Постоянные траты компании — <b>330 К ₽/мес</b> (юрист 30 + разработка 300). Сервера и домены клиентов — внутри подписки.",
-    "Точка плюса — <b>239 платящих клиентов</b> (≈ месяц 11).",
-    "За 18 месяцев модель выходит на <b>9.6 М ₽/мес выручки</b> и <b>+7.7 М ₽ на счёте</b>.",
-    "Запускаться можно <b>без инвесторов</b>, нужно ~2.65 М ₽ оборотки на первые 10 месяцев.",
-    "Сравнение с v2 plan (с маркет.+FOT 3.5М): break-even с 858 → <b>239 (−72%)</b>; Min cash с 28М → <b>2.65М (−91%)</b>.",
+    "Базовые затраты компании — <b>330 К/мес</b> (юрист 30 + разработка 300). С M2 добавляется маркетинг 100→250 К/мес.",
+    "M1 — только разработка. M2 — запуск + маркетинг сразу. Точка плюса — <b>M8</b> при ~720 платящих.",
+    "За 18 месяцев модель выходит на <b>16.3 М ₽/мес выручки</b> (ARR ~196 М) и <b>+21.8 М ₽ на счёте</b>.",
+    "Запускаться можно <b>без инвесторов</b>, нужно ~2 М ₽ оборотки на первые 7 месяцев (M2-M7 в минусе).",
+    "Маркетинг 18 мес — <b>3 М ₽</b> (100 → 250 К/мес ramping). Окупается уже к M8.",
 ]
 for i, p in enumerate(main_pts, start=1):
     story.append(Paragraph(f"<b>{i}.</b> {p}", P))

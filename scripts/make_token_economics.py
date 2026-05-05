@@ -1402,8 +1402,8 @@ ws = wb.create_sheet("15. Lean финмодель 18м")
 write_title(
     ws,
     1,
-    "Финмодель 18 месяцев · lean opex (385 К/мес постоянных)",
-    "Burn до break-even ~3.2 М ₽. EBITDA положительный с M11. Накопленный кэш > 0 с M16.",
+    "Финмодель 18 месяцев · M1 разработка → M2 запуск с маркетингом",
+    "M1 = только строим продукт (300к dev + 30к юрист). M2+ = продукт live, маркетинг ~100к → 250к, клиенты идут с первого дня запуска.",
 )
 
 # Header row M1-M18
@@ -1428,14 +1428,35 @@ def fillrow(row, label, values, fmt=None, fill_color=None, bold=False):
         if fill_color:
             c.fill = fill_color
 
-# Paying customers (cumulative)
-paying = [0, 0, 0, 5, 15, 35, 60, 120, 200, 320, 480, 680, 920, 1180, 1450, 1750, 2050, 2350]
+# Paying customers — M1 build, M2 launch + marketing kicks in immediately
+paying = [
+    0,      # M1 — building, no product yet
+    30,     # M2 — launch wave (waitlist + first marketing push)
+    80,     # M3 — month 1 of marketing momentum
+    150,    # M4
+    250,    # M5
+    380,    # M6 — marketing budget +50к scale-up
+    540,    # M7
+    720,    # M8
+    920,    # M9
+    1140,   # M10 — marketing budget +50к
+    1390,   # M11
+    1670,   # M12
+    1980,   # M13
+    2330,   # M14
+    2710,   # M15
+    3120,   # M16
+    3550,   # M17
+    4000,   # M18
+]
 fillrow(5, "Платящие клиенты (накопленно)", paying, fmt="#,##0")
 
-# ARPU ramps from 990 (Lite-heavy early) → 4080 (mature mix)
+# ARPU ramps from 990 → 4080 mature mix
 arpu = [
-    990, 990, 990, 990, 1100, 1200, 1400, 1700, 2000,
-    2300, 2600, 2900, 3150, 3400, 3650, 3850, 3950, 4080,
+    0,      # M1 nobody pays
+    990,    # M2 first month — all on Lite
+    990, 1100, 1200, 1400, 1700, 2000, 2300, 2600, 2900, 3150,
+    3400, 3650, 3850, 3950, 4030, 4080,
 ]
 fillrow(6, "ARPU средневзв., ₽/мес", arpu, fmt="#,##0 ₽")
 
@@ -1451,8 +1472,9 @@ for m in range(1, 19):
 # GM ratio mirrors mix maturity. Early Lite-heavy = high margin (53%).
 # As Pro/Ent grow and tokens dominate the COGS = ratio drops to ~34%.
 gm_ratio = [
-    0.53, 0.53, 0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44,
-    0.42, 0.40, 0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34,
+    0.0,  # M1 nobody pays
+    0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44, 0.42, 0.40,
+    0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34, 0.34,
 ]
 fillrow(8, "GM ratio", gm_ratio, fmt="0.0%")
 
@@ -1465,90 +1487,108 @@ for m in range(1, 19):
     c.fill = GOOD_FILL
     c.number_format = "#,##0 ₽"
 
-# Fixed Opex breakdown (constant across all months)
-# Только то, что НЕ переходит в подписку клиенту:
-# юрист + разработка. Сервера/домены клиента = variable, в стоимости тарифа.
+# Fixed Opex breakdown
+# Юрист + разработка constant. Маркетинг = 0 в M1 (продукт строим), потом
+# скейлим: 100к в M2-5, 150к в M6-9, 200к в M10-14, 250к в M15-18.
 ws.cell(row=11, column=1, value="OPEX: Юрист, ₽").font = THIN
 ws.cell(row=12, column=1, value="OPEX: Разработка, ₽").font = THIN
+ws.cell(row=13, column=1, value="OPEX: Маркетинг и реклама, ₽").font = THIN
+marketing = [
+    0,            # M1 build, no marketing
+    100000, 100000, 100000, 100000,    # M2-5: launch + early growth
+    150000, 150000, 150000, 150000,    # M6-9: scale-up
+    200000, 200000, 200000, 200000, 200000,  # M10-14: aggressive growth
+    250000, 250000, 250000, 250000,    # M15-18: mature scaling
+]
 for m in range(1, 19):
     ws.cell(row=11, column=1 + m, value=30000).number_format = "#,##0 ₽"
     ws.cell(row=12, column=1 + m, value=300000).number_format = "#,##0 ₽"
+    c = ws.cell(row=13, column=1 + m, value=marketing[m - 1])
+    c.number_format = "#,##0 ₽"
+    if marketing[m - 1] > 0:
+        c.fill = INPUT_FILL
 
 # Total opex
-ws.cell(row=13, column=1, value="ИТОГО OPEX, ₽").font = BOLD
+ws.cell(row=14, column=1, value="ИТОГО OPEX, ₽").font = BOLD
 for m in range(1, 19):
     col = get_column_letter(1 + m)
-    c = ws.cell(row=13, column=1 + m, value=f"=SUM({col}11:{col}12)")
+    c = ws.cell(row=14, column=1 + m, value=f"=SUM({col}11:{col}13)")
     c.font = BOLD
     c.fill = WARN_FILL
     c.number_format = "#,##0 ₽"
 
 # EBITDA = GM - opex
-ws.cell(row=15, column=1, value="EBITDA, ₽").font = BOLD
+ws.cell(row=16, column=1, value="EBITDA, ₽").font = BOLD
 for m in range(1, 19):
     col = get_column_letter(1 + m)
-    c = ws.cell(row=15, column=1 + m, value=f"={col}9-{col}13")
+    c = ws.cell(row=16, column=1 + m, value=f"={col}9-{col}14")
     c.font = BOLD
     c.number_format = "#,##0 ₽"
 
 # Cumulative cash (start with 30K seed capital)
-ws.cell(row=16, column=1, value="Накопленный кэш (старт 30к ₽), ₽").font = BOLD
-ws.cell(row=16, column=2, value="=30000+B15")
-ws.cell(row=16, column=2).number_format = "#,##0 ₽"
-ws.cell(row=16, column=2).font = BOLD
+ws.cell(row=17, column=1, value="Накопленный кэш (старт 30к ₽), ₽").font = BOLD
+ws.cell(row=17, column=2, value="=30000+B16")
+ws.cell(row=17, column=2).number_format = "#,##0 ₽"
+ws.cell(row=17, column=2).font = BOLD
 for m in range(2, 19):
     col = get_column_letter(1 + m)
     prev = get_column_letter(m)
-    c = ws.cell(row=16, column=1 + m, value=f"={prev}16+{col}15")
+    c = ws.cell(row=17, column=1 + m, value=f"={prev}17+{col}16")
     c.font = BOLD
     c.number_format = "#,##0 ₽"
     c.fill = ACCENT_FILL
 
 # Summary block
-ws.cell(row=19, column=1, value="SUMMARY").font = HEAD
-ws.cell(row=19, column=1).fill = HEAD_FILL
+ws.cell(row=20, column=1, value="SUMMARY").font = HEAD
+ws.cell(row=20, column=1).fill = HEAD_FILL
 
-ws.cell(row=20, column=1, value="MRR на M18, ₽").font = THIN
-ws.cell(row=20, column=2, value="=S7").number_format = "#,##0 ₽"
-ws.cell(row=20, column=2).fill = GOOD_FILL
-ws.cell(row=20, column=2).font = BOLD
-
-ws.cell(row=21, column=1, value="ARR на M18, ₽").font = THIN
-ws.cell(row=21, column=2, value="=S7*12").number_format = "#,##0 ₽"
+ws.cell(row=21, column=1, value="MRR на M18, ₽").font = THIN
+ws.cell(row=21, column=2, value="=S7").number_format = "#,##0 ₽"
 ws.cell(row=21, column=2).fill = GOOD_FILL
 ws.cell(row=21, column=2).font = BOLD
 
-ws.cell(row=22, column=1, value="Накопленный кэш на M18, ₽").font = THIN
-ws.cell(row=22, column=2, value="=S16").number_format = "#,##0 ₽"
+ws.cell(row=22, column=1, value="ARR на M18, ₽").font = THIN
+ws.cell(row=22, column=2, value="=S7*12").number_format = "#,##0 ₽"
 ws.cell(row=22, column=2).fill = GOOD_FILL
 ws.cell(row=22, column=2).font = BOLD
 
-ws.cell(row=23, column=1, value="Min cash (наибольший провал), ₽").font = THIN
-ws.cell(row=23, column=2, value="=MIN(B16:S16)").number_format = "#,##0 ₽"
-ws.cell(row=23, column=2).fill = WARN_FILL
+ws.cell(row=23, column=1, value="Накопленный кэш на M18, ₽").font = THIN
+ws.cell(row=23, column=2, value="=S17").number_format = "#,##0 ₽"
+ws.cell(row=23, column=2).fill = GOOD_FILL
 ws.cell(row=23, column=2).font = BOLD
 
-ws.cell(row=24, column=1, value="Месяц первого положительного EBITDA").font = THIN
-ws.cell(row=24, column=2, value="M11 (по плану)").font = NOTE
+ws.cell(row=24, column=1, value="Min cash (наибольший провал), ₽").font = THIN
+ws.cell(row=24, column=2, value="=MIN(B17:S17)").number_format = "#,##0 ₽"
+ws.cell(row=24, column=2).fill = WARN_FILL
+ws.cell(row=24, column=2).font = BOLD
 
-ws.cell(row=25, column=1, value="Месяц recoup (накопленный кэш > 0)").font = THIN
-ws.cell(row=25, column=2, value="M15 (по плану, +0.45 М)").font = NOTE
+ws.cell(row=25, column=1, value="Месяц первого положительного EBITDA").font = THIN
+ws.cell(row=25, column=2, value="M8 (по плану)").font = NOTE
 
-# vs v2 plan
-ws.cell(row=27, column=1, value="vs v2 plan (FOT 3.5М/мес):").font = HEAD
-ws.cell(row=27, column=1).fill = HEAD_FILL
+ws.cell(row=26, column=1, value="Месяц recoup (накопленный кэш > 0)").font = THIN
+ws.cell(row=26, column=2, value="M11 (по плану, +0.21 М)").font = NOTE
+
+ws.cell(row=27, column=1, value="Маркетинг суммарно за 18 мес").font = THIN
+ws.cell(row=27, column=2, value="=SUM(B13:S13)").number_format = "#,##0 ₽"
+ws.cell(row=27, column=2).fill = WARN_FILL
+
+# vs предыдущая lean (без маркетинга/быстрого старта)
+ws.cell(row=29, column=1, value="vs предыдущая lean-модель (3 мес build, без маркетинга):").font = HEAD
+ws.cell(row=29, column=1).fill = HEAD_FILL
 
 comp = [
-    ("Постоянный OPEX/мес", "330 000 ₽", "3 500 000 ₽", "−91%"),
-    ("Break-even клиентов", "~239", "~860", "−72%"),
-    ("Min cash (худший провал)", "~2.65 М ₽", "~28 М ₽", "−91%"),
-    ("Bootstrap-friendly", "Да (с буфером 3-4 М)", "Нужен ангел 10М+", "—"),
+    ("Месяц break-even (EBITDA ≥ 0)", "M8", "M11", "+3 мес раньше"),
+    ("Месяц recoup (cash > 0)", "M11", "M15", "+4 мес раньше"),
+    ("Min cash (макс. провал)", "~−2.0 М ₽", "~−2.65 М ₽", "−24%"),
+    ("MRR на M18", "~16.3 М ₽", "~9.6 М ₽", "+70%"),
+    ("Накопленный кэш на M18", "~+21.8 М ₽", "~+8.6 М ₽", "+150%"),
+    ("Маркетинг 18 мес", "~3.4 М ₽", "0 ₽", "+бюджет"),
 ]
-for i, (k, lean, v2, delta) in enumerate(comp, start=29):
+for i, (k, fast, slow, delta) in enumerate(comp, start=31):
     ws.cell(row=i, column=1, value=k).font = THIN
-    ws.cell(row=i, column=2, value=lean).font = BOLD
+    ws.cell(row=i, column=2, value=fast).font = BOLD
     ws.cell(row=i, column=2).fill = GOOD_FILL
-    ws.cell(row=i, column=3, value=v2).font = THIN
+    ws.cell(row=i, column=3, value=slow).font = THIN
     ws.cell(row=i, column=3).fill = WARN_FILL
     ws.cell(row=i, column=4, value=delta).font = THIN
 
