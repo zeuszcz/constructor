@@ -139,13 +139,13 @@ write_title(
     ws,
     1,
     "8 моделей · себестоимость и retail-цена",
-    "Cost ₽/M = (input × output_share + output × output_share) × FX. Retail ₽/M = cost × markup.",
+    "Себест ₽/1М = (цена input × 0.5 + цена output × 0.5) × курс ₽/$. Цена клиенту = себест × наценка 2.8.",
 )
 
 write_head(
     ws,
     4,
-    ["Модель", "Категория", "Input $/1M", "Output $/1M", "Себест. ₽/1M", "Retail ₽/1M"],
+    ["Модель", "Категория", "Input $/1M", "Output $/1M", "Себест. ₽/1M", "Цена клиенту ₽/1M"],
 )
 
 models = [
@@ -197,7 +197,7 @@ write_title(
 write_head(
     ws,
     4,
-    ["Модель", "Себест. ₽/msg", "Retail ₽/msg", "Маржа ₽/msg", "Маржа %"],
+    ["Модель", "Себест ₽/сообщ", "Цена клиенту ₽/сообщ", "Маржа ₽/сообщ", "Маржа %"],
 )
 
 for i, (name, _, _, _) in enumerate(models, start=5):
@@ -232,7 +232,7 @@ write_title(
     ws,
     1,
     "Сколько стоит 50 / 200 / 1 000 сообщений",
-    "Retail-цена что заплатит пользователь · меняй msg_size в 1.Параметры.",
+    "Цена что заплатит клиент · меняй размер сообщения в 1. Параметры.",
 )
 
 write_head(
@@ -383,7 +383,7 @@ for col in range(2, 6):
     c.number_format = "0%"
 
 # Cost-per-msg row (weighted average using sheet 3)
-ws.cell(row=15, column=1, value="Себест. ₽/msg").font = BOLD
+ws.cell(row=15, column=1, value="Себест ₽/сообщ").font = BOLD
 ws.cell(row=15, column=1).fill = HEAD_FILL
 ws.cell(row=15, column=1).font = HEAD
 for col in range(2, 6):
@@ -393,7 +393,7 @@ for col in range(2, 6):
     c.number_format = "0.00 ₽"
     c.font = BOLD
 
-ws.cell(row=16, column=1, value="Retail ₽/msg").font = BOLD
+ws.cell(row=16, column=1, value="Цена клиенту ₽/сообщ").font = BOLD
 ws.cell(row=16, column=1).fill = HEAD_FILL
 ws.cell(row=16, column=1).font = HEAD
 for col in range(2, 6):
@@ -805,11 +805,11 @@ write_head(
     11,
     [
         "Модель",
-        "Без кеша · cost/msg",
-        "С кешем · cost/msg",
+        "Без кеша · себест/сообщ",
+        "С кешем · себест/сообщ",
         "Экономия %",
-        "Без · retail/msg",
-        "С · retail/msg",
+        "Без · цена клиенту/сообщ",
+        "С · цена клиенту/сообщ",
         "Экономия для нас ₽/msg",
     ],
 )
@@ -948,7 +948,7 @@ col_widths(ws, [44, 18, 16, 18, 18, 26, 24])
 
 
 # ====================================================================== #
-# Sheet 12 — Self-hosted Qwen break-even                                  #
+# Sheet 12 — Self-hosted Qwen точки безубыточности                                  #
 # ====================================================================== #
 ws = wb.create_sheet("12. Qwen self-hosted")
 write_title(
@@ -962,10 +962,10 @@ write_title(
 write_head(ws, 4, ["Параметр", "Значение", "Комментарий"])
 
 qwen_inputs = [
-    ("Capex (железо)", 250000, "1× A100 80GB ИЛИ 2× RTX 4090, 256 ГБ RAM"),
-    ("Opex /мес (электр., охлаждение, амортизация 5y)", 120000, "Включая 4 100 кВт×час × 6 ₽/кВт + 50% капекса/60"),
-    ("Throughput на 1 GPU, msg/час (8K токенов)", 60, "Реалистично для 235B на A100 при batch=4"),
-    ("Активный uptime, ч/мес", 720, "30 дней × 24 часа (всегда запущен)"),
+    ("Покупка железа", 250000, "1× A100 80GB ИЛИ 2× RTX 4090, 256 ГБ RAM"),
+    ("Текущие траты в месяц (электричество, охлаждение, износ за 5 лет)", 120000, "Включая 4 100 кВт×час × 6 ₽/кВт + 50% капекса/60"),
+    ("Производительность 1 видеокарты, сообщ/час", 60, "Реалистично для 235B на A100 при batch=4"),
+    ("Время работы, часов/мес", 720, "30 дней × 24 часа (всегда запущен)"),
     ("Доля задач, которые можно роутить на Qwen", 0.30, "Простые правки, типовые задачи. 40-50% при умном роутинге."),
 ]
 for i, (k, v, n) in enumerate(qwen_inputs, start=5):
@@ -982,11 +982,11 @@ for i, (k, v, n) in enumerate(qwen_inputs, start=5):
     ws.cell(row=i, column=3).alignment = WRAP
 
 # Computed metrics
-ws.cell(row=11, column=1, value="Capacity Qwen msg/мес").font = BOLD
+ws.cell(row=11, column=1, value="Сколько сообщ может обработать в мес").font = BOLD
 ws.cell(row=11, column=2, value="=B7*B8").number_format = "#,##0"
 ws.cell(row=11, column=3, value="на 1 GPU").font = NOTE
 
-ws.cell(row=12, column=1, value="Стоимость нам Qwen ₽/msg").font = BOLD
+ws.cell(row=12, column=1, value="Себест 1 сообщ на Qwen, ₽").font = BOLD
 ws.cell(row=12, column=2, value="=B6/B11").number_format = "0.00 ₽"
 ws.cell(row=12, column=3, value="opex / capacity").font = NOTE
 
@@ -1000,7 +1000,7 @@ ws.cell(row=14, column=2, value=f"=B11*'3. Цена сообщения'!B8").num
 ws.cell(row=15, column=1, value="Если бы платили API (Sonnet)").font = THIN
 ws.cell(row=15, column=2, value=f"=B11*'3. Цена сообщения'!B11").number_format = "#,##0 ₽"
 
-# break-even sensitivity by user-base
+# точки безубыточности sensitivity by user-base
 write_head(
     ws,
     18,
@@ -1011,7 +1011,7 @@ write_head(
         "Если бы Sonnet, ₽",
         "Себест на Qwen, ₽",
         "Экономия /мес",
-        "Месяцев до break-even",
+        "Месяцев до точки безубыточности",
     ],
 )
 
@@ -1058,9 +1058,9 @@ ws.cell(row=verdict_row, column=1).fill = HEAD_FILL
 
 verdict_lines = [
     "• До 100 активных Pro юзеров: Qwen НЕ окупается — opex 120к/мес больше чем экономия на API.",
-    "• 200-500 юзеров: 4-12 мес до break-even. Прицельно если есть стратегические причины (152-ФЗ, vendor lock-in protection).",
-    "• 500+ юзеров: 1-3 мес до break-even — однозначно ставить.",
-    "• По плану на M15: ~1 000 платящих → break-even на 4-м месяце с launch'a Qwen.",
+    "• 200-500 юзеров: 4-12 мес до точки безубыточности. Прицельно если есть стратегические причины (152-ФЗ, vendor lock-in protection).",
+    "• 500+ юзеров: 1-3 мес до точки безубыточности — однозначно ставить.",
+    "• По плану на M15: ~1 000 платящих → точки безубыточности на 4-м месяце с launch'a Qwen.",
     "• Альтернатива до тех пор: остаёмся на DeepSeek + Haiku API. COGS низкий, гибкость высокая.",
 ]
 for i, line in enumerate(verdict_lines, start=verdict_row + 1):
@@ -1070,7 +1070,7 @@ for i, line in enumerate(verdict_lines, start=verdict_row + 1):
 
 # Strategic note
 strat_row = verdict_row + len(verdict_lines) + 2
-ws.cell(row=strat_row, column=1, value="СТРАТЕГИЧЕСКАЯ ЦЕННОСТЬ (за пределами break-even)").font = HEAD
+ws.cell(row=strat_row, column=1, value="СТРАТЕГИЧЕСКАЯ ЦЕННОСТЬ (за пределами точки безубыточности)").font = HEAD
 ws.cell(row=strat_row, column=1).fill = HEAD_FILL
 
 strat_lines = [
@@ -1236,9 +1236,9 @@ col_widths(ws, [22, 14, 22, 14, 14, 14, 14, 16, 12])
 
 
 # ====================================================================== #
-# Sheet 14 — Lean юнит-эконмика (break-even)                              #
+# Sheet 14 — Lean юнит-эконмика (точки безубыточности)                              #
 # ====================================================================== #
-ws = wb.create_sheet("14. Lean break-even")
+ws = wb.create_sheet("14. Lean точки безубыточности")
 write_title(
     ws,
     1,
@@ -1271,7 +1271,7 @@ ws.cell(row=10, column=2).number_format = "0%"
 ws.cell(row=13, column=1, value="ВЗВЕШЕННЫЕ ПОКАЗАТЕЛИ").font = HEAD
 ws.cell(row=13, column=1).fill = HEAD_FILL
 
-ws.cell(row=15, column=1, value="ARPU средневзв., ₽").font = THIN
+ws.cell(row=15, column=1, value="Средний доход с клиента, ₽").font = THIN
 ws.cell(
     row=15,
     column=2,
@@ -1285,7 +1285,7 @@ ws.cell(
 ws.cell(row=15, column=2).fill = ACCENT_FILL
 ws.cell(row=15, column=2).font = BOLD
 
-ws.cell(row=16, column=1, value="GM на 1 клиента/мес, ₽").font = THIN
+ws.cell(row=16, column=1, value="Маржа на 1 клиента/мес, ₽").font = THIN
 ws.cell(
     row=16,
     column=2,
@@ -1299,12 +1299,12 @@ ws.cell(
 ws.cell(row=16, column=2).fill = ACCENT_FILL
 ws.cell(row=16, column=2).font = BOLD
 
-ws.cell(row=17, column=1, value="GM ratio (от MRR)").font = THIN
+ws.cell(row=17, column=1, value="Маржа % от выручки").font = THIN
 ws.cell(row=17, column=2, value="=B16/B15").number_format = "0.0%"
 ws.cell(row=17, column=2).font = BOLD
 
 # Break-even
-ws.cell(row=20, column=1, value="BREAK-EVEN").font = HEAD
+ws.cell(row=20, column=1, value="ТОЧКА БЕЗУБЫТОЧНОСТИ").font = HEAD
 ws.cell(row=20, column=1).fill = HEAD_FILL
 
 ws.cell(row=22, column=1, value="Постоянный opex, ₽/мес").font = THIN
@@ -1316,7 +1316,7 @@ ws.cell(row=23, column=2, value="=ROUNDUP(B22/B16,0)").font = BOLD
 ws.cell(row=23, column=2).fill = GOOD_FILL
 ws.cell(row=23, column=2).number_format = "#,##0"
 
-ws.cell(row=24, column=1, value="MRR break-even, ₽").font = BOLD
+ws.cell(row=24, column=1, value="Выручка/мес для безубыточности, ₽").font = BOLD
 ws.cell(row=24, column=2, value="=B23*B15").font = BOLD
 ws.cell(row=24, column=2).fill = GOOD_FILL
 ws.cell(row=24, column=2).number_format = "#,##0 ₽"
@@ -1328,7 +1328,7 @@ ws.cell(row=27, column=1).fill = HEAD_FILL
 write_head(
     ws,
     29,
-    ["Сценарий", "Lite %", "Starter %", "Pro %", "Ent %", "ARPU ₽", "GM/cust ₽", "Break-even"],
+    ["Сценарий", "Lite %", "Starter %", "Pro %", "Ent %", "Доход/клиент ₽", "Маржа/клиент ₽", "Клиентов до плюса"],
 )
 
 scenarios = [
@@ -1382,14 +1382,14 @@ for r in range(29, 35):
 ws.cell(
     row=37,
     column=1,
-    value="ВЫВОД: при дефолтном миксе break-even ≈ 280 платящих. При премиум-tilt — всего ~145.",
+    value="ВЫВОД: при дефолтном миксе точки безубыточности ≈ 280 платящих. При премиум-tilt — всего ~145.",
 ).font = NOTE
 ws.cell(row=37, column=1).alignment = WRAP
 
 ws.cell(
     row=38,
     column=1,
-    value="vs v2 business plan (с маркетингом и FOT 3.5М/мес): break-even был 858 → теперь 280 = в 3× меньше.",
+    value="vs v2 business plan (с маркетингом и FOT 3.5М/мес): точки безубыточности был 858 → теперь 280 = в 3× меньше.",
 ).font = NOTE
 
 col_widths(ws, [32, 12, 12, 12, 12, 14, 14, 14])
@@ -1458,10 +1458,10 @@ arpu = [
     990, 1100, 1200, 1400, 1700, 2000, 2300, 2600, 2900, 3150,
     3400, 3650, 3850, 3950, 4030, 4080,
 ]
-fillrow(6, "ARPU средневзв., ₽/мес", arpu, fmt="#,##0 ₽")
+fillrow(6, "Средний доход с клиента, ₽/мес", arpu, fmt="#,##0 ₽")
 
 # MRR
-ws.cell(row=7, column=1, value="MRR, ₽/мес").font = BOLD
+ws.cell(row=7, column=1, value="Выручка, ₽/мес").font = BOLD
 for m in range(1, 19):
     col = get_column_letter(1 + m)
     c = ws.cell(row=7, column=1 + m, value=f"={col}5*{col}6")
@@ -1469,14 +1469,14 @@ for m in range(1, 19):
     c.fill = ACCENT_FILL
     c.number_format = "#,##0 ₽"
 
-# GM ratio mirrors mix maturity. Early Lite-heavy = high margin (53%).
+# Маржа % mirrors mix maturity. Early Lite-heavy = high margin (53%).
 # As Pro/Ent grow and tokens dominate the COGS = ratio drops to ~34%.
 gm_ratio = [
     0.0,  # M1 nobody pays
     0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44, 0.42, 0.40,
     0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34, 0.34,
 ]
-fillrow(8, "GM ratio", gm_ratio, fmt="0.0%")
+fillrow(8, "Маржа %", gm_ratio, fmt="0.0%")
 
 # Gross profit
 ws.cell(row=9, column=1, value="ГРОСС-ПРИБЫЛЬ, ₽").font = BOLD
@@ -1518,7 +1518,7 @@ for m in range(1, 19):
     c.number_format = "#,##0 ₽"
 
 # EBITDA = GM - opex
-ws.cell(row=16, column=1, value="EBITDA, ₽").font = BOLD
+ws.cell(row=16, column=1, value="Прибыль/убыток, ₽").font = BOLD
 for m in range(1, 19):
     col = get_column_letter(1 + m)
     c = ws.cell(row=16, column=1 + m, value=f"={col}9-{col}14")
@@ -1542,12 +1542,12 @@ for m in range(2, 19):
 ws.cell(row=20, column=1, value="SUMMARY").font = HEAD
 ws.cell(row=20, column=1).fill = HEAD_FILL
 
-ws.cell(row=21, column=1, value="MRR на M18, ₽").font = THIN
+ws.cell(row=21, column=1, value="Выручка/мес на M18, ₽").font = THIN
 ws.cell(row=21, column=2, value="=S7").number_format = "#,##0 ₽"
 ws.cell(row=21, column=2).fill = GOOD_FILL
 ws.cell(row=21, column=2).font = BOLD
 
-ws.cell(row=22, column=1, value="ARR на M18, ₽").font = THIN
+ws.cell(row=22, column=1, value="Выручка/год на M18, ₽").font = THIN
 ws.cell(row=22, column=2, value="=S7*12").number_format = "#,##0 ₽"
 ws.cell(row=22, column=2).fill = GOOD_FILL
 ws.cell(row=22, column=2).font = BOLD
@@ -1557,7 +1557,7 @@ ws.cell(row=23, column=2, value="=S17").number_format = "#,##0 ₽"
 ws.cell(row=23, column=2).fill = GOOD_FILL
 ws.cell(row=23, column=2).font = BOLD
 
-ws.cell(row=24, column=1, value="Min cash (наибольший провал), ₽").font = THIN
+ws.cell(row=24, column=1, value="Самый большой минус по деньгам, ₽").font = THIN
 ws.cell(row=24, column=2, value="=MIN(B17:S17)").number_format = "#,##0 ₽"
 ws.cell(row=24, column=2).fill = WARN_FILL
 ws.cell(row=24, column=2).font = BOLD
@@ -1577,7 +1577,7 @@ ws.cell(row=29, column=1, value="vs предыдущая lean-модель (3 м
 ws.cell(row=29, column=1).fill = HEAD_FILL
 
 comp = [
-    ("Месяц break-even (EBITDA ≥ 0)", "M8", "M11", "+3 мес раньше"),
+    ("Месяц точки безубыточности (EBITDA ≥ 0)", "M8", "M11", "+3 мес раньше"),
     ("Месяц recoup (cash > 0)", "M11", "M15", "+4 мес раньше"),
     ("Min cash (макс. провал)", "~−2.0 М ₽", "~−2.65 М ₽", "−24%"),
     ("MRR на M18", "~16.3 М ₽", "~9.6 М ₽", "+70%"),
