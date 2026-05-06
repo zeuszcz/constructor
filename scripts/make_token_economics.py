@@ -1398,12 +1398,12 @@ col_widths(ws, [32, 12, 12, 12, 12, 14, 14, 14])
 # ====================================================================== #
 # Sheet 15 — Lean финмодель 18 мес                                        #
 # ====================================================================== #
-ws = wb.create_sheet("15. Lean финмодель 24м")
+ws = wb.create_sheet("15. Финмодель 24 мес")
 write_title(
     ws,
     1,
-    "Финмодель 24 месяца · founders-only без зарплат + инфраструктура для роста",
-    "Юрист 30к/мес · маркетинг 100→300к · инфра наша (DB+API+backups+мониторинг) растёт с базой клиентов 8к→380к/мес. Серверум за клиентский сайт уже в variable COGS.",
+    "Финмодель 24 месяца · структура расходов как доля выручки",
+    "Зарплаты = 30% выручки (с минимумом 30к в M1-M4) · Токены+инфра = 30% · Бэкофис (VPS клиенту + домены + операционка) = 10% · Маркетинг = отдельно фиксированно. Платящие пересчитаны под маркетинговую реальность 2026.",
 )
 
 # Header row M1-M24
@@ -1428,18 +1428,19 @@ def fillrow(row, label, values, fmt=None, fill_color=None, bold=False):
         if fill_color:
             c.fill = fill_color
 
-# Платящие клиенты — 24 мес ramp; founders делали dev до M1, маркетинг с M2
+# Платящие клиенты — пересчитано под маркетинговую реальность 2026:
+# M2-M6 замедленный разгон, с M7 догоняет исходный план (бренд + первые кейсы)
 paying = [
-    0,                                       # M1 soft launch
-    30, 80, 150, 250,                        # M2-M5
-    380, 540, 720, 920,                      # M6-M9
-    1140, 1390, 1670, 1980, 2330,            # M10-M14
+    0,                                       # M1 тихий запуск
+    10, 30, 75, 165,                         # M2-M5 (маркет.реальность: 8-12, 25-35, 65-85, 150-180)
+    300, 480, 660, 870,                      # M6-M9 (M7+ начинает догонять)
+    1100, 1380, 1670, 1980, 2330,            # M10-M14 (полностью догнал)
     2710, 3120, 3550, 4000,                  # M15-M18
-    4400, 4800, 5200, 5550, 5900, 6250,      # M19-M24 (рост замедляется)
+    4400, 4800, 5200, 5550, 5900, 6250,      # M19-M24
 ]
 fillrow(5, "Платящие клиенты (накопленно)", paying, fmt="#,##0")
 
-# ARPU ramps from 990 → 4160 mature mix
+# Средний доход с клиента — растёт от 990 → 4160 по мере зрелости микса
 arpu = [
     0,
     990, 990, 1100, 1200,
@@ -1450,8 +1451,8 @@ arpu = [
 ]
 fillrow(6, "Средний доход с клиента, ₽/мес", arpu, fmt="#,##0 ₽")
 
-# MRR
-ws.cell(row=7, column=1, value="Выручка, ₽/мес").font = BOLD
+# Выручка
+ws.cell(row=7, column=1, value="ВЫРУЧКА, ₽/мес").font = BOLD
 for m in range(1, 25):
     col = get_column_letter(1 + m)
     c = ws.cell(row=7, column=1 + m, value=f"={col}5*{col}6")
@@ -1459,35 +1460,20 @@ for m in range(1, 25):
     c.fill = ACCENT_FILL
     c.number_format = "#,##0 ₽"
 
-# Маржа % mirrors mix maturity. Early Lite-heavy = high margin (53%).
-# As Pro/Ent grow and tokens dominate the COGS = ratio drops to ~34%.
-gm_ratio = [
-    0.0,  # M1 nobody pays
-    0.53, 0.53, 0.52, 0.50, 0.48, 0.46, 0.44, 0.42, 0.40,
-    0.38, 0.37, 0.36, 0.35, 0.34, 0.34, 0.34, 0.34,
-    0.34, 0.34, 0.34, 0.34, 0.34, 0.34,  # M19-M24
-]
-fillrow(8, "Маржа %", gm_ratio, fmt="0.0%")
+# === Структура расходов (доли от выручки) ===
+# Зарплаты = 30% выручки, но не меньше 30к в первые месяцы (юрист + минимум основателю)
+# Токены + наша инфра = 30% выручки
+# Бэкофис (VPS для клиентских сайтов + их домены + операционка) = 10% выручки
+# Маркетинг = фиксированный бюджет
+# Операционная прибыль = выручка - все расходы
 
-# Gross profit
-ws.cell(row=9, column=1, value="ГРОСС-ПРИБЫЛЬ, ₽").font = BOLD
-for m in range(1, 25):
-    col = get_column_letter(1 + m)
-    c = ws.cell(row=9, column=1 + m, value=f"={col}7*{col}8")
-    c.font = BOLD
-    c.fill = GOOD_FILL
-    c.number_format = "#,##0 ₽"
+ws.cell(row=9, column=1, value="Зарплаты (30% выручки или 30к, что больше), ₽").font = THIN
+ws.cell(row=10, column=1, value="Токены + наша инфра (30% выручки), ₽").font = THIN
+ws.cell(row=11, column=1, value="Бэкофис: VPS клиентов + домены + опер (10%), ₽").font = THIN
+ws.cell(row=12, column=1, value="Маркетинг и реклама (фиксированный бюджет), ₽").font = THIN
 
-# Fixed Opex breakdown
-# Юрист 30к каждый месяц. Разработка = 0 (founders сами без зарплат).
-# Маркетинг ramping: 0 → 100 → 150 → 200 → 250 → 300.
-# Инфра наша: API-сервера + БД + Redis + S3 + бэкапы + мониторинг — растёт с базой
-# (Серверум за клиентский сайт + домен клиента уже учтены в variable COGS внутри тарифа.)
-ws.cell(row=11, column=1, value="OPEX: Юрист, ₽").font = THIN
-ws.cell(row=12, column=1, value="OPEX: Маркетинг и реклама, ₽").font = THIN
-ws.cell(row=13, column=1, value="OPEX: Инфра (наши сервера/БД/бэкапы), ₽").font = THIN
 marketing = [
-    0,                                     # M1 soft launch
+    0,                                     # M1 тихий запуск
     100000, 100000, 100000, 100000,        # M2-M5
     150000, 150000, 150000, 150000,        # M6-M9
     200000, 200000, 200000, 200000, 200000, # M10-M14
@@ -1495,46 +1481,43 @@ marketing = [
     250000, 250000,                        # M19-M20
     300000, 300000, 300000, 300000,        # M21-M24
 ]
-# Инфра масштабируется с числом платящих клиентов: control-plane (наши API),
-# managed PostgreSQL/Redis, S3-бэкапы, мониторинг, CDN, DDoS-защита.
-# При росте до 6К+ клиентов это становится заметной статьёй (~6% от ARPU).
-infra = [
-    8000,                                  # M1 (0 платящих) — staging+dev VPS+минимум
-    10000, 15000, 20000, 25000,            # M2-M5 (30→250) — primary DB + S3
-    35000, 45000, 55000, 65000,            # M6-M9 (380→920) — read-replica + monitoring
-    80000, 100000, 120000, 140000, 160000, # M10-M14 (1.1k→2.3k) — cluster + DR
-    180000, 200000, 230000, 260000,        # M15-M18 (2.7k→4k) — premium ops
-    280000, 300000, 320000, 340000, 360000, 380000,  # M19-M24 (4.4k→6.25k)
-]
-for m in range(1, 25):
-    ws.cell(row=11, column=1 + m, value=30000).number_format = "#,##0 ₽"
-    c = ws.cell(row=12, column=1 + m, value=marketing[m - 1])
-    c.number_format = "#,##0 ₽"
-    if marketing[m - 1] > 0:
-        c.fill = INPUT_FILL
-    c2 = ws.cell(row=13, column=1 + m, value=infra[m - 1])
-    c2.number_format = "#,##0 ₽"
-    c2.fill = INPUT_FILL
 
-# Total opex
-ws.cell(row=14, column=1, value="ИТОГО OPEX, ₽").font = BOLD
 for m in range(1, 25):
     col = get_column_letter(1 + m)
-    c = ws.cell(row=14, column=1 + m, value=f"=SUM({col}11:{col}13)")
+    # Зарплаты: max(30%×MRR, 30000)
+    c_sal = ws.cell(row=9, column=1 + m, value=f"=MAX(30000,{col}7*0.3)")
+    c_sal.number_format = "#,##0 ₽"
+    # Токены + инфра: 30% × MRR
+    c_ti = ws.cell(row=10, column=1 + m, value=f"={col}7*0.3")
+    c_ti.number_format = "#,##0 ₽"
+    # Бэкофис: 10% × MRR
+    c_bo = ws.cell(row=11, column=1 + m, value=f"={col}7*0.1")
+    c_bo.number_format = "#,##0 ₽"
+    # Маркетинг
+    c_mkt = ws.cell(row=12, column=1 + m, value=marketing[m - 1])
+    c_mkt.number_format = "#,##0 ₽"
+    if marketing[m - 1] > 0:
+        c_mkt.fill = INPUT_FILL
+
+# ИТОГО ОПЕР. РАСХОДОВ
+ws.cell(row=14, column=1, value="ИТОГО ОПЕРАЦИОННЫХ РАСХОДОВ, ₽").font = BOLD
+for m in range(1, 25):
+    col = get_column_letter(1 + m)
+    c = ws.cell(row=14, column=1 + m, value=f"=SUM({col}9:{col}12)")
     c.font = BOLD
     c.fill = WARN_FILL
     c.number_format = "#,##0 ₽"
 
-# Прибыль/убыток = GM - opex
-ws.cell(row=16, column=1, value="Прибыль/убыток, ₽").font = BOLD
+# Операционная прибыль = выручка - все расходы
+ws.cell(row=16, column=1, value="ОПЕРАЦИОННАЯ ПРИБЫЛЬ/УБЫТОК, ₽").font = BOLD
 for m in range(1, 25):
     col = get_column_letter(1 + m)
-    c = ws.cell(row=16, column=1 + m, value=f"={col}9-{col}14")
+    c = ws.cell(row=16, column=1 + m, value=f"={col}7-{col}14")
     c.font = BOLD
     c.number_format = "#,##0 ₽"
 
-# Cumulative cash (start with 30K seed capital)
-ws.cell(row=17, column=1, value="Накопленный кэш (старт 30к ₽), ₽").font = BOLD
+# Накопленный кэш (старт с 30К капитала основателей)
+ws.cell(row=17, column=1, value="Накопленные деньги на счёте (старт 30к ₽), ₽").font = BOLD
 ws.cell(row=17, column=2, value="=30000+B16")
 ws.cell(row=17, column=2).number_format = "#,##0 ₽"
 ws.cell(row=17, column=2).font = BOLD
@@ -1546,8 +1529,8 @@ for m in range(2, 25):
     c.number_format = "#,##0 ₽"
     c.fill = ACCENT_FILL
 
-# Summary block — теперь до M24 (col Y = 25)
-ws.cell(row=20, column=1, value="SUMMARY").font = HEAD
+# Сводка результатов — по M24 (колонка Y = 25-я)
+ws.cell(row=20, column=1, value="ИТОГИ").font = HEAD
 ws.cell(row=20, column=1).fill = HEAD_FILL
 
 ws.cell(row=21, column=1, value="Выручка/мес на M24, ₽").font = THIN
@@ -1560,7 +1543,7 @@ ws.cell(row=22, column=2, value="=Y7*12").number_format = "#,##0 ₽"
 ws.cell(row=22, column=2).fill = GOOD_FILL
 ws.cell(row=22, column=2).font = BOLD
 
-ws.cell(row=23, column=1, value="Накопленный кэш на M24, ₽").font = THIN
+ws.cell(row=23, column=1, value="Деньги на счёте на M24, ₽").font = THIN
 ws.cell(row=23, column=2, value="=Y17").number_format = "#,##0 ₽"
 ws.cell(row=23, column=2).fill = GOOD_FILL
 ws.cell(row=23, column=2).font = BOLD
@@ -1575,33 +1558,42 @@ ws.cell(row=25, column=2, value="=Y5").number_format = "#,##0"
 ws.cell(row=25, column=2).fill = GOOD_FILL
 ws.cell(row=25, column=2).font = BOLD
 
-ws.cell(row=26, column=1, value="Месяц первой прибыли (положительная)").font = THIN
-ws.cell(row=26, column=2, value="M6 (с учётом инфры)").font = NOTE
+ws.cell(row=26, column=1, value="Месяц первой прибыли").font = THIN
+ws.cell(row=26, column=2, value="M7 (с новой структурой 30/30/10/30)").font = NOTE
 
-ws.cell(row=27, column=1, value="Месяц возврата вложений (кэш > 0)").font = THIN
-ws.cell(row=27, column=2, value="M8 (с учётом инфры)").font = NOTE
+ws.cell(row=27, column=1, value="Месяц возврата вложений (счёт > 0)").font = THIN
+ws.cell(row=27, column=2, value="M9").font = NOTE
 
 ws.cell(row=28, column=1, value="Маркетинг суммарно за 24 мес, ₽").font = THIN
 ws.cell(row=28, column=2, value="=SUM(B12:Y12)").number_format = "#,##0 ₽"
 ws.cell(row=28, column=2).fill = WARN_FILL
 
-ws.cell(row=29, column=1, value="Инфра суммарно за 24 мес, ₽").font = THIN
-ws.cell(row=29, column=2, value="=SUM(B13:Y13)").number_format = "#,##0 ₽"
+ws.cell(row=29, column=1, value="Зарплаты суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=29, column=2, value="=SUM(B9:Y9)").number_format = "#,##0 ₽"
 ws.cell(row=29, column=2).fill = WARN_FILL
 
-# vs предыдущая (с зарплатой разработчиков 300к/мес)
-ws.cell(row=31, column=1, value="vs модель с зарплатой разработчикам 300к/мес (с учётом инфры):").font = HEAD
-ws.cell(row=31, column=1).fill = HEAD_FILL
+ws.cell(row=30, column=1, value="Токены+инфра суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=30, column=2, value="=SUM(B10:Y10)").number_format = "#,##0 ₽"
+ws.cell(row=30, column=2).fill = WARN_FILL
+
+ws.cell(row=31, column=1, value="Бэкофис суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=31, column=2, value="=SUM(B11:Y11)").number_format = "#,##0 ₽"
+ws.cell(row=31, column=2).fill = WARN_FILL
+
+# Сравнение вариантов
+ws.cell(row=33, column=1, value="Структура: 30% зарплаты / 30% токены+инфра / 10% бэкофис / 30% операц.доход (до маркетинга)").font = HEAD
+ws.cell(row=33, column=1).fill = HEAD_FILL
 
 comp = [
-    ("Месяц первой прибыли", "M6", "M9", "+3 мес раньше"),
-    ("Месяц возврата вложений", "M8", "M12", "+4 мес раньше"),
-    ("Самый большой минус", "~−305 К ₽", "~−2.5 М ₽", "−88%"),
-    ("Накопленный кэш на M24", "~+67 М ₽", "~+59 М ₽", "+8 М"),
-    ("Можно ли запуститься на 30к?", "ДА (хватит на M1)", "Нет", "—"),
-    ("Источник разработки", "founders + AI", "1 senior + 1 mid", "—"),
+    ("Платящих клиентов на M24", "6 250", "По плану", "—"),
+    ("Месяц первой прибыли", "M7", "M6 (старая модель)", "+1 мес позже"),
+    ("Месяц возврата вложений", "M9", "M8", "+1 мес позже"),
+    ("Самый большой минус", "~−380 К ₽", "~−305 К", "−25%"),
+    ("Накопленные деньги на M24", "~+60 М ₽", "~+67 М (старая)", "−7 М"),
+    ("Почему стало хуже?", "Зарплаты 30% + замедл. разгон M2-M6", "В старой founders=0", "—"),
+    ("Что лучше?", "Каждый рубль роста = +30к в команду", "—", "Запас прочности"),
 ]
-for i, (k, fast, slow, delta) in enumerate(comp, start=33):
+for i, (k, fast, slow, delta) in enumerate(comp, start=35):
     ws.cell(row=i, column=1, value=k).font = THIN
     ws.cell(row=i, column=2, value=fast).font = BOLD
     ws.cell(row=i, column=2).fill = GOOD_FILL
@@ -1703,7 +1695,7 @@ keywords_2026 = [
 ]
 
 # Headers
-write_head(ws, 4, ["#", "Запрос", "Категория", "Показов/мес 2026", "CPC ₽ 2026", "Ценность 1-5"])
+write_head(ws, 4, ["#", "Запрос", "Категория", "Показов/мес 2026", "Цена клика ₽ 2026", "Ценность 1-5"])
 
 for i, (q, cat, imp, cpc, val) in enumerate(keywords_2026, start=5):
     ws.cell(row=i, column=1, value=i - 4).font = THIN
@@ -1754,14 +1746,14 @@ ws.cell(row=input_row, column=4, value="← поменяй число — пер
 sc_head_row = input_row + 2
 write_head(ws, sc_head_row, [
     "Сценарий",
-    "CPC ₽",
+    "Цена клика ₽",
     "Кликов = визитов",
     "Цена визита ₽",
-    "Конверсия лендинга",
-    "Trial регистраций",
-    "Trial → Paid",
+    "Конверсия посадочной",
+    "Регистраций на пробник",
+    "Пробник → платящий",
     "Платящих/мес",
-    "CAC ₽",
+    "Стоимость привлечения ₽",
 ])
 
 scenarios = [
@@ -1815,13 +1807,13 @@ ws.cell(row=ramp_row, column=1).fill = HEAD_FILL
 write_head(ws, ramp_row + 2, [
     "Месяц",
     "Что происходит",
-    "CPC ₽",
-    "CV лендинга",
-    "Trial → Paid",
+    "Цена клика ₽",
+    "Конв. посадочной",
+    "Прб → Плт",
     "Кликов",
-    "Trials",
+    "Пробников",
     "Платящих",
-    "CAC ₽",
+    "Стоимость привлечения ₽",
 ])
 
 ramp = [
