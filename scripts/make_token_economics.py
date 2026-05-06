@@ -1398,12 +1398,12 @@ col_widths(ws, [32, 12, 12, 12, 12, 14, 14, 14])
 # ====================================================================== #
 # Sheet 15 — Lean финмодель 18 мес                                        #
 # ====================================================================== #
-ws = wb.create_sheet("15. Финмодель 24 мес")
+ws = wb.create_sheet("15. Финмодель РЕАЛЬНАЯ 24м")
 write_title(
     ws,
     1,
-    "Финмодель 24 месяца · структура расходов как доля выручки",
-    "Зарплаты = 30% выручки (с минимумом 30к в M1-M4) · Токены+инфра = 30% · Бэкофис (VPS клиенту + домены + операционка) = 10% · Маркетинг = отдельно фиксированно. Платящие пересчитаны под маркетинговую реальность 2026.",
+    "РЕАЛИСТИЧНАЯ финмодель 24 месяца · все 9 категорий расходов май 2026",
+    "Зарплаты по плану найма (gross × 1.13 с IT-аккредитацией) · Токены 30% · Инфра ступенчато · Бэкофис 9% (включая 2.8% эквайринг) · Юр/бух/ПО/Резерв/Налог · Маркетинг фикс. Стартовый капитал 3 М ₽.",
 )
 
 # Header row M1-M24
@@ -1460,146 +1460,159 @@ for m in range(1, 25):
     c.fill = ACCENT_FILL
     c.number_format = "#,##0 ₽"
 
-# === Структура расходов (доли от выручки) ===
-# Зарплаты = 30% выручки, но не меньше 30к в первые месяцы (юрист + минимум основателю)
-# Токены + наша инфра = 30% выручки
-# Бэкофис (VPS для клиентских сайтов + их домены + операционка) = 10% выручки
-# Маркетинг = фиксированный бюджет
-# Операционная прибыль = выручка - все расходы
+# === Реалистичная структура расходов: все 9 категорий ===
+# По плану найма (gross × мультипликатор) для команды
+# Variable % от MRR для токенов / бэкофиса / резервов / налогов
+# Фикс ступенчато для инфры / юр / маркетинга / ПО
 
-ws.cell(row=9, column=1, value="Зарплаты (30% выручки или 30к, что больше), ₽").font = THIN
-ws.cell(row=10, column=1, value="Токены + наша инфра (30% выручки), ₽").font = THIN
-ws.cell(row=11, column=1, value="Бэкофис: VPS клиентов + домены + опер (10%), ₽").font = THIN
-ws.cell(row=12, column=1, value="Маркетинг и реклама (фиксированный бюджет), ₽").font = THIN
+ws.cell(row=9, column=1, value="Команда (ФОТ × 1.10–1.13 страх+бенеф), ₽").font = THIN
+ws.cell(row=10, column=1, value="Токены LLM (30% выручки), ₽").font = THIN
+ws.cell(row=11, column=1, value="Наша инфра (Yandex/Selectel/мониторинг), ₽").font = THIN
+ws.cell(row=12, column=1, value="Бэкофис: эквайринг+VPS клиентов+домены (9%), ₽").font = THIN
+ws.cell(row=13, column=1, value="Юристы / бухгалтеры / банк / аудит, ₽").font = THIN
+ws.cell(row=14, column=1, value="ПО на сотрудника (Figma/JetBrains/...), ₽").font = THIN
+ws.cell(row=15, column=1, value="Маркетинг фикс.бюджет, ₽").font = THIN
+ws.cell(row=16, column=1, value="Резервы (refunds 1.5% + штрафы 0.5% + 1.5% прочее), ₽").font = THIN
+ws.cell(row=17, column=1, value="Налоги (УСН 6%→1% с M4 IT-льгота), ₽").font = THIN
 
-marketing = [
-    0,                                     # M1 тихий запуск
-    100000, 100000, 100000, 100000,        # M2-M5
-    150000, 150000, 150000, 150000,        # M6-M9
-    200000, 200000, 200000, 200000, 200000, # M10-M14
-    250000, 250000, 250000, 250000,        # M15-M18
-    250000, 250000,                        # M19-M20
-    300000, 300000, 300000, 300000,        # M21-M24
-]
+# Команда — расчёт через gross-зарплаты × мультипликатор
+team_gross = [60000,140000,140000,388000,454000,533000,698000,867000,867000,1261000,1261000,1689000,1689000,1689000,2286000,2286000,2286000,2601000,2601000,2601000,2725000,2725000,2725000,2725000]
+team_mult = [1.03,1.03,1.03,1.10,1.11,1.12,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13,1.13]
+team_count_arr = [2,3,3,4,4,5,5,6,6,7,7,9,9,9,11,11,11,12,12,12,13,13,13,13]
+
+# Инфра ступенчато
+infra_arr = [8000,12000,18000,25000,35000,50000,65000,85000,105000,130000,160000,195000,235000,280000,330000,380000,430000,480000,530000,580000,630000,680000,730000,780000]
+# Юр/бух
+legal_arr = [20000,25000,25000,35000,35000,35000,50000,50000,50000,65000,65000,80000,80000,80000,100000,100000,100000,120000,120000,120000,140000,140000,140000,160000]
+# Маркетинг
+marketing = [0,100000,100000,100000,100000,150000,150000,150000,150000,200000,200000,200000,200000,200000,250000,250000,250000,250000,250000,250000,300000,300000,300000,300000]
 
 for m in range(1, 25):
     col = get_column_letter(1 + m)
-    # Зарплаты: max(30%×MRR, 30000)
-    c_sal = ws.cell(row=9, column=1 + m, value=f"=MAX(30000,{col}7*0.3)")
-    c_sal.number_format = "#,##0 ₽"
-    # Токены + инфра: 30% × MRR
-    c_ti = ws.cell(row=10, column=1 + m, value=f"={col}7*0.3")
-    c_ti.number_format = "#,##0 ₽"
-    # Бэкофис: 10% × MRR
-    c_bo = ws.cell(row=11, column=1 + m, value=f"={col}7*0.1")
+    idx = m - 1
+    # Команда
+    c_team = ws.cell(row=9, column=1 + m, value=int(team_gross[idx] * team_mult[idx]))
+    c_team.number_format = "#,##0 ₽"
+    # Токены 30% MRR
+    c_tok = ws.cell(row=10, column=1 + m, value=f"={col}7*0.30")
+    c_tok.number_format = "#,##0 ₽"
+    # Инфра фикс
+    c_inf = ws.cell(row=11, column=1 + m, value=infra_arr[idx])
+    c_inf.number_format = "#,##0 ₽"
+    # Бэкофис 9% MRR
+    c_bo = ws.cell(row=12, column=1 + m, value=f"={col}7*0.09")
     c_bo.number_format = "#,##0 ₽"
+    # Юр фикс
+    c_leg = ws.cell(row=13, column=1 + m, value=legal_arr[idx])
+    c_leg.number_format = "#,##0 ₽"
+    # ПО × сотрудников
+    c_sw = ws.cell(row=14, column=1 + m, value=team_count_arr[idx] * 7000)
+    c_sw.number_format = "#,##0 ₽"
     # Маркетинг
-    c_mkt = ws.cell(row=12, column=1 + m, value=marketing[m - 1])
+    c_mkt = ws.cell(row=15, column=1 + m, value=marketing[idx])
     c_mkt.number_format = "#,##0 ₽"
-    if marketing[m - 1] > 0:
+    if marketing[idx] > 0:
         c_mkt.fill = INPUT_FILL
+    # Резервы 3.5%
+    c_res = ws.cell(row=16, column=1 + m, value=f"={col}7*0.035")
+    c_res.number_format = "#,##0 ₽"
+    # Налоги: УСН 6% до M4, потом 1% (IT-льгота)
+    tax_rate = 0.06 if m <= 3 else 0.01
+    c_tax = ws.cell(row=17, column=1 + m, value=f"={col}7*{tax_rate}")
+    c_tax.number_format = "#,##0 ₽"
 
 # ИТОГО ОПЕР. РАСХОДОВ
-ws.cell(row=14, column=1, value="ИТОГО ОПЕРАЦИОННЫХ РАСХОДОВ, ₽").font = BOLD
+ws.cell(row=19, column=1, value="ИТОГО ОПЕРАЦИОННЫХ РАСХОДОВ, ₽").font = BOLD
 for m in range(1, 25):
     col = get_column_letter(1 + m)
-    c = ws.cell(row=14, column=1 + m, value=f"=SUM({col}9:{col}12)")
+    c = ws.cell(row=19, column=1 + m, value=f"=SUM({col}9:{col}17)")
     c.font = BOLD
     c.fill = WARN_FILL
     c.number_format = "#,##0 ₽"
 
-# Операционная прибыль = выручка - все расходы
-ws.cell(row=16, column=1, value="ОПЕРАЦИОННАЯ ПРИБЫЛЬ/УБЫТОК, ₽").font = BOLD
+# Прибыль = выручка - расходы
+ws.cell(row=20, column=1, value="ПРИБЫЛЬ/УБЫТОК, ₽").font = BOLD
 for m in range(1, 25):
     col = get_column_letter(1 + m)
-    c = ws.cell(row=16, column=1 + m, value=f"={col}7-{col}14")
+    c = ws.cell(row=20, column=1 + m, value=f"={col}7-{col}19")
     c.font = BOLD
     c.number_format = "#,##0 ₽"
 
-# Накопленный кэш (старт с 30К капитала основателей)
-ws.cell(row=17, column=1, value="Накопленные деньги на счёте (старт 30к ₽), ₽").font = BOLD
-ws.cell(row=17, column=2, value="=30000+B16")
-ws.cell(row=17, column=2).number_format = "#,##0 ₽"
-ws.cell(row=17, column=2).font = BOLD
+# Деньги на счёте (старт 3 М ₽ — стартовый капитал founders + друзей)
+ws.cell(row=21, column=1, value="Деньги на счёте (старт 3 М ₽), ₽").font = BOLD
+ws.cell(row=21, column=2, value="=3000000+B20")
+ws.cell(row=21, column=2).number_format = "#,##0 ₽"
+ws.cell(row=21, column=2).font = BOLD
 for m in range(2, 25):
     col = get_column_letter(1 + m)
     prev = get_column_letter(m)
-    c = ws.cell(row=17, column=1 + m, value=f"={prev}17+{col}16")
+    c = ws.cell(row=21, column=1 + m, value=f"={prev}21+{col}20")
     c.font = BOLD
     c.number_format = "#,##0 ₽"
     c.fill = ACCENT_FILL
 
 # Сводка результатов — по M24 (колонка Y = 25-я)
-ws.cell(row=20, column=1, value="ИТОГИ").font = HEAD
-ws.cell(row=20, column=1).fill = HEAD_FILL
+ws.cell(row=24, column=1, value="ИТОГИ").font = HEAD
+ws.cell(row=24, column=1).fill = HEAD_FILL
 
-ws.cell(row=21, column=1, value="Выручка/мес на M24, ₽").font = THIN
-ws.cell(row=21, column=2, value="=Y7").number_format = "#,##0 ₽"
-ws.cell(row=21, column=2).fill = GOOD_FILL
-ws.cell(row=21, column=2).font = BOLD
-
-ws.cell(row=22, column=1, value="Выручка/год на M24, ₽").font = THIN
-ws.cell(row=22, column=2, value="=Y7*12").number_format = "#,##0 ₽"
-ws.cell(row=22, column=2).fill = GOOD_FILL
-ws.cell(row=22, column=2).font = BOLD
-
-ws.cell(row=23, column=1, value="Деньги на счёте на M24, ₽").font = THIN
-ws.cell(row=23, column=2, value="=Y17").number_format = "#,##0 ₽"
-ws.cell(row=23, column=2).fill = GOOD_FILL
-ws.cell(row=23, column=2).font = BOLD
-
-ws.cell(row=24, column=1, value="Самый большой минус по деньгам, ₽").font = THIN
-ws.cell(row=24, column=2, value="=MIN(B17:Y17)").number_format = "#,##0 ₽"
-ws.cell(row=24, column=2).fill = WARN_FILL
-ws.cell(row=24, column=2).font = BOLD
-
-ws.cell(row=25, column=1, value="Платящих клиентов на M24").font = THIN
-ws.cell(row=25, column=2, value="=Y5").number_format = "#,##0"
+ws.cell(row=25, column=1, value="Выручка/мес на M24, ₽").font = THIN
+ws.cell(row=25, column=2, value="=Y7").number_format = "#,##0 ₽"
 ws.cell(row=25, column=2).fill = GOOD_FILL
 ws.cell(row=25, column=2).font = BOLD
 
-ws.cell(row=26, column=1, value="Месяц первой прибыли").font = THIN
-ws.cell(row=26, column=2, value="M7 (с новой структурой 30/30/10/30)").font = NOTE
+ws.cell(row=26, column=1, value="Выручка/год на M24, ₽").font = THIN
+ws.cell(row=26, column=2, value="=Y7*12").number_format = "#,##0 ₽"
+ws.cell(row=26, column=2).fill = GOOD_FILL
+ws.cell(row=26, column=2).font = BOLD
 
-ws.cell(row=27, column=1, value="Месяц возврата вложений (счёт > 0)").font = THIN
-ws.cell(row=27, column=2, value="M9").font = NOTE
+ws.cell(row=27, column=1, value="Деньги на счёте на M24, ₽").font = THIN
+ws.cell(row=27, column=2, value="=Y21").number_format = "#,##0 ₽"
+ws.cell(row=27, column=2).fill = GOOD_FILL
+ws.cell(row=27, column=2).font = BOLD
 
-ws.cell(row=28, column=1, value="Маркетинг суммарно за 24 мес, ₽").font = THIN
-ws.cell(row=28, column=2, value="=SUM(B12:Y12)").number_format = "#,##0 ₽"
+ws.cell(row=28, column=1, value="Самый большой минус (M9 ≈ -2.4 М)", ).font = THIN
+ws.cell(row=28, column=2, value="=MIN(B21:Y21)").number_format = "#,##0 ₽"
 ws.cell(row=28, column=2).fill = WARN_FILL
+ws.cell(row=28, column=2).font = BOLD
 
-ws.cell(row=29, column=1, value="Зарплаты суммарно за 24 мес, ₽").font = THIN
-ws.cell(row=29, column=2, value="=SUM(B9:Y9)").number_format = "#,##0 ₽"
-ws.cell(row=29, column=2).fill = WARN_FILL
+ws.cell(row=29, column=1, value="Платящих клиентов на M24").font = THIN
+ws.cell(row=29, column=2, value="=Y5").number_format = "#,##0"
+ws.cell(row=29, column=2).fill = GOOD_FILL
+ws.cell(row=29, column=2).font = BOLD
 
-ws.cell(row=30, column=1, value="Токены+инфра суммарно за 24 мес, ₽").font = THIN
-ws.cell(row=30, column=2, value="=SUM(B10:Y10)").number_format = "#,##0 ₽"
-ws.cell(row=30, column=2).fill = WARN_FILL
+ws.cell(row=30, column=1, value="Месяц первой прибыли").font = THIN
+ws.cell(row=30, column=2, value="M11 (с реалистичной командой)").font = NOTE
 
-ws.cell(row=31, column=1, value="Бэкофис суммарно за 24 мес, ₽").font = THIN
-ws.cell(row=31, column=2, value="=SUM(B11:Y11)").number_format = "#,##0 ₽"
-ws.cell(row=31, column=2).fill = WARN_FILL
+ws.cell(row=31, column=1, value="Месяц возврата вложений (счёт > 0)").font = THIN
+ws.cell(row=31, column=2, value="M14").font = NOTE
+
+ws.cell(row=32, column=1, value="Команда суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=32, column=2, value="=SUM(B9:Y9)").number_format = "#,##0 ₽"
+ws.cell(row=32, column=2).fill = WARN_FILL
+
+ws.cell(row=33, column=1, value="Токены суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=33, column=2, value="=SUM(B10:Y10)").number_format = "#,##0 ₽"
+ws.cell(row=33, column=2).fill = WARN_FILL
+
+ws.cell(row=34, column=1, value="Инфра суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=34, column=2, value="=SUM(B11:Y11)").number_format = "#,##0 ₽"
+ws.cell(row=34, column=2).fill = WARN_FILL
+
+ws.cell(row=35, column=1, value="Бэкофис суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=35, column=2, value="=SUM(B12:Y12)").number_format = "#,##0 ₽"
+ws.cell(row=35, column=2).fill = WARN_FILL
+
+ws.cell(row=36, column=1, value="Юр+ПО+Резервы+Налоги суммарно, ₽").font = THIN
+ws.cell(row=36, column=2, value="=SUM(B13:Y14)+SUM(B16:Y17)").number_format = "#,##0 ₽"
+ws.cell(row=36, column=2).fill = WARN_FILL
+
+ws.cell(row=37, column=1, value="Маркетинг суммарно за 24 мес, ₽").font = THIN
+ws.cell(row=37, column=2, value="=SUM(B15:Y15)").number_format = "#,##0 ₽"
+ws.cell(row=37, column=2).fill = WARN_FILL
 
 # Сравнение вариантов
-ws.cell(row=33, column=1, value="Структура: 30% зарплаты / 30% токены+инфра / 10% бэкофис / 30% операц.доход (до маркетинга)").font = HEAD
-ws.cell(row=33, column=1).fill = HEAD_FILL
-
-comp = [
-    ("Платящих клиентов на M24", "6 250", "По плану", "—"),
-    ("Месяц первой прибыли", "M7", "M6 (старая модель)", "+1 мес позже"),
-    ("Месяц возврата вложений", "M9", "M8", "+1 мес позже"),
-    ("Самый большой минус", "~−380 К ₽", "~−305 К", "−25%"),
-    ("Накопленные деньги на M24", "~+60 М ₽", "~+67 М (старая)", "−7 М"),
-    ("Почему стало хуже?", "Зарплаты 30% + замедл. разгон M2-M6", "В старой founders=0", "—"),
-    ("Что лучше?", "Каждый рубль роста = +30к в команду", "—", "Запас прочности"),
-]
-for i, (k, fast, slow, delta) in enumerate(comp, start=35):
-    ws.cell(row=i, column=1, value=k).font = THIN
-    ws.cell(row=i, column=2, value=fast).font = BOLD
-    ws.cell(row=i, column=2).fill = GOOD_FILL
-    ws.cell(row=i, column=3, value=slow).font = THIN
-    ws.cell(row=i, column=3).fill = WARN_FILL
-    ws.cell(row=i, column=4, value=delta).font = THIN
+ws.cell(row=39, column=1, value="Стартовый капитал 3 М ₽ обязателен. Минимум на счёте M9 ≈ +570 К ₽ (потеряли 2.4 М за 9 мес).").font = HEAD
+ws.cell(row=39, column=1).fill = HEAD_FILL
 
 col_widths(ws, [42, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14])
 
@@ -1663,22 +1676,18 @@ keywords_2026 = [
     ("сайт косметолога", "G. Красота", 1500, 95, 5),
     ("сайт парикмахерской", "G. Красота", 1200, 65, 5),
     ("сайт барбершопа", "G. Красота", 800, 70, 5),
-    # H. Медицина
+    # H. Медицина (без медцентра — generic)
     ("сайт клиники", "H. Медицина", 2000, 145, 4),
     ("сайт врача", "H. Медицина", 1800, 95, 5),
     ("сайт стоматологии", "H. Медицина", 1500, 130, 5),
-    ("сайт медцентра", "H. Медицина", 1200, 145, 4),
     ("сайт ветклиники", "H. Медицина", 800, 105, 5),
-    # I. Авто
+    # I. Авто (без автосалона — крупный бизнес)
     ("сайт автосервиса", "I. Авто", 1200, 85, 5),
-    ("сайт автосалона", "I. Авто", 800, 115, 4),
     ("сайт шиномонтажа", "I. Авто", 600, 65, 5),
     ("сайт детейлинга", "I. Авто", 500, 75, 5),
-    # J. Недвижимость
+    # J. Недвижимость (без ЖК и застройщика — корпорат)
     ("сайт агентства недвижимости", "J. Недв", 1500, 125, 4),
     ("сайт риэлтора", "J. Недв", 1200, 95, 5),
-    ("сайт жк", "J. Недв", 800, 175, 3),
-    ("сайт застройщика", "J. Недв", 600, 145, 4),
     # K. Образование
     ("сайт психолога", "K. Образ", 2500, 95, 5),
     ("сайт репетитора", "K. Образ", 2000, 75, 5),
