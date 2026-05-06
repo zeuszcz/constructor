@@ -1612,6 +1612,319 @@ for i, (k, fast, slow, delta) in enumerate(comp, start=33):
 col_widths(ws, [42, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14])
 
 
+# ====================================================================== #
+# Sheet 16 — Маркетинг · Wordstat + воронка 2026                          #
+# ====================================================================== #
+ws = wb.create_sheet("16. Маркетинг 2026 (Wordstat)")
+write_title(
+    ws,
+    1,
+    "Семантическое ядро · Wordstat 2026 + воронка 100К ₽",
+    "71 запрос по 12 нишам. CPC оценка после ухода Google Ads (2022) и AI-хайпа 2024-2025. Перед запуском проверить руками в wordstat.yandex.ru и Прогнозе бюджета Директа.",
+)
+
+# Keyword data: (запрос, категория, показов/мес, CPC ₽ 2026, ценность 1-5)
+keywords_2026 = [
+    # A. Прямой коммерческий
+    ("создать сайт", "A. Прямой", 80000, 110, 3),
+    ("сделать сайт", "A. Прямой", 70000, 95, 3),
+    ("сайт бесплатно", "A. Прямой", 40000, 70, 2),
+    ("конструктор сайтов", "A. Прямой", 25000, 165, 4),
+    ("сайт под ключ", "A. Прямой", 18000, 135, 4),
+    ("лендинг создать", "A. Прямой", 15000, 120, 4),
+    ("сайт визитка", "A. Прямой", 12000, 75, 3),
+    ("сайт самостоятельно", "A. Прямой", 8000, 80, 4),
+    ("одностраничный сайт", "A. Прямой", 5000, 90, 4),
+    ("сайт без программиста", "A. Прямой", 1500, 65, 5),
+    # B. AI
+    ("нейросеть сайт", "B. AI ★", 4500, 85, 5),
+    ("ai сайт", "B. AI ★", 2800, 90, 5),
+    ("нейросеть создать сайт", "B. AI ★", 2200, 80, 5),
+    ("сайт через chatgpt", "B. AI ★", 1500, 75, 4),
+    ("искусственный интеллект сайт", "B. AI ★", 1400, 80, 4),
+    ("сделать сайт нейросетью", "B. AI ★", 1300, 80, 5),
+    ("ai конструктор сайтов", "B. AI ★", 1200, 95, 5),
+    ("сайт с помощью ai", "B. AI ★", 950, 85, 5),
+    ("генератор сайтов ai", "B. AI ★", 800, 95, 5),
+    # C. Бренд
+    ("тильда", "C. Бренд", 200000, 35, 1),
+    ("bitrix сайт сделать", "C. Бренд", 4500, 65, 3),
+    ("wix или tilda", "C. Бренд", 1500, 65, 5),
+    ("tilda аналог", "C. Бренд", 1100, 75, 5),
+    ("конструктор сайтов сравнение", "C. Бренд", 800, 80, 4),
+    ("замена tilda", "C. Бренд", 600, 70, 5),
+    # D. Кафе
+    ("доставка еды сайт", "D. Кафе", 4500, 95, 4),
+    ("сайт ресторана", "D. Кафе", 3000, 85, 5),
+    ("сайт для кафе", "D. Кафе", 2500, 75, 5),
+    ("сайт кофейни", "D. Кафе", 800, 70, 5),
+    ("сайт для бара", "D. Кафе", 600, 70, 4),
+    ("сайт пиццерии", "D. Кафе", 500, 75, 5),
+    # E. Магазин
+    ("создать интернет магазин", "E. Магазин", 12000, 165, 4),
+    ("интернет магазин с нуля", "E. Магазин", 3500, 130, 4),
+    ("интернет магазин под ключ", "E. Магазин", 2500, 145, 4),
+    ("магазин одежды сайт", "E. Магазин", 2000, 95, 4),
+    ("сайт магазина бесплатно", "E. Магазин", 1500, 90, 3),
+    ("сайт цветочного магазина", "E. Магазин", 600, 70, 5),
+    # F. Юрист
+    ("сайт юриста", "F. Юрист", 2000, 105, 5),
+    ("сайт адвоката", "F. Юрист", 1500, 105, 5),
+    ("сайт юридической компании", "F. Юрист", 800, 125, 5),
+    ("сайт нотариуса", "F. Юрист", 600, 90, 5),
+    ("сайт визитка юристу", "F. Юрист", 400, 85, 5),
+    # G. Красота
+    ("сайт салона красоты", "G. Красота", 2500, 85, 5),
+    ("сайт мастера маникюра", "G. Красота", 1800, 75, 5),
+    ("сайт косметолога", "G. Красота", 1500, 95, 5),
+    ("сайт парикмахерской", "G. Красота", 1200, 65, 5),
+    ("сайт барбершопа", "G. Красота", 800, 70, 5),
+    # H. Медицина
+    ("сайт клиники", "H. Медицина", 2000, 145, 4),
+    ("сайт врача", "H. Медицина", 1800, 95, 5),
+    ("сайт стоматологии", "H. Медицина", 1500, 130, 5),
+    ("сайт медцентра", "H. Медицина", 1200, 145, 4),
+    ("сайт ветклиники", "H. Медицина", 800, 105, 5),
+    # I. Авто
+    ("сайт автосервиса", "I. Авто", 1200, 85, 5),
+    ("сайт автосалона", "I. Авто", 800, 115, 4),
+    ("сайт шиномонтажа", "I. Авто", 600, 65, 5),
+    ("сайт детейлинга", "I. Авто", 500, 75, 5),
+    # J. Недвижимость
+    ("сайт агентства недвижимости", "J. Недв", 1500, 125, 4),
+    ("сайт риэлтора", "J. Недв", 1200, 95, 5),
+    ("сайт жк", "J. Недв", 800, 175, 3),
+    ("сайт застройщика", "J. Недв", 600, 145, 4),
+    # K. Образование
+    ("сайт психолога", "K. Образ", 2500, 95, 5),
+    ("сайт репетитора", "K. Образ", 2000, 75, 5),
+    ("сайт онлайн школы", "K. Образ", 1500, 105, 4),
+    ("сайт коуча", "K. Образ", 800, 85, 5),
+    ("сайт фитнес тренера", "K. Образ", 700, 75, 5),
+    # L. Pain-driven
+    ("простой сайт сделать", "L. Pain ★", 1500, 70, 4),
+    ("сайт за день", "L. Pain ★", 1200, 95, 5),
+    ("сайт быстро недорого", "L. Pain ★", 800, 85, 5),
+    ("сайт визитка дёшево", "L. Pain ★", 800, 55, 4),
+    ("сайт без знаний программирования", "L. Pain ★", 600, 65, 5),
+    ("сделать сайт самому без программиста", "L. Pain ★", 400, 60, 5),
+]
+
+# Headers
+write_head(ws, 4, ["#", "Запрос", "Категория", "Показов/мес 2026", "CPC ₽ 2026", "Ценность 1-5"])
+
+for i, (q, cat, imp, cpc, val) in enumerate(keywords_2026, start=5):
+    ws.cell(row=i, column=1, value=i - 4).font = THIN
+    ws.cell(row=i, column=2, value=q).font = THIN
+    ws.cell(row=i, column=3, value=cat).font = THIN
+    ws.cell(row=i, column=4, value=imp).number_format = "#,##0"
+    ws.cell(row=i, column=4).font = THIN
+    ws.cell(row=i, column=5, value=cpc).number_format = "#,##0 ₽"
+    ws.cell(row=i, column=5).font = THIN
+    c = ws.cell(row=i, column=6, value=val)
+    c.font = BOLD
+    c.alignment = CENTER
+    if val >= 4:
+        c.fill = GOOD_FILL
+    elif val == 3:
+        c.fill = INPUT_FILL
+    else:
+        c.fill = WARN_FILL
+
+# Aggregates row
+agg_row = 5 + len(keywords_2026) + 1
+ws.cell(row=agg_row, column=2, value=f"ИТОГО · {len(keywords_2026)} ключей").font = HEAD
+ws.cell(row=agg_row, column=2).fill = HEAD_FILL
+ws.cell(row=agg_row, column=4, value=f"=SUM(D5:D{agg_row-1})").number_format = "#,##0"
+ws.cell(row=agg_row, column=4).font = HEAD
+ws.cell(row=agg_row, column=4).fill = HEAD_FILL
+ws.cell(row=agg_row, column=5, value=f"=AVERAGE(E5:E{agg_row-1})").number_format = "#,##0 ₽"
+ws.cell(row=agg_row, column=5).font = HEAD
+ws.cell(row=agg_row, column=5).fill = HEAD_FILL
+
+# ====================================================================== #
+# Funnel calculator                                                      #
+# ====================================================================== #
+funnel_start = agg_row + 3
+ws.cell(row=funnel_start, column=1, value="ВОРОНКА 100К ₽ → ПЛАТЯЩИЕ КЛИЕНТЫ · 4 СЦЕНАРИЯ 2026").font = HEAD
+ws.cell(row=funnel_start, column=1).fill = HEAD_FILL
+
+# Inputs row
+input_row = funnel_start + 2
+ws.cell(row=input_row, column=1, value="Бюджет ₽/мес").font = INPUT
+ws.cell(row=input_row, column=1).fill = INPUT_FILL
+ws.cell(row=input_row, column=2, value=100000).font = INPUT
+ws.cell(row=input_row, column=2).fill = INPUT_FILL
+ws.cell(row=input_row, column=2).number_format = "#,##0 ₽"
+ws.cell(row=input_row, column=4, value="← поменяй число — пересчитается всё ниже").font = NOTE
+
+# Scenarios table
+sc_head_row = input_row + 2
+write_head(ws, sc_head_row, [
+    "Сценарий",
+    "CPC ₽",
+    "Кликов = визитов",
+    "Цена визита ₽",
+    "Конверсия лендинга",
+    "Trial регистраций",
+    "Trial → Paid",
+    "Платящих/мес",
+    "CAC ₽",
+])
+
+scenarios = [
+    ("А. Песимистичный (M2 cold start)", 95, 0.025, 0.05),
+    ("Б. Реалистичный (M3, базовая оптимизация)", 75, 0.035, 0.06),
+    ("В. Оптимистичный (M5, отшлифованный)", 55, 0.05, 0.08),
+    ("Г. Идеал (M6+ vertical+long-tail)", 45, 0.06, 0.10),
+]
+
+for i, (name, cpc, cv, tp) in enumerate(scenarios, start=sc_head_row + 1):
+    bcol = "B"  # column index 2 для бюджета
+    ws.cell(row=i, column=1, value=name).font = THIN
+    # CPC
+    ws.cell(row=i, column=2, value=cpc).number_format = "#,##0 ₽"
+    ws.cell(row=i, column=2).font = INPUT
+    ws.cell(row=i, column=2).fill = INPUT_FILL
+    # Кликов
+    ws.cell(row=i, column=3, value=f"=${bcol}${input_row}/B{i}").number_format = "#,##0"
+    # Цена визита (= CPC)
+    ws.cell(row=i, column=4, value=f"=B{i}").number_format = "#,##0 ₽"
+    # Conversion лендинга
+    ws.cell(row=i, column=5, value=cv).number_format = "0.0%"
+    ws.cell(row=i, column=5).font = INPUT
+    ws.cell(row=i, column=5).fill = INPUT_FILL
+    # Trials
+    ws.cell(row=i, column=6, value=f"=C{i}*E{i}").number_format = "#,##0"
+    # Trial → Paid
+    ws.cell(row=i, column=7, value=tp).number_format = "0.0%"
+    ws.cell(row=i, column=7).font = INPUT
+    ws.cell(row=i, column=7).fill = INPUT_FILL
+    # Платящих
+    pay_cell = ws.cell(row=i, column=8, value=f"=F{i}*G{i}")
+    pay_cell.number_format = "0.0"
+    pay_cell.font = BOLD
+    pay_cell.fill = GOOD_FILL
+    # CAC
+    cac_cell = ws.cell(row=i, column=9, value=f"=${bcol}${input_row}/H{i}")
+    cac_cell.number_format = "#,##0 ₽"
+    cac_cell.font = BOLD
+    if i - sc_head_row <= 2:
+        cac_cell.fill = WARN_FILL
+    else:
+        cac_cell.fill = GOOD_FILL
+
+# 6-month ramp
+ramp_row = sc_head_row + len(scenarios) + 3
+ws.cell(row=ramp_row, column=1, value="ГРАФИК ПЕРВЫХ 6 МЕСЯЦЕВ НА 100К ₽/мес DIRECT").font = HEAD
+ws.cell(row=ramp_row, column=1).fill = HEAD_FILL
+
+write_head(ws, ramp_row + 2, [
+    "Месяц",
+    "Что происходит",
+    "CPC ₽",
+    "CV лендинга",
+    "Trial → Paid",
+    "Кликов",
+    "Trials",
+    "Платящих",
+    "CAC ₽",
+])
+
+ramp = [
+    (1, "M1 Soft launch (без рекламы)", 0, 0.0, 0.0),
+    (2, "M2 Cold start", 95, 0.025, 0.05),
+    (3, "M3 Первая оптимизация", 80, 0.030, 0.06),
+    (4, "M4 Vertical landing pages", 65, 0.040, 0.07),
+    (5, "M5 Retargeting + бренд", 55, 0.045, 0.08),
+    (6, "M6 Зрелая воронка", 50, 0.050, 0.09),
+]
+
+for i, (m, label, cpc, cv, tp) in enumerate(ramp, start=ramp_row + 3):
+    ws.cell(row=i, column=1, value=f"M{m}").font = BOLD
+    ws.cell(row=i, column=2, value=label).font = THIN
+    if cpc == 0:
+        ws.cell(row=i, column=3, value="—").alignment = CENTER
+        ws.cell(row=i, column=4, value="—").alignment = CENTER
+        ws.cell(row=i, column=5, value="—").alignment = CENTER
+        ws.cell(row=i, column=6, value="—").alignment = CENTER
+        ws.cell(row=i, column=7, value="—").alignment = CENTER
+        c = ws.cell(row=i, column=8, value=0)
+        c.font = BOLD
+        c.fill = WARN_FILL
+        ws.cell(row=i, column=9, value="—").alignment = CENTER
+    else:
+        ws.cell(row=i, column=3, value=cpc).number_format = "#,##0 ₽"
+        ws.cell(row=i, column=4, value=cv).number_format = "0.0%"
+        ws.cell(row=i, column=5, value=tp).number_format = "0.0%"
+        ws.cell(row=i, column=6, value=f"=$B${input_row}/C{i}").number_format = "#,##0"
+        ws.cell(row=i, column=7, value=f"=F{i}*D{i}").number_format = "#,##0"
+        c = ws.cell(row=i, column=8, value=f"=G{i}*E{i}")
+        c.number_format = "0.0"
+        c.font = BOLD
+        c.fill = GOOD_FILL
+        cac = ws.cell(row=i, column=9, value=f"=$B${input_row}/H{i}")
+        cac.number_format = "#,##0 ₽"
+
+# Total row
+total_row = ramp_row + 3 + len(ramp)
+ws.cell(row=total_row, column=2, value="ИТОГО за 6 мес (новых платящих)").font = HEAD
+ws.cell(row=total_row, column=2).fill = HEAD_FILL
+ws.cell(row=total_row, column=8, value=f"=SUM(H{ramp_row + 3}:H{total_row - 1})").number_format = "0.0"
+ws.cell(row=total_row, column=8).font = HEAD
+ws.cell(row=total_row, column=8).fill = HEAD_FILL
+
+# Reality check vs финплан
+check_row = total_row + 3
+ws.cell(row=check_row, column=1, value="РАСХОЖДЕНИЕ С ФИНПЛАНОМ (лист 15)").font = HEAD
+ws.cell(row=check_row, column=1).fill = HEAD_FILL
+
+write_head(ws, check_row + 2, [
+    "Месяц",
+    "По финплану",
+    "По воронке Direct 100К",
+    "Дельта",
+    "Что компенсирует",
+])
+
+check_data = [
+    ("M1", 0, 0, "0", "—"),
+    ("M2", 30, 1, "−29", "Soft-launch buzz + Telegram founders"),
+    ("M3", 80, 2, "−78", "VC.ru/Habr статья + первые кейсы"),
+    ("M4", 150, 4, "−146", "Multi-channel (VK + Telegram + контент)"),
+    ("M5", 250, 7, "−243", "Retargeting + первая узнаваемость"),
+    ("M6", 380, 9, "−371", "Зрелая воронка + B2B продажи"),
+    ("M7+", "540+", "15-25", "догоняет", "Бренд + кейсы + органика"),
+]
+for i, (m, fp, vrn, delta, comp) in enumerate(check_data, start=check_row + 3):
+    ws.cell(row=i, column=1, value=m).font = BOLD
+    if isinstance(fp, int):
+        ws.cell(row=i, column=2, value=fp).number_format = "#,##0"
+    else:
+        ws.cell(row=i, column=2, value=fp).alignment = CENTER
+    if isinstance(vrn, int):
+        ws.cell(row=i, column=3, value=vrn).number_format = "#,##0"
+    else:
+        ws.cell(row=i, column=3, value=vrn).alignment = CENTER
+    ws.cell(row=i, column=4, value=delta).font = BOLD
+    ws.cell(row=i, column=4).fill = WARN_FILL if "−" in str(delta) else GOOD_FILL
+    ws.cell(row=i, column=5, value=comp).font = NOTE
+
+# Final note
+note_row = check_row + 3 + len(check_data) + 2
+ws.cell(row=note_row, column=1, value=(
+    "ВЫВОД: 100К ₽ только в Direct в первый месяц = 1-2 платящих. "
+    "Финплан с М2=30 платящих требует мульти-канал (Direct 60К + VK 25К + Telegram 15К) ИЛИ "
+    "soft-launch buzz (VC.ru/Habr) + B2B sales. Реалистичный график: М2=5-10, М3=18-25, М6=250-300, М7+ догоняет план."
+)).font = HEAD
+ws.cell(row=note_row, column=1).fill = ACCENT_FILL
+ws.cell(row=note_row, column=1).alignment = WRAP
+ws.row_dimensions[note_row].height = 60
+ws.merge_cells(start_row=note_row, start_column=1, end_row=note_row, end_column=9)
+
+col_widths(ws, [42, 30, 18, 20, 18, 18, 18, 18, 18])
+
+
 wb.save(OUT)
 print(f"OK saved: {OUT}")
 print(f"Total sheets: {len(wb.sheetnames)}")
