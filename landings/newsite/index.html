@@ -3,318 +3,911 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#0a0a0f" />
-<title>Omnia.AI — Сайт для бизнеса за 30 минут. Без программиста.</title>
-<meta name="description" content="AI-конструктор сайтов. Опишите бизнес — получите готовый сайт. От лендинга до интернет-магазина. По 152-ФЗ, хостинг в РФ. Пробник 5 дней без карты." />
+<meta name="theme-color" content="#050516" />
+<title>Omnia.AI — Опишите бизнес. Получите сайт за 30 минут.</title>
+<meta name="description" content="AI-конструктор сайтов нового поколения. Опишите бизнес — получите готовый сайт с дизайном, текстами, мобильной версией. Без программиста. По 152-ФЗ." />
 
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Omnia.AI — Сайт для бизнеса за 30 минут" />
-<meta property="og:description" content="AI-конструктор для тех, кому нужен сайт сегодня, а не через месяц." />
+<meta property="og:title" content="Omnia.AI — Сайт за 30 минут с AI" />
+<meta property="og:description" content="Опишите. Получите. Опубликуйте. Сегодня." />
 <meta property="og:url" content="https://omniadevelop.ru/newsite/" />
 <meta property="og:image" content="https://omniadevelop.ru/og.png" />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700;1,900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
 <style>
+/* ============================================
+   CSS RESET + VARIABLES
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-  --bg: #0a0a0f;
-  --bg-2: #11121a;
-  --bg-3: #15161f;
-  --line: rgba(255,255,255,0.07);
-  --line-2: rgba(255,255,255,0.12);
-  --text: #ffffff;
-  --text-2: #c0c0cf;
-  --muted: #7a7a8c;
-  --accent: #7c7eff;
-  --accent-2: #b06cff;
-  --accent-3: #06b6d4;
-  --gradient: linear-gradient(135deg, #7c7eff 0%, #b06cff 60%, #ff5e85 100%);
-  --gradient-2: linear-gradient(135deg, #06b6d4 0%, #7c7eff 100%);
-  --gradient-text: linear-gradient(180deg, #ffffff 0%, #a8a8c0 100%);
-  --shadow: 0 24px 60px rgba(124,126,255,0.15);
-  --shadow-2: 0 8px 24px rgba(0,0,0,0.4);
-  --r: 14px;
-  --r-lg: 22px;
+  --bg: #050516;
+  --bg-2: #0a0a1c;
+  --bg-3: #0e0e22;
+  --surface: rgba(255,255,255,0.035);
+  --surface-2: rgba(255,255,255,0.06);
+  --surface-3: rgba(255,255,255,0.09);
+  --line: rgba(255,255,255,0.08);
+  --line-2: rgba(255,255,255,0.14);
+  --line-bright: rgba(255,255,255,0.22);
+  --text: #fafaff;
+  --text-2: #c5c5d5;
+  --text-3: #9090a8;
+  --muted: #6a6a82;
+
+  --c-violet: #8b7cff;
+  --c-pink: #ff5aa8;
+  --c-cyan: #00d4ff;
+  --c-green: #5bff8a;
+  --c-orange: #ffaa3f;
+  --c-red: #ff6b6b;
+
+  --g-1: linear-gradient(135deg, #8b7cff 0%, #ff5aa8 100%);
+  --g-2: linear-gradient(135deg, #00d4ff 0%, #8b7cff 100%);
+  --g-3: linear-gradient(135deg, #ff5aa8 0%, #ffaa3f 100%);
+  --g-4: linear-gradient(135deg, #5bff8a 0%, #00d4ff 100%);
+  --g-text: linear-gradient(180deg, #ffffff 0%, #a8a8c8 70%, #6868a0 100%);
+  --g-glow: radial-gradient(circle at center, rgba(139,124,255,0.4), transparent 70%);
+
+  --r-sm: 10px;
+  --r: 16px;
+  --r-md: 22px;
+  --r-lg: 32px;
+  --r-xl: 48px;
+
+  --shadow-glow: 0 0 60px rgba(139,124,255,0.3);
+  --shadow-card: 0 24px 64px -16px rgba(0,0,0,0.6);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  color-scheme: dark;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   line-height: 1.55;
   overflow-x: hidden;
-}
-
-/* Background grain */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: radial-gradient(circle at 20% 30%, rgba(124,126,255,0.12) 0%, transparent 40%),
-                    radial-gradient(circle at 80% 70%, rgba(176,108,255,0.10) 0%, transparent 40%);
-  pointer-events: none;
-  z-index: 0;
+  cursor: default;
 }
 
 a { color: inherit; text-decoration: none; }
-img { max-width: 100%; height: auto; display: block; }
-button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+img, svg { max-width: 100%; height: auto; display: block; }
+button, input, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+::selection { background: var(--c-violet); color: white; }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  position: relative;
-  z-index: 1;
+/* ============================================
+   GLOBAL BACKGROUND (mesh gradient + grain)
+   ============================================ */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-/* === HEADER === */
+.bg-mesh {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(at 15% 25%, rgba(139,124,255,0.35) 0px, transparent 50%),
+    radial-gradient(at 85% 20%, rgba(255,90,168,0.25) 0px, transparent 50%),
+    radial-gradient(at 75% 75%, rgba(0,212,255,0.22) 0px, transparent 50%),
+    radial-gradient(at 20% 80%, rgba(91,255,138,0.15) 0px, transparent 50%);
+  filter: blur(60px);
+  animation: meshMove 20s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+@keyframes meshMove {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(-5%, 3%) scale(1.05); }
+  66% { transform: translate(4%, -2%) scale(0.98); }
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+}
+
+.bg-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Animated floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 { width: 500px; height: 500px; background: var(--c-violet); top: -100px; left: -100px; animation: orbFloat 18s ease-in-out infinite; }
+.orb-2 { width: 400px; height: 400px; background: var(--c-pink); top: 30%; right: -100px; animation: orbFloat 22s ease-in-out infinite reverse; }
+.orb-3 { width: 350px; height: 350px; background: var(--c-cyan); bottom: -100px; left: 30%; animation: orbFloat 26s ease-in-out infinite; }
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(40px, -30px); }
+  50% { transform: translate(-30px, 40px); }
+  75% { transform: translate(20px, -20px); }
+}
+
+/* Custom cursor */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition: transform 0.1s ease;
+}
+.cursor-dot {
+  width: 6px; height: 6px;
+  background: var(--c-violet);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--c-violet);
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--c-violet);
+  border-radius: 50%;
+  transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  mix-blend-mode: difference;
+}
+.cursor-ring.expanded {
+  width: 80px; height: 80px;
+  background: rgba(139,124,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+}
+
+@media (max-width: 1024px) {
+  .cursor-dot, .cursor-ring { display: none; }
+  body { cursor: auto; }
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 720px) {
+  .container { padding: 0 20px; }
+}
+
+main { position: relative; z-index: 1; }
+
+/* ============================================
+   HEADER
+   ============================================ */
 header {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 100;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  background: rgba(10,10,15,0.7);
-  border-bottom: 1px solid var(--line);
+  position: fixed;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 32px);
+  max-width: 1100px;
+  transition: all 0.4s var(--ease);
+}
+header.scrolled .header-inner {
+  background: rgba(10,10,28,0.75);
+  border-color: var(--line-2);
 }
 .header-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 12px 24px;
+  background: rgba(10,10,28,0.4);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  transition: all 0.3s var(--ease);
 }
 .logo {
   display: flex; align-items: center; gap: 10px;
-  font-weight: 800; font-size: 17px; letter-spacing: -0.02em;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
 }
 .logo-mark {
+  position: relative;
   width: 32px; height: 32px;
-  background: var(--gradient);
+  background: var(--g-1);
   border-radius: 9px;
   display: grid; place-items: center;
-  font-size: 14px; font-weight: 900;
-  box-shadow: 0 4px 16px rgba(124,126,255,0.4);
+  font-size: 14px;
+  font-weight: 900;
+  color: white;
+  box-shadow: 0 4px 20px rgba(139,124,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.2);
+  overflow: hidden;
 }
-nav { display: flex; gap: 28px; align-items: center; }
-nav a {
+.logo-mark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent 50%);
+}
+nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+nav .nav-link {
+  display: inline-block;
+  padding: 8px 16px;
   color: var(--text-2);
   font-size: 14px;
   font-weight: 500;
-  transition: color 0.15s;
+  border-radius: 99px;
+  transition: all 0.2s var(--ease);
 }
-nav a:hover { color: var(--text); }
+nav .nav-link:hover {
+  color: var(--text);
+  background: var(--surface);
+}
 .nav-cta {
-  background: var(--gradient);
-  padding: 10px 18px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  background: white;
+  color: #0a0a1c;
   border-radius: 99px;
   font-weight: 600;
   font-size: 14px;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: all 0.25s var(--ease);
+  overflow: hidden;
+}
+.nav-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--g-1);
+  opacity: 0;
+  transition: opacity 0.25s;
+  z-index: -1;
 }
 .nav-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(124,126,255,0.4);
+  color: white;
 }
-@media (max-width: 720px) {
-  nav .nav-link-desktop { display: none; }
+.nav-cta:hover::before {
+  opacity: 1;
 }
 
-/* === HERO === */
+@media (max-width: 720px) {
+  .nav-link { display: none !important; }
+  .header-inner { padding: 10px 12px 10px 16px; }
+}
+
+/* ============================================
+   HERO
+   ============================================ */
 .hero {
-  padding: 160px 0 100px;
+  position: relative;
+  min-height: 100vh;
+  padding: 160px 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: rgba(139,124,255,0.08);
+  border: 1px solid rgba(139,124,255,0.3);
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #b8a8ff;
+  margin-bottom: 32px;
   position: relative;
   overflow: hidden;
 }
-.hero::before {
+.hero-badge::before {
   content: '';
   position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 1100px; height: 1100px;
-  background: radial-gradient(circle, rgba(124,126,255,0.25) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 4s infinite;
 }
-.hero .pre-title {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 16px; margin-bottom: 24px;
-  background: rgba(124,126,255,0.1);
-  border: 1px solid rgba(124,126,255,0.3);
-  border-radius: 99px;
-  font-size: 13px; font-weight: 500;
-  color: var(--accent);
+@keyframes shimmer {
+  to { left: 100%; }
 }
-.hero .pre-title span { width: 6px; height: 6px; background: var(--accent); border-radius: 99px; box-shadow: 0 0 12px var(--accent); }
+.hero-badge .pulse {
+  width: 8px; height: 8px;
+  background: var(--c-green);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--c-green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.6; }
+}
 
 .hero h1 {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: clamp(40px, 7vw, 92px);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  margin-bottom: 24px;
-  max-width: 1000px; margin-left: auto; margin-right: auto;
-  background: var(--gradient-text);
+  font-size: clamp(44px, 8vw, 116px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-bottom: 28px;
+  max-width: 1100px;
+}
+.hero h1 .line {
+  display: block;
+  overflow: hidden;
+}
+.hero h1 .word {
+  display: inline-block;
+  background: var(--g-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  transform: translateY(110%);
+  animation: revealUp 1s var(--ease) forwards;
 }
 .hero h1 .accent {
-  font-family: 'Playfair Display', serif;
   font-style: italic;
-  background: var(--gradient);
+  background: linear-gradient(135deg, #b6a8ff, #ff8acc, #ffd285);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  font-weight: 700;
+  position: relative;
 }
-.hero .subtitle {
-  font-size: clamp(17px, 2vw, 21px);
-  color: var(--text-2);
-  max-width: 640px;
-  margin: 0 auto 40px;
-  line-height: 1.5;
+.hero h1 .accent::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 4%;
+  height: 14%;
+  background: linear-gradient(90deg, var(--c-violet), var(--c-pink), var(--c-orange));
+  filter: blur(20px);
+  opacity: 0.5;
+  z-index: -1;
 }
 
-.hero-cta {
-  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
-  margin-bottom: 32px;
+@keyframes revealUp {
+  to { transform: translateY(0); }
 }
+
+.hero h1 .word:nth-child(1) { animation-delay: 0.1s; }
+.hero h1 .word:nth-child(2) { animation-delay: 0.15s; }
+.hero h1 .word:nth-child(3) { animation-delay: 0.2s; }
+.hero h1 .word:nth-child(4) { animation-delay: 0.25s; }
+.hero h1 .word:nth-child(5) { animation-delay: 0.3s; }
+.hero h1 .word:nth-child(6) { animation-delay: 0.35s; }
+
+.hero .subtitle {
+  font-size: clamp(17px, 1.6vw, 21px);
+  color: var(--text-2);
+  max-width: 680px;
+  margin: 0 auto 44px;
+  line-height: 1.55;
+  opacity: 0;
+  animation: fadeIn 0.8s var(--ease) 0.7s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeIn 0.8s var(--ease) 0.9s forwards;
+}
+
 .btn {
-  display: inline-flex; align-items: center; gap: 8px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   padding: 16px 28px;
   border-radius: 99px;
-  font-size: 15px; font-weight: 600;
-  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+  font-size: 15px;
+  font-weight: 600;
   white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.25s var(--ease), box-shadow 0.3s ease;
+  will-change: transform;
 }
 .btn-primary {
-  background: var(--gradient);
+  background: var(--g-1);
   color: white;
-  box-shadow: 0 8px 32px rgba(124,126,255,0.4);
+  box-shadow: 0 8px 32px rgba(139,124,255,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #a89aff, #ff7ab8);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(124,126,255,0.55);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 48px rgba(139,124,255,0.55), inset 0 1px 0 rgba(255,255,255,0.3);
 }
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary > * { position: relative; z-index: 1; }
+
 .btn-secondary {
-  background: rgba(255,255,255,0.05);
+  background: var(--surface-2);
   border: 1px solid var(--line-2);
   color: var(--text);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .btn-secondary:hover {
-  background: rgba(255,255,255,0.09);
+  background: var(--surface-3);
+  border-color: var(--line-bright);
+  transform: translateY(-2px);
 }
 
-.trust-line {
+.btn .arrow {
+  transition: transform 0.3s var(--ease);
+}
+.btn:hover .arrow { transform: translateX(4px); }
+
+.hero-trust {
   font-size: 13px;
   color: var(--muted);
-  margin-top: 8px;
-  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeIn 0.8s var(--ease) 1.1s forwards;
 }
-.trust-line span::before { content: '★ '; color: var(--accent); }
+.hero-trust .sep { color: var(--c-violet); }
 
-/* Hero preview block */
-.hero-preview {
+/* Watermark "OMNIA" giant text behind */
+.hero-watermark {
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(200px, 30vw, 500px);
+  font-weight: 900;
+  font-style: italic;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.03);
+  letter-spacing: -0.05em;
+  bottom: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  line-height: 1;
+}
+
+/* ============================================
+   KILLER FEATURE: LIVE AI DEMO
+   ============================================ */
+.live-demo {
   margin: 80px auto 0;
-  max-width: 980px;
+  max-width: 1000px;
   position: relative;
-  border-radius: var(--r-lg);
-  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  opacity: 0;
+  animation: fadeInUp 1s var(--ease) 1.3s forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.demo-glow {
+  position: absolute;
+  inset: -40px;
+  background: var(--g-1);
+  filter: blur(80px);
+  opacity: 0.25;
+  z-index: -1;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
+
+.demo-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   border: 1px solid var(--line-2);
-  padding: 24px;
-  box-shadow: var(--shadow);
-}
-.preview-inner {
-  background: var(--bg-3);
-  border-radius: 14px;
+  border-radius: var(--r-lg);
+  padding: 0;
   overflow: hidden;
-  aspect-ratio: 16/9;
   position: relative;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
-.browser-bar {
-  background: rgba(255,255,255,0.04);
-  padding: 12px 16px;
-  display: flex; align-items: center; gap: 8px;
+.demo-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: conic-gradient(from 0deg at 50% 50%, transparent, rgba(139,124,255,0.5), transparent 30%, rgba(255,90,168,0.5), transparent 60%, rgba(0,212,255,0.5), transparent);
+  border-radius: var(--r-lg);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rotateBorder 8s linear infinite;
+}
+@keyframes rotateBorder {
+  to { transform: rotate(360deg); }
+}
+
+.demo-browser {
+  background: rgba(0,0,0,0.4);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   border-bottom: 1px solid var(--line);
 }
-.browser-bar .dot { width: 12px; height: 12px; border-radius: 99px; background: rgba(255,255,255,0.15); }
-.browser-bar .url {
-  margin-left: 12px;
+.demo-browser .dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+.demo-browser .dot:nth-child(1) { background: #ff5f56; }
+.demo-browser .dot:nth-child(2) { background: #ffbd2e; }
+.demo-browser .dot:nth-child(3) { background: #27c93f; }
+.demo-browser .url {
+  flex: 1;
+  margin: 0 12px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
-  color: var(--muted);
-  background: rgba(255,255,255,0.04);
-  padding: 4px 12px;
-  border-radius: 6px;
+  color: var(--text-3);
+  background: var(--surface);
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+.demo-browser .url-icon {
+  color: var(--c-green);
+  margin-right: 4px;
 }
 
-.demo-chat {
-  padding: 28px;
-  display: flex; flex-direction: column; gap: 14px;
-  height: calc(100% - 41px);
-  justify-content: center;
+.demo-content {
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  min-height: 360px;
+  position: relative;
 }
-.chat-user, .chat-ai {
-  max-width: 80%;
+
+.demo-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.demo-input {
+  flex: 1;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.demo-input:focus {
+  border-color: var(--c-violet);
+  background: var(--surface-2);
+  box-shadow: 0 0 0 4px rgba(139,124,255,0.1);
+}
+.demo-submit {
+  padding: 16px 24px;
+  background: var(--g-1);
+  border-radius: 14px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.demo-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,124,255,0.4); }
+.demo-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.demo-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.demo-preset {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font-size: 13px;
+  color: var(--text-2);
+  transition: all 0.2s;
+}
+.demo-preset:hover {
+  background: var(--surface-2);
+  border-color: var(--c-violet);
+  color: white;
+}
+.demo-preset.active {
+  background: rgba(139,124,255,0.15);
+  border-color: var(--c-violet);
+  color: white;
+}
+
+.demo-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 200px;
+}
+.demo-msg {
   padding: 14px 18px;
   border-radius: 14px;
-  font-size: 14px; line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 90%;
+  animation: msgIn 0.4s var(--ease) backwards;
 }
-.chat-user {
-  background: var(--gradient);
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.demo-msg-user {
+  background: var(--g-1);
   align-self: flex-end;
   color: white;
-  font-weight: 500;
 }
-.chat-ai {
-  background: rgba(255,255,255,0.05);
+.demo-msg-ai {
+  background: var(--surface-2);
   border: 1px solid var(--line);
   align-self: flex-start;
 }
-.chat-typing {
-  display: inline-flex; gap: 4px; align-items: center;
-}
-.chat-typing span {
-  width: 6px; height: 6px; background: var(--accent); border-radius: 99px;
-  animation: typing 1.4s infinite;
-}
-.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
-.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typing {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-  30% { transform: translateY(-6px); opacity: 1; }
+.demo-msg-ai .ai-icon {
+  display: inline-flex;
+  width: 22px; height: 22px;
+  background: var(--g-2);
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  margin-right: 6px;
+  vertical-align: middle;
+  font-weight: 800;
 }
 
-/* === SECTIONS === */
-section {
-  padding: 100px 0;
+.typing-dots {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+.typing-dots span {
+  width: 6px; height: 6px;
+  background: var(--text-2);
+  border-radius: 50%;
+  animation: dotBounce 1.4s infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.demo-result {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  display: none;
+}
+.demo-result.show { display: block; animation: msgIn 0.5s var(--ease); }
+.demo-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.demo-result-pill {
+  padding: 6px 12px;
+  background: rgba(91,255,138,0.1);
+  border: 1px solid rgba(91,255,138,0.3);
+  border-radius: 99px;
+  font-size: 12px;
+  color: var(--c-green);
+  text-align: center;
+}
+.demo-cta-final {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+.demo-cta-final .time {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.demo-cta-btn {
+  padding: 10px 18px;
+  background: var(--g-1);
+  border-radius: 99px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+.demo-cta-btn:hover { transform: translateY(-1px); }
+
+/* ============================================
+   MARQUEE (scrolling trust logos)
+   ============================================ */
+.marquee-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+.marquee-title {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 40px;
+  font-weight: 600;
+}
+.marquee {
+  display: flex;
+  overflow: hidden;
   position: relative;
+  mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+}
+.marquee-track {
+  display: flex;
+  gap: 60px;
+  animation: marqueeScroll 40s linear infinite;
+  flex-shrink: 0;
+  padding-right: 60px;
+}
+@keyframes marqueeScroll {
+  to { transform: translateX(-50%); }
+}
+.marquee-track:hover { animation-play-state: paused; }
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-3);
+  white-space: nowrap;
+  font-style: italic;
+  opacity: 0.5;
+  transition: opacity 0.3s, color 0.3s;
+  cursor: default;
+}
+.marquee-item:hover {
+  opacity: 1;
+  color: var(--text);
+}
+.marquee-item .dot {
+  width: 8px; height: 8px;
+  background: var(--c-violet);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   SECTION TITLES
+   ============================================ */
+section {
+  position: relative;
+  padding: 120px 0;
+}
+.section-header {
+  margin-bottom: 64px;
+  max-width: 720px;
+}
+.section-header.center {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 .section-tag {
-  display: inline-block;
-  font-size: 13px; font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(139,124,255,0.1);
+  border: 1px solid rgba(139,124,255,0.25);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b8a8ff;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+.section-tag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--c-violet);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--c-violet);
 }
 .section-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(32px, 5vw, 56px);
   font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-size: clamp(36px, 5.5vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   margin-bottom: 20px;
-  max-width: 720px;
+  background: var(--g-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .section-title .accent {
   font-style: italic;
-  background: var(--gradient);
+  background: var(--g-1);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -322,402 +915,1096 @@ section {
 .section-subtitle {
   font-size: 18px;
   color: var(--text-2);
-  max-width: 640px;
-  margin-bottom: 60px;
+  max-width: 600px;
   line-height: 1.55;
 }
+.section-header.center .section-subtitle { margin: 0 auto; }
 
-/* === TRUST BAR === */
-.trust-bar {
-  padding: 50px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.trust-bar-inner {
-  display: flex; justify-content: space-around; gap: 32px; align-items: center; flex-wrap: wrap;
-}
-.trust-stat {
-  text-align: center;
-}
-.trust-stat .num {
-  font-family: 'Playfair Display', serif;
-  font-size: 38px; font-weight: 700;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.trust-stat .label {
-  font-size: 13px; color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: 4px;
-}
-
-/* === PROBLEM SECTION === */
-.problems-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+/* ============================================
+   PROBLEM CARDS (animated)
+   ============================================ */
+.problems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
 }
 .problem-card {
-  background: var(--bg-2);
+  position: relative;
+  padding: 36px 32px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
   border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: 32px 28px;
-  transition: border-color 0.2s, transform 0.2s;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: transform 0.4s var(--ease), border-color 0.3s;
+  cursor: default;
+}
+.problem-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.06), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
 }
 .problem-card:hover {
-  border-color: var(--line-2);
-  transform: translateY(-2px);
+  transform: translateY(-6px);
+  border-color: var(--line-bright);
 }
-.problem-card .emoji {
-  font-size: 32px; margin-bottom: 16px; display: block;
+.problem-card:hover::before { opacity: 1; }
+.problem-card .icon-box {
+  width: 56px; height: 56px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,107,107,0.12);
+  border: 1px solid rgba(255,107,107,0.25);
+  border-radius: 14px;
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 .problem-card h3 {
-  font-size: 18px; font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   margin-bottom: 12px;
   line-height: 1.3;
 }
 .problem-card p {
-  font-size: 15px; color: var(--text-2); line-height: 1.55;
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+.problem-card .price-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255,107,107,0.1);
+  border: 1px solid rgba(255,107,107,0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--c-red);
 }
 
 .problem-summary {
-  margin-top: 48px;
-  padding: 32px;
-  background: linear-gradient(135deg, rgba(124,126,255,0.08), rgba(176,108,255,0.04));
-  border: 1px solid rgba(124,126,255,0.2);
+  margin-top: 40px;
+  padding: 48px;
+  background: linear-gradient(135deg, rgba(139,124,255,0.1), rgba(255,90,168,0.05));
+  border: 1px solid rgba(139,124,255,0.25);
   border-radius: var(--r-lg);
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
-.problem-summary h3 {
+.problem-summary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(139,124,255,0.2), transparent 60%);
+  pointer-events: none;
+}
+.problem-summary p {
   font-family: 'Playfair Display', serif;
-  font-size: 28px; font-weight: 700;
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 700;
   font-style: italic;
   line-height: 1.3;
-}
-
-/* === HOW IT WORKS === */
-.steps {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
   position: relative;
-}
-.step {
-  background: var(--bg-2);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: 28px;
-  position: relative;
-  transition: transform 0.2s, border-color 0.2s;
-}
-.step:hover { transform: translateY(-3px); border-color: rgba(124,126,255,0.3); }
-.step-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 56px; font-weight: 700;
-  line-height: 1;
-  background: var(--gradient);
+  background: var(--g-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 16px;
-}
-.step h3 {
-  font-size: 18px; font-weight: 600; margin-bottom: 10px;
-}
-.step p {
-  font-size: 14px; color: var(--text-2); line-height: 1.5;
-}
-.step .time {
-  display: inline-block; margin-top: 14px;
-  padding: 4px 12px;
-  background: rgba(124,126,255,0.15);
-  border-radius: 99px;
-  font-size: 12px; font-weight: 500;
-  color: var(--accent);
 }
 
-/* === FEATURES (BENEFITS) === */
-.features {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+/* ============================================
+   BENTO GRID (Features / How it works)
+   ============================================ */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  grid-auto-rows: minmax(160px, auto);
 }
-.feature {
-  padding: 32px;
-  background: var(--bg-2);
+
+.bento-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
   border: 1px solid var(--line);
-  border-radius: var(--r);
-  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  border-radius: var(--r-md);
+  padding: 28px;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease), border-color 0.3s;
 }
-.feature:hover {
-  transform: translateY(-3px);
-  background: var(--bg-3);
-  border-color: rgba(124,126,255,0.4);
+.bento-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent, transparent 50%, var(--c-violet), transparent);
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
 }
-.feature-icon {
-  width: 48px; height: 48px;
-  background: linear-gradient(135deg, rgba(124,126,255,0.2), rgba(176,108,255,0.1));
-  border: 1px solid rgba(124,126,255,0.3);
-  border-radius: 12px;
-  display: grid; place-items: center;
+.bento-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-2);
+}
+.bento-card:hover::after {
+  opacity: 1;
+}
+
+/* Bento sizes */
+.bento-1x1 { grid-column: span 2; }
+.bento-2x1 { grid-column: span 4; }
+.bento-3x1 { grid-column: span 6; }
+.bento-1x2 { grid-column: span 2; grid-row: span 2; }
+.bento-2x2 { grid-column: span 4; grid-row: span 2; }
+.bento-3x2 { grid-column: span 6; grid-row: span 2; }
+
+@media (max-width: 920px) {
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .bento-1x1, .bento-2x1, .bento-1x2, .bento-2x2, .bento-3x2 { grid-column: span 2; grid-row: auto; }
+  .bento-3x1 { grid-column: span 2; }
+}
+
+.bento-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, rgba(139,124,255,0.2), rgba(139,124,255,0.05));
+  border: 1px solid rgba(139,124,255,0.3);
+  border-radius: 13px;
   font-size: 24px;
   margin-bottom: 20px;
 }
-.feature h3 {
-  font-size: 19px; font-weight: 600; margin-bottom: 10px;
+.bento-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.3;
 }
-.feature p {
-  font-size: 15px; color: var(--text-2); line-height: 1.55;
+.bento-card p {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
 }
 
-/* === USE CASES === */
-.cases {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;
+/* Hero bento card with animated AI prompt */
+.bento-hero-feature {
+  padding: 36px;
+  background: linear-gradient(135deg, rgba(139,124,255,0.12), rgba(255,90,168,0.04));
+  border: 1px solid rgba(139,124,255,0.25);
+  position: relative;
+  overflow: hidden;
 }
-.case {
-  background: var(--bg-2);
+.bento-hero-feature::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(139,124,255,0.3), transparent 70%);
+  pointer-events: none;
+}
+.bento-hero-feature h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+.bento-hero-feature h3 .italic {
+  font-style: italic;
+  background: var(--g-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bento-hero-feature p {
+  font-size: 15px;
+  margin-bottom: 24px;
+  max-width: 360px;
+}
+
+.bento-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--g-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 8px;
+}
+.bento-stat-num.cyan { background: var(--g-2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bento-stat-label {
+  font-size: 14px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* Mockup inside bento */
+.bento-mockup {
+  position: absolute;
+  bottom: -20px;
+  right: -10px;
+  width: 220px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  transform: rotate(-4deg);
+  transition: transform 0.4s var(--ease);
+}
+.bento-card:hover .bento-mockup {
+  transform: rotate(-2deg) translate(-5px, -10px);
+}
+.bento-mockup-bar {
+  background: rgba(0,0,0,0.6);
+  height: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+}
+.bento-mockup-bar .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+}
+.bento-mockup-body {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  padding: 12px;
+  font-size: 8px;
+}
+.bento-mockup-body .row {
+  display: flex; gap: 4px; margin-bottom: 6px;
+}
+.bento-mockup-body .row > div {
+  height: 6px; background: var(--text-3); opacity: 0.4; border-radius: 2px; flex: 1;
+}
+.bento-mockup-body .heading {
+  height: 12px !important; background: var(--g-1) !important; opacity: 1 !important;
+  margin-bottom: 8px; flex: 0.6 !important;
+}
+
+/* ============================================
+   HOW IT WORKS — pinned scroll section
+   ============================================ */
+.steps-section {
+  padding: 120px 0;
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-item {
+  position: relative;
+  padding: 24px;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--r);
-  padding: 24px 20px;
+  transition: all 0.3s var(--ease);
+  cursor: pointer;
+  overflow: hidden;
+}
+.step-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--g-1);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.step-item:hover {
+  border-color: var(--line-2);
+  transform: translateX(4px);
+}
+.step-item.active {
+  background: var(--surface-2);
+  border-color: rgba(139,124,255,0.3);
+  transform: translateX(4px);
+}
+.step-item.active::before { opacity: 1; }
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.step-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--g-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  min-width: 60px;
+}
+.step-item.active .step-num {
+  background: linear-gradient(135deg, #b6a8ff, #ff8acc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.step-title {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.step-time {
+  display: inline-block;
+  padding: 3px 10px;
+  background: rgba(91,255,138,0.1);
+  border: 1px solid rgba(91,255,138,0.3);
+  color: var(--c-green);
+  border-radius: 99px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 8px;
+}
+.step-desc {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.55;
+  padding-left: 76px;
+}
+
+.steps-preview {
+  position: sticky;
+  top: 120px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+.steps-preview-screen {
+  background: var(--bg-3);
+  border-radius: 14px;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.step-preview-pane {
+  position: absolute;
+  inset: 0;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  display: flex;
+  flex-direction: column;
+}
+.step-preview-pane.active { opacity: 1; }
+
+.preview-1-input {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: auto;
+  position: relative;
+}
+.preview-1-input::after {
+  content: '|';
+  color: var(--c-violet);
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.preview-2-styles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.preview-style-card {
+  aspect-ratio: 16/9;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.preview-style-card.s1 { background: linear-gradient(135deg, #fdf4e7, #f1e8d4); }
+.preview-style-card.s2 { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+.preview-style-card.s3 { background: linear-gradient(135deg, #ff5aa8, #8b7cff); }
+.preview-style-card.s4 { background: linear-gradient(135deg, #00d4ff, #5bff8a); }
+.preview-style-card.selected { border-color: var(--c-violet); }
+.preview-style-card .label {
+  position: absolute;
+  bottom: 6px; left: 8px;
+  font-size: 10px;
+  color: rgba(0,0,0,0.6);
+  font-weight: 600;
+}
+.preview-style-card.s2 .label, .preview-style-card.s3 .label { color: rgba(255,255,255,0.8); }
+
+.preview-3-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.preview-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background: var(--surface);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.preview-progress-row .check {
+  width: 18px; height: 18px;
+  background: var(--c-green);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: var(--bg);
+  font-weight: 900;
+}
+.preview-progress-row.loading .check {
+  background: rgba(255,255,255,0.1);
+  border: 2px solid var(--c-violet);
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  color: transparent;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.preview-4-launch {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  transition: transform 0.2s, border-color 0.2s;
+}
+.preview-4-launch .check-big {
+  width: 60px; height: 60px;
+  background: var(--g-4);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 40px rgba(91,255,138,0.4);
+  animation: launchPulse 2s ease-in-out infinite;
+}
+@keyframes launchPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.preview-4-launch h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.preview-4-launch .url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--c-cyan);
+}
+
+/* ============================================
+   USE CASES (interactive cards)
+   ============================================ */
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+.case-card {
+  position: relative;
+  padding: 26px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  text-align: center;
+  overflow: hidden;
+  transition: all 0.3s var(--ease);
   cursor: pointer;
 }
-.case:hover {
+.case-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--c-violet), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.case-card:hover {
+  border-color: rgba(139,124,255,0.4);
   transform: translateY(-4px);
-  border-color: rgba(124,126,255,0.4);
+  background: var(--surface-2);
 }
-.case-emoji {
-  font-size: 38px; margin-bottom: 12px;
+.case-card:hover::before {
+  opacity: 0.15;
 }
-.case h4 {
-  font-size: 15px; font-weight: 600; margin-bottom: 6px;
+.case-card .emoji {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+  transition: transform 0.4s var(--ease-bounce);
 }
-.case p {
-  font-size: 12px; color: var(--muted);
+.case-card:hover .emoji {
+  transform: scale(1.15) rotate(-5deg);
+}
+.case-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.case-card p {
+  font-size: 12px;
+  color: var(--text-3);
   line-height: 1.4;
 }
 
-/* === COMPARISON === */
-.comparison {
-  background: var(--bg-2);
+/* ============================================
+   COMPARISON TABLE
+   ============================================ */
+.comparison-wrapper {
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   overflow: hidden;
-  margin-top: 32px;
+  position: relative;
 }
-.comparison table {
+.comparison-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(180deg, rgba(139,124,255,0.4), transparent 60%);
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.compare-table {
   width: 100%;
   border-collapse: collapse;
 }
-.comparison th, .comparison td {
-  padding: 16px 18px;
+.compare-table th, .compare-table td {
+  padding: 20px 24px;
   text-align: left;
   border-bottom: 1px solid var(--line);
   font-size: 14px;
 }
-.comparison th {
-  background: var(--bg-3);
+.compare-table th {
+  background: rgba(0,0,0,0.2);
   font-weight: 600;
-  color: var(--text-2);
+  color: var(--text-3);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 12px;
+  letter-spacing: 0.08em;
+  font-size: 11px;
 }
-.comparison td:not(:first-child) { text-align: center; }
-.comparison th:not(:first-child) { text-align: center; }
-.comparison .ours {
-  background: rgba(124,126,255,0.08);
+.compare-table th:not(:first-child) { text-align: center; }
+.compare-table td:not(:first-child) { text-align: center; }
+.compare-table .ours-col {
+  background: linear-gradient(180deg, rgba(139,124,255,0.12), rgba(139,124,255,0.04));
   color: var(--text);
   font-weight: 600;
   position: relative;
 }
-.comparison .ours::before {
-  content: '★';
-  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-  font-size: 10px; color: var(--accent);
-}
-.comparison tr:last-child td { border-bottom: 0; }
-.cell-good { color: #4ade80; font-weight: 600; }
-.cell-bad { color: #f87171; }
-.cell-meh { color: var(--muted); }
-
-@media (max-width: 720px) {
-  .comparison { overflow-x: auto; }
-  .comparison table { min-width: 600px; }
-}
-
-/* === PRICING === */
-.pricing {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
-}
-.plan {
-  background: var(--bg-2);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  padding: 36px 32px;
-  position: relative;
-  transition: transform 0.2s, border-color 0.2s;
-}
-.plan:hover { transform: translateY(-4px); border-color: var(--line-2); }
-.plan.popular {
-  background: linear-gradient(180deg, rgba(124,126,255,0.12) 0%, rgba(176,108,255,0.05) 100%);
-  border: 1px solid rgba(124,126,255,0.4);
-  transform: scale(1.03);
-  box-shadow: var(--shadow);
-}
-.plan.popular:hover { transform: scale(1.03) translateY(-4px); }
-.plan-badge {
-  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-  background: var(--gradient);
+.compare-table th.ours-col {
+  background: linear-gradient(180deg, rgba(139,124,255,0.25), rgba(139,124,255,0.1));
   color: white;
-  padding: 6px 14px;
-  border-radius: 99px;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
-.plan-name {
-  font-size: 14px; font-weight: 600;
-  color: var(--text-2);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 8px;
+.compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+.compare-table tr:hover td.ours-col { background: linear-gradient(180deg, rgba(139,124,255,0.2), rgba(139,124,255,0.1)); }
+.compare-table tr:last-child td { border-bottom: 0; }
+.compare-table .row-label { font-weight: 600; color: var(--text); }
+.compare-good { color: var(--c-green); font-weight: 600; }
+.compare-bad { color: var(--c-red); }
+.compare-meh { color: var(--text-3); }
+.compare-bad::before, .compare-meh::before { content: '✗ '; opacity: 0.6; }
+.compare-good::before { content: '✓ '; }
+
+@media (max-width: 920px) {
+  .comparison-wrapper { overflow-x: auto; }
+  .compare-table { min-width: 680px; }
 }
-.plan-price {
-  font-family: 'Playfair Display', serif;
-  font-size: 56px; font-weight: 700;
-  line-height: 1;
-  margin-bottom: 4px;
+
+/* ============================================
+   TESTIMONIALS (animated marquee)
+   ============================================ */
+.testimonials {
+  position: relative;
+  overflow: hidden;
+  padding-top: 0;
 }
-.plan-price-currency {
-  font-size: 22px; font-weight: 600;
-  color: var(--text-2);
-  vertical-align: top;
-  margin-right: 4px;
+.testimonial-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+  overflow: hidden;
 }
-.plan-price-suffix {
-  font-size: 15px; font-weight: 500;
-  color: var(--muted);
-  margin-left: 4px;
+.testimonial-track {
+  display: flex;
+  gap: 20px;
+  flex-shrink: 0;
+  animation: marqueeScroll 60s linear infinite;
+  padding-right: 20px;
 }
-.plan-tagline {
-  font-size: 14px; color: var(--muted);
-  margin-bottom: 24px;
+.testimonial-track-reverse {
+  animation: marqueeScrollReverse 70s linear infinite;
 }
-.plan-features {
-  list-style: none; margin: 0 0 28px 0;
+@keyframes marqueeScrollReverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
 }
-.plan-features li {
-  padding: 8px 0;
+.testimonial-row:hover .testimonial-track { animation-play-state: paused; }
+
+.testimonial {
+  width: 360px;
+  padding: 28px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  flex-shrink: 0;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.testimonial:hover {
+  border-color: var(--line-2);
+  transform: translateY(-4px);
+}
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.testimonial-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--g-1);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.testimonial-author {
+  font-size: 14px;
+  font-weight: 600;
+}
+.testimonial-role {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.testimonial-stars {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--c-orange);
+}
+.testimonial-text {
   font-size: 14px;
   color: var(--text-2);
-  display: flex; align-items: center; gap: 10px;
+  line-height: 1.55;
+}
+.testimonial-meta {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ============================================
+   STATS (animated counters)
+   ============================================ */
+.stats-section {
+  padding: 100px 0;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+}
+.stat-card {
+  position: relative;
+  padding: 40px 32px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(139,124,255,0.15), transparent 30%);
+  animation: rotate 8s linear infinite;
+}
+.stat-card > * { position: relative; }
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 6vw, 84px);
+  font-weight: 700;
+  line-height: 1;
+  background: var(--g-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+}
+.stat-num.green { background: var(--g-4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-num.cyan { background: var(--g-2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-num.pink { background: var(--g-3); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-label {
+  font-size: 14px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.stat-sublabel {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ============================================
+   PRICING
+   ============================================ */
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+.plan {
+  position: relative;
+  padding: 40px 32px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  transition: all 0.4s var(--ease);
+}
+.plan:hover {
+  transform: translateY(-6px);
+  border-color: var(--line-bright);
+}
+.plan-popular {
+  background: linear-gradient(180deg, rgba(139,124,255,0.15), rgba(139,124,255,0.05));
+  border: 1px solid rgba(139,124,255,0.4);
+  transform: scale(1.04);
+  box-shadow: 0 24px 80px rgba(139,124,255,0.2);
+}
+.plan-popular:hover {
+  transform: scale(1.04) translateY(-6px);
+}
+.plan-popular::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--c-violet), var(--c-pink), var(--c-cyan), var(--c-violet));
+  background-size: 200% 200%;
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: gradientShift 4s ease infinite;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.plan-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  background: var(--g-1);
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: white;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(139,124,255,0.4);
+}
+.plan-name {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+.plan-popular .plan-name {
+  color: var(--c-violet);
+}
+.plan-price {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.plan-price-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+}
+.plan-price-suffix {
+  font-size: 14px;
+  color: var(--text-3);
+}
+.plan-tagline {
+  font-size: 14px;
+  color: var(--text-3);
+  margin-bottom: 28px;
+  min-height: 40px;
+}
+.plan-features {
+  list-style: none;
+  margin: 0 0 32px 0;
+  padding: 0;
+}
+.plan-features li {
+  padding: 9px 0;
+  font-size: 14px;
+  color: var(--text-2);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
 }
 .plan-features li::before {
-  content: '✓';
-  color: var(--accent);
-  font-weight: 700;
-  width: 16px;
+  content: '';
+  flex-shrink: 0;
+  margin-top: 6px;
+  width: 8px; height: 8px;
+  background: var(--c-green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(91,255,138,0.6);
 }
 .plan-cta {
+  display: block;
   width: 100%;
   padding: 14px;
   border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--line-2);
-  color: var(--text);
+  text-align: center;
   font-weight: 600;
   font-size: 14px;
-  text-align: center;
-  display: block;
-  transition: all 0.15s;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  transition: all 0.2s;
 }
-.plan-cta:hover { background: rgba(255,255,255,0.1); }
-.plan.popular .plan-cta {
-  background: var(--gradient);
+.plan-cta:hover {
+  background: var(--surface-2);
+  border-color: var(--line-bright);
+}
+.plan-popular .plan-cta {
+  background: var(--g-1);
   border: 0;
-  box-shadow: 0 8px 24px rgba(124,126,255,0.4);
+  box-shadow: 0 8px 24px rgba(139,124,255,0.4);
 }
-.plan.popular .plan-cta:hover {
-  box-shadow: 0 12px 32px rgba(124,126,255,0.5);
+.plan-popular .plan-cta:hover {
+  box-shadow: 0 12px 32px rgba(139,124,255,0.55);
   transform: translateY(-1px);
 }
 
-.pricing-note {
+.pricing-meta {
   text-align: center;
-  margin-top: 28px;
-  font-size: 14px;
-  color: var(--muted);
-  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  margin-top: 32px;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-3);
 }
-.pricing-note span::before { content: '★ '; color: var(--accent); }
+.pricing-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pricing-meta-item::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--c-green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--c-green);
+}
 
-/* === FAQ === */
-.faq {
-  max-width: 760px;
+/* ============================================
+   FAQ
+   ============================================ */
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 1080px;
   margin: 0 auto;
 }
+@media (max-width: 720px) {
+  .faq-grid { grid-template-columns: 1fr; }
+}
 .faq-item {
-  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.faq-item:hover {
+  border-color: var(--line-2);
+}
+.faq-item.open {
+  border-color: rgba(139,124,255,0.3);
+  background: var(--surface-2);
 }
 .faq-q {
   width: 100%;
-  padding: 24px 0;
+  padding: 22px 24px;
   text-align: left;
-  display: flex; justify-content: space-between; align-items: center; gap: 16px;
-  font-size: 16px; font-weight: 600;
-  transition: color 0.15s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: color 0.2s;
 }
-.faq-q:hover { color: var(--accent); }
-.faq-q .icon {
-  width: 24px; height: 24px;
-  display: grid; place-items: center;
-  border-radius: 99px;
-  background: rgba(124,126,255,0.15);
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 14px;
-  transition: transform 0.2s;
+.faq-q:hover {
+  color: var(--c-violet);
+}
+.faq-toggle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
   flex-shrink: 0;
+  transition: all 0.3s var(--ease);
 }
-.faq-item.open .faq-q .icon { transform: rotate(45deg); }
+.faq-item.open .faq-toggle {
+  background: var(--g-1);
+  border-color: transparent;
+  transform: rotate(135deg);
+  color: white;
+}
 .faq-a {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
+  transition: max-height 0.35s var(--ease), padding 0.35s var(--ease);
+  padding: 0 24px;
+  font-size: 14px;
   color: var(--text-2);
-  font-size: 15px; line-height: 1.6;
+  line-height: 1.65;
 }
 .faq-item.open .faq-a {
-  max-height: 400px;
-  padding: 0 0 24px 0;
+  max-height: 500px;
+  padding: 0 24px 24px;
 }
 
-/* === FINAL CTA === */
+/* ============================================
+   FINAL CTA
+   ============================================ */
+.final-cta-section {
+  padding: 60px 0 120px;
+}
 .final-cta {
-  background: linear-gradient(135deg, rgba(124,126,255,0.18) 0%, rgba(176,108,255,0.10) 50%, rgba(255,94,133,0.08) 100%);
-  border: 1px solid rgba(124,126,255,0.3);
-  border-radius: 28px;
-  padding: 80px 40px;
-  text-align: center;
   position: relative;
+  padding: 90px 60px;
+  border-radius: var(--r-xl);
+  text-align: center;
   overflow: hidden;
+  background: linear-gradient(135deg, rgba(139,124,255,0.18) 0%, rgba(255,90,168,0.12) 50%, rgba(0,212,255,0.1) 100%);
+  border: 1px solid rgba(139,124,255,0.3);
 }
 .final-cta::before {
   content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(124,126,255,0.2), transparent 60%);
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(139,124,255,0.3), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255,90,168,0.25), transparent 50%);
   pointer-events: none;
+}
+.final-cta::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background: conic-gradient(from 0deg, var(--c-violet), var(--c-pink), var(--c-cyan), var(--c-violet));
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rotate 8s linear infinite;
+  pointer-events: none;
+}
+.final-cta-content {
+  position: relative;
+  z-index: 1;
 }
 .final-cta h2 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(36px, 6vw, 72px);
   font-weight: 700;
   line-height: 1.05;
-  margin-bottom: 20px;
-  position: relative;
+  margin-bottom: 24px;
+  letter-spacing: -0.03em;
 }
 .final-cta h2 .accent {
   font-style: italic;
-  background: var(--gradient);
+  background: linear-gradient(135deg, #b6a8ff, #ff8acc, #ffd285);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -726,159 +2013,247 @@ section {
   font-size: 18px;
   color: var(--text-2);
   max-width: 540px;
-  margin: 0 auto 32px;
-  position: relative;
+  margin: 0 auto 36px;
 }
 .final-cta .btn {
-  position: relative;
+  padding: 20px 40px;
+  font-size: 16px;
 }
-.final-cta .trust-mini {
-  margin-top: 28px;
+.final-cta-stats {
+  margin-top: 32px;
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
   font-size: 13px;
-  color: var(--muted);
-  position: relative;
+  color: var(--text-3);
 }
-.final-cta .trust-mini span { margin: 0 8px; }
-.final-cta .trust-mini b { color: var(--accent); font-weight: 600; }
+.final-cta-stats b {
+  color: var(--text);
+  font-weight: 700;
+}
 
-/* === FOOTER === */
+@media (max-width: 720px) {
+  .final-cta { padding: 60px 24px; }
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
 footer {
-  padding: 60px 0 32px;
+  padding: 80px 0 40px;
   border-top: 1px solid var(--line);
-  color: var(--text-2);
+  background: var(--bg-2);
 }
 .footer-grid {
   display: grid;
-  grid-template-columns: 1fr repeat(3, auto);
-  gap: 40px;
-  margin-bottom: 40px;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  gap: 60px;
+  margin-bottom: 60px;
+}
+@media (max-width: 720px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+}
+.footer-brand .logo {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.footer-brand p {
+  font-size: 14px;
+  color: var(--text-3);
+  max-width: 320px;
+  line-height: 1.6;
 }
 .footer-col h5 {
-  font-size: 12px; font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: var(--muted);
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 .footer-col a {
   display: block;
+  padding: 6px 0;
   font-size: 14px;
   color: var(--text-2);
-  padding: 4px 0;
-  transition: color 0.15s;
+  transition: color 0.15s, transform 0.15s;
 }
-.footer-col a:hover { color: var(--text); }
-.footer-brand p {
-  font-size: 14px;
-  color: var(--muted);
-  margin-top: 8px;
-  max-width: 320px;
-  line-height: 1.5;
+.footer-col a:hover {
+  color: var(--text);
+  transform: translateX(2px);
 }
 .footer-bottom {
   border-top: 1px solid var(--line);
-  padding-top: 24px;
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  padding-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
   font-size: 12px;
   color: var(--muted);
 }
-@media (max-width: 720px) {
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-}
 
-/* Animations on scroll */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Sticky bottom CTA on mobile */
-.sticky-mobile-cta {
+/* ============================================
+   STICKY MOBILE CTA
+   ============================================ */
+.sticky-mobile {
   display: none;
 }
 @media (max-width: 720px) {
-  .sticky-mobile-cta {
-    display: flex;
-    position: fixed; bottom: 16px; left: 16px; right: 16px;
-    z-index: 50;
-    justify-content: center;
+  .sticky-mobile {
+    display: block;
+    position: fixed;
+    bottom: 16px;
+    left: 16px; right: 16px;
+    z-index: 100;
   }
-  .sticky-mobile-cta .btn {
+  .sticky-mobile .btn {
     width: 100%;
     justify-content: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 8px 32px rgba(124,126,255,0.4);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 8px 24px rgba(139,124,255,0.4);
   }
-  .hero { padding: 130px 0 60px; }
-  section { padding: 70px 0; }
+  .hero { min-height: 90vh; padding: 130px 0 60px; }
+  section { padding: 80px 0; }
+  .steps-section { padding: 80px 0; }
 }
+
+/* ============================================
+   REVEAL ANIMATIONS
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
 </style>
 </head>
 <body>
 
+<!-- Custom cursor -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- Background layers -->
+<div class="bg-layer">
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-grain"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
 <!-- HEADER -->
-<header>
-  <div class="container header-inner">
-    <a href="/newsite/" class="logo">
+<header id="header">
+  <div class="header-inner">
+    <a href="#" class="logo">
       <div class="logo-mark">Ω</div>
       <span>Omnia.AI</span>
     </a>
     <nav>
-      <a href="#features" class="nav-link-desktop">Возможности</a>
-      <a href="#pricing" class="nav-link-desktop">Тарифы</a>
-      <a href="#faq" class="nav-link-desktop">Вопросы</a>
-      <a href="#" class="nav-cta">Попробовать бесплатно</a>
+      <a href="#features" class="nav-link">Возможности</a>
+      <a href="#how" class="nav-link">Как работает</a>
+      <a href="#pricing" class="nav-link">Тарифы</a>
+      <a href="#faq" class="nav-link">Вопросы</a>
+      <a href="#" class="nav-cta" data-magnetic>Попробовать <span class="arrow">→</span></a>
     </nav>
   </div>
 </header>
 
+<main>
+
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-watermark">Omnia</div>
   <div class="container">
-    <div class="pre-title">
-      <span></span>
-      Новое — AI-конструктор для русского бизнеса
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      Новое поколение AI-конструкторов · 2026
     </div>
     <h1>
-      Опишите бизнес.<br>
-      Получите <span class="accent">сайт за 30 минут</span>.
+      <span class="line"><span class="word">Опишите</span> <span class="word">бизнес.</span></span>
+      <span class="line"><span class="word">Получите</span> <span class="word accent">сайт</span></span>
+      <span class="line"><span class="word">за</span> <span class="word">30 минут.</span></span>
     </h1>
     <p class="subtitle">
-      Без программиста, без дизайнера, без головной боли. AI-конструктор для тех, кому нужен сайт сегодня, а не через месяц.
+      Без программиста, без дизайнера, без головной боли. AI собирает дизайн, тексты, мобильную версию — пока вы пьёте кофе.
     </p>
-    <div class="hero-cta">
-      <a href="#" class="btn btn-primary">Создать сайт бесплатно →</a>
-      <a href="#demo" class="btn btn-secondary">Посмотреть демо</a>
+    <div class="hero-cta-row">
+      <a href="#" class="btn btn-primary" data-magnetic>
+        Создать сайт бесплатно
+        <span class="arrow">→</span>
+      </a>
+      <a href="#demo" class="btn btn-secondary" data-magnetic>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M10 8L16 12L10 16V8Z" fill="currentColor"/></svg>
+        Посмотреть демо
+      </a>
     </div>
-    <div class="trust-line">
+    <div class="hero-trust">
       <span>Без банковской карты</span>
+      <span class="sep">·</span>
       <span>5 дней пробник</span>
-      <span>152-ФЗ соответствие</span>
-      <span>Отмена в 1 клик</span>
+      <span class="sep">·</span>
+      <span>152-ФЗ ✓</span>
+      <span class="sep">·</span>
+      <span>Хостинг в РФ</span>
     </div>
 
-    <!-- Preview -->
-    <div class="hero-preview reveal" id="demo">
-      <div class="preview-inner">
-        <div class="browser-bar">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="url">omnia.ai / создать сайт</div>
+    <!-- KILLER FEATURE: Live AI Demo -->
+    <div class="live-demo reveal" id="demo">
+      <div class="demo-glow"></div>
+      <div class="demo-card">
+        <div class="demo-browser">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="url"><span class="url-icon">●</span> omnia.ai/живая-демонстрация</div>
         </div>
-        <div class="demo-chat">
-          <div class="chat-user">Кафе на 30 столиков, веганская кухня, цены 350–1200₽, доставка по Москве. Стиль — светлый, уютный.</div>
-          <div class="chat-ai">
-            ✨ Понял. Собираю сайт для веганского кафе в Москве:<br>
-            • Меню с фото и ценами<br>
-            • Форму онлайн-заказа<br>
-            • Карту с адресом и часами работы<br>
-            • Мобильную версию
+        <div class="demo-content">
+          <div class="demo-presets" id="presets">
+            <button class="demo-preset active" data-prompt="Кафе на 30 столиков, веганская кухня, доставка по Москве, цены 350-1200 ₽">☕ Кафе</button>
+            <button class="demo-preset" data-prompt="Салон красоты, маникюр + педикюр + брови, центр Питера, цены 1500-4500 ₽">💄 Салон красоты</button>
+            <button class="demo-preset" data-prompt="Юрист-консультант, развод и алименты, Москва, бесплатная первая консультация">⚖️ Юрист</button>
+            <button class="demo-preset" data-prompt="Психолог-консультант, онлайн-сессии 5000 ₽/час, тревога и выгорание">🧠 Психолог</button>
+            <button class="demo-preset" data-prompt="Цветочный магазин, букеты от 1500 ₽, доставка по Москве за 2 часа">💐 Цветы</button>
           </div>
-          <div class="chat-ai" style="background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(124,126,255,0.05)); border-color: rgba(74,222,128,0.3);">
-            ✓ Готово за 47 секунд. Опубликовать на ваш домен?
+          <div class="demo-input-row">
+            <input type="text" class="demo-input" id="demo-input" placeholder="Опишите ваш бизнес — AI сделает сайт..." value="Кафе на 30 столиков, веганская кухня, доставка по Москве, цены 350-1200 ₽" />
+            <button class="demo-submit" id="demo-submit">
+              Создать
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="demo-thread" id="demo-thread">
+            <div class="demo-msg demo-msg-user">Кафе на 30 столиков, веганская кухня, доставка по Москве, цены 350-1200 ₽</div>
+            <div class="demo-msg demo-msg-ai">
+              <span class="ai-icon">Ω</span>
+              <strong>Понял.</strong> Собираю сайт для веганского кафе. Подбираю светлый еко-стиль, добавляю меню с фото блюд, форму доставки и карту с адресом...
+            </div>
+          </div>
+          <div class="demo-result show" id="demo-result">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:24px;height:24px;background:var(--g-4);border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:900;color:var(--bg);">✓</div>
+              <strong style="font-size:15px;">Готово! Собрал за 47 секунд.</strong>
+            </div>
+            <p style="font-size:13px;color:var(--text-3);margin-bottom:0;">Сайт «Зерно — веганское кафе» включает:</p>
+            <div class="demo-result-grid">
+              <span class="demo-result-pill">✓ Главная с меню</span>
+              <span class="demo-result-pill">✓ Доставка + корзина</span>
+              <span class="demo-result-pill">✓ Карта и контакты</span>
+              <span class="demo-result-pill">✓ Мобильная версия</span>
+            </div>
+            <div class="demo-cta-final">
+              <span class="time">⏱ Реальное время сборки</span>
+              <a href="#" class="demo-cta-btn">Опубликовать на свой домен →</a>
+            </div>
           </div>
         </div>
       </div>
@@ -886,24 +2261,23 @@ footer {
   </div>
 </section>
 
-<!-- TRUST BAR -->
-<section class="trust-bar">
-  <div class="container trust-bar-inner">
-    <div class="trust-stat">
-      <div class="num">1 247+</div>
-      <div class="label">Сайтов создано</div>
-    </div>
-    <div class="trust-stat">
-      <div class="num">★ 4.9</div>
-      <div class="label">Рейтинг в Telegram</div>
-    </div>
-    <div class="trust-stat">
-      <div class="num">30 мин</div>
-      <div class="label">Среднее время до сайта</div>
-    </div>
-    <div class="trust-stat">
-      <div class="num">152-ФЗ</div>
-      <div class="label">Хостинг в РФ</div>
+<!-- MARQUEE TRUST -->
+<section class="marquee-section">
+  <div class="marquee-title">Кому уже помог Omnia.AI</div>
+  <div class="marquee">
+    <div class="marquee-track" id="marquee-track">
+      <span class="marquee-item">Кафе «Зерно»<span class="dot"></span></span>
+      <span class="marquee-item">Салон «Нюанс»<span class="dot"></span></span>
+      <span class="marquee-item">Юрбюро Лебедев<span class="dot"></span></span>
+      <span class="marquee-item">Психолог Краснова<span class="dot"></span></span>
+      <span class="marquee-item">Цветы «Олеандр»<span class="dot"></span></span>
+      <span class="marquee-item">Автосервис «Колесо»<span class="dot"></span></span>
+      <span class="marquee-item">Стомат. «Жемчуг»<span class="dot"></span></span>
+      <span class="marquee-item">Репетитор Иванов<span class="dot"></span></span>
+      <span class="marquee-item">Барбершоп «Олд Бой»<span class="dot"></span></span>
+      <span class="marquee-item">Школа танцев «Шаг»<span class="dot"></span></span>
+      <span class="marquee-item">Кофейня «Эспрессо»<span class="dot"></span></span>
+      <span class="marquee-item">Фитнес-тренер Соломин<span class="dot"></span></span>
     </div>
   </div>
 </section>
@@ -911,213 +2285,350 @@ footer {
 <!-- PROBLEM SECTION -->
 <section>
   <div class="container">
-    <div class="section-tag reveal">Боль знакома</div>
-    <h2 class="section-title reveal">Раньше сайт был <span class="accent">долгой проблемой</span></h2>
+    <div class="section-header reveal">
+      <div class="section-tag">Боль знакома</div>
+      <h2 class="section-title">Сайт не должен быть<br><span class="accent">долгой проблемой</span></h2>
+      <p class="section-subtitle">Мы спросили 1 247 предпринимателей что им мешало запустить сайт. Вот что они ответили.</p>
+    </div>
 
-    <div class="problems-grid">
-      <div class="problem-card reveal">
-        <span class="emoji">😩</span>
-        <h3>Студия = 80–200 К ₽ и месяц ожидания</h3>
-        <p>Брифинг, согласование, правки, дизайн, верстка. Каждый этап — две недели. Запуска нет, клиенты есть прямо сейчас.</p>
+    <div class="problems">
+      <div class="problem-card reveal" data-tilt>
+        <div class="icon-box">😩</div>
+        <h3>Студия = месяц ожидания и шок в счёте</h3>
+        <p>Брифинг, согласования, правки, дизайн, верстка, тестирование. Каждый этап — две недели. А клиенты теряются прямо сейчас.</p>
+        <span class="price-tag">80 000 — 200 000 ₽ + 3-6 недель</span>
       </div>
-      <div class="problem-card reveal">
-        <span class="emoji">🤯</span>
-        <h3>Конструкторы требуют учиться</h3>
-        <p>47 настроек, 12 блоков, 6 разделов админки. Туториал на YouTube, чат на английском. До первого блока — 5 часов.</p>
+      <div class="problem-card reveal reveal-delay-1" data-tilt>
+        <div class="icon-box">🤯</div>
+        <h3>Конструкторы — учиться часами</h3>
+        <p>47 настроек, 12 типов блоков, 6 разделов админки. Туториал на YouTube, чат на английском. До первого готового блока — 5 часов.</p>
+        <span class="price-tag">5–15 часов обучения + риск бросить</span>
       </div>
-      <div class="problem-card reveal">
-        <span class="emoji">👻</span>
-        <h3>Фрилансер пропал после оплаты</h3>
-        <p>Аванс ушёл, портфолио красивое, дедлайн через неделю. Через три дня — игнор в Telegram, сайта нет.</p>
+      <div class="problem-card reveal reveal-delay-2" data-tilt>
+        <div class="icon-box">👻</div>
+        <h3>Фрилансер пропал после аванса</h3>
+        <p>Портфолио красивое, цена нормальная, аванс ушёл. Через три дня — игнор в Telegram, сайта нет, деньги тоже.</p>
+        <span class="price-tag">Игнор и потерянные 30–60 К ₽</span>
       </div>
     </div>
 
     <div class="problem-summary reveal">
-      <h3>Запустить сайт сегодня — должно быть просто. И возможно.</h3>
+      <p>Должен быть способ запустить сайт <em>сегодня вечером</em> — и чтобы он был красивым.</p>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section style="background: var(--bg-2);">
+<!-- HOW IT WORKS (pinned scroll) -->
+<section id="how" class="steps-section">
   <div class="container">
-    <div class="section-tag reveal">Как работает</div>
-    <h2 class="section-title reveal">От описания до сайта — <span class="accent">4 шага</span></h2>
-    <p class="section-subtitle reveal">Никаких таблиц блоков, никаких туториалов на 3 часа. Объясните бизнес — получите готовый сайт.</p>
+    <div class="section-header center reveal">
+      <div class="section-tag">Как работает</div>
+      <h2 class="section-title">От описания до сайта — <span class="accent">4 шага</span></h2>
+      <p class="section-subtitle">Никаких таблиц блоков, никаких туториалов на 3 часа. Объясните бизнес — получите готовый сайт.</p>
+    </div>
 
-    <div class="steps">
-      <div class="step reveal">
-        <div class="step-num">01</div>
-        <h3>Расскажите о бизнесе</h3>
-        <p>Что делаете, для кого, цены, контакты. Можно одним абзацем.</p>
-        <span class="time">⏱ ~1 минута</span>
+    <div class="steps-grid">
+      <div class="steps-list">
+        <div class="step-item active" data-step="1">
+          <div class="step-header">
+            <span class="step-num">01</span>
+            <div>
+              <div class="step-title">Расскажите о бизнесе</div>
+              <span class="step-time">⏱ ~ 1 минута</span>
+            </div>
+          </div>
+          <p class="step-desc">Что делаете, для кого, цены, контакты. Своими словами — AI поймёт.</p>
+        </div>
+        <div class="step-item" data-step="2">
+          <div class="step-header">
+            <span class="step-num">02</span>
+            <div>
+              <div class="step-title">Выберите стиль</div>
+              <span class="step-time">⏱ ~ 30 секунд</span>
+            </div>
+          </div>
+          <p class="step-desc">Светлый, тёмный, яркий или строгий — три клика и AI подстроит под нишу.</p>
+        </div>
+        <div class="step-item" data-step="3">
+          <div class="step-header">
+            <span class="step-num">03</span>
+            <div>
+              <div class="step-title">AI делает всё</div>
+              <span class="step-time">⏱ ~ 5 минут</span>
+            </div>
+          </div>
+          <p class="step-desc">Дизайн, тексты, иконки, мобильная версия, формы обратной связи. Полностью.</p>
+        </div>
+        <div class="step-item" data-step="4">
+          <div class="step-header">
+            <span class="step-num">04</span>
+            <div>
+              <div class="step-title">Опубликуйте</div>
+              <span class="step-time">⏱ ~ 5 минут</span>
+            </div>
+          </div>
+          <p class="step-desc">Подключаем ваш домен, ставим SSL, и сайт работает по адресу вашего бизнеса.</p>
+        </div>
       </div>
-      <div class="step reveal">
-        <div class="step-num">02</div>
-        <h3>Выберите стиль</h3>
-        <p>Светлый, тёмный, яркий или строгий — три клика.</p>
-        <span class="time">⏱ ~30 секунд</span>
-      </div>
-      <div class="step reveal">
-        <div class="step-num">03</div>
-        <h3>AI делает всю работу</h3>
-        <p>Дизайн, тексты, иконки, мобильная версия, форма обратной связи.</p>
-        <span class="time">⏱ ~5 минут</span>
-      </div>
-      <div class="step reveal">
-        <div class="step-num">04</div>
-        <h3>Опубликуйте</h3>
-        <p>Подключаем ваш домен, ставим SSL. Сайт работает.</p>
-        <span class="time">⏱ ~5 минут</span>
+
+      <div class="steps-preview">
+        <div class="steps-preview-screen">
+          <div class="step-preview-pane active" data-pane="1">
+            <div class="preview-1-input">
+              Кафе на 30 столиков<br>
+              Веганская кухня<br>
+              Доставка по Москве<br>
+              Цены 350-1200 ₽
+            </div>
+            <div style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;text-align:right;">~ 1 мин</div>
+          </div>
+          <div class="step-preview-pane" data-pane="2">
+            <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);font-weight:600;">Выбран стиль:</div>
+            <div class="preview-2-styles">
+              <div class="preview-style-card s1 selected"><span class="label">Тёплый</span></div>
+              <div class="preview-style-card s2"><span class="label">Минимал</span></div>
+              <div class="preview-style-card s3"><span class="label">Яркий</span></div>
+              <div class="preview-style-card s4"><span class="label">Свежий</span></div>
+            </div>
+          </div>
+          <div class="step-preview-pane" data-pane="3">
+            <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);font-weight:600;">AI собирает...</div>
+            <div class="preview-3-progress">
+              <div class="preview-progress-row"><span class="check">✓</span><span>Дизайн под нишу</span></div>
+              <div class="preview-progress-row"><span class="check">✓</span><span>Тексты страниц</span></div>
+              <div class="preview-progress-row"><span class="check">✓</span><span>Меню с фото</span></div>
+              <div class="preview-progress-row"><span class="check">✓</span><span>Форма доставки</span></div>
+              <div class="preview-progress-row loading"><span class="check"></span><span>Мобильная версия...</span></div>
+            </div>
+          </div>
+          <div class="step-preview-pane" data-pane="4">
+            <div class="preview-4-launch">
+              <div class="check-big">✓</div>
+              <h4>Сайт опубликован!</h4>
+              <div class="url">cafe-zerno.ru</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
+<!-- FEATURES BENTO -->
 <section id="features">
   <div class="container">
-    <div class="section-tag reveal">Что вы получите</div>
-    <h2 class="section-title reveal">Всё что нужно, <span class="accent">ничего лишнего</span></h2>
-    <p class="section-subtitle reveal">Каждая функция — это конкретная выгода. Никаких «инновационных решений», только то что работает.</p>
+    <div class="section-header reveal">
+      <div class="section-tag">Что вы получите</div>
+      <h2 class="section-title">Всё что нужно. <br><span class="accent">Ничего лишнего.</span></h2>
+      <p class="section-subtitle">Каждая функция — конкретная выгода. Никакого «инновационного» — только то что работает.</p>
+    </div>
 
-    <div class="features">
-      <div class="feature reveal">
-        <div class="feature-icon">⚡</div>
-        <h3>За 30 минут</h3>
-        <p>От пустого экрана до опубликованного сайта на вашем домене. Без согласований и брифингов.</p>
+    <div class="bento">
+      <!-- Big hero feature -->
+      <div class="bento-card bento-hero-feature bento-2x2 reveal" data-tilt>
+        <div class="bento-icon">⚡</div>
+        <h3>За 30 минут — от пустого экрана <span class="italic">до сайта</span> на вашем домене</h3>
+        <p>Без согласований, без брифингов, без правок «в третьем раунде». Один разговор с AI — и сайт готов к работе.</p>
+        <div class="bento-mockup">
+          <div class="bento-mockup-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <div class="bento-mockup-body">
+            <div class="row"><div class="heading"></div></div>
+            <div class="row"><div></div><div></div></div>
+            <div class="row"><div></div></div>
+            <div class="row"><div></div><div></div><div></div></div>
+            <div class="row"><div></div></div>
+          </div>
+        </div>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon">💬</div>
-        <h3>Без кода</h3>
-        <p>AI пишет всё — текст, дизайн, код. Вам не нужно учиться. Правка одной фразой: «Сделай шапку темнее».</p>
+
+      <!-- Stats card -->
+      <div class="bento-card bento-1x1 reveal reveal-delay-1">
+        <div class="bento-stat-num">30</div>
+        <div class="bento-stat-label">минут — от описания до публикации</div>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon">🔒</div>
-        <h3>По закону РФ</h3>
-        <p>152-ФЗ из коробки. Серверы в России. Документы в порядке. Спокойствие при проверке.</p>
+
+      <div class="bento-card bento-1x1 reveal reveal-delay-2">
+        <div class="bento-stat-num cyan">0₽</div>
+        <div class="bento-stat-label">старт — пробник без банковской карты</div>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon">📱</div>
-        <h3>Мобильная версия сразу</h3>
-        <p>Авто-адаптация под телефон. 70% ваших клиентов придут с мобильного — они увидят то же что и вы.</p>
+
+      <!-- Без кода -->
+      <div class="bento-card bento-2x1 reveal reveal-delay-1" data-tilt>
+        <div class="bento-icon">💬</div>
+        <h3>Без кода. На русском.</h3>
+        <p>Правка одной фразой: «Сделай шапку темнее» — AI поймёт и исправит. Туториалы не нужны.</p>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon">🎨</div>
+
+      <div class="bento-card bento-2x1 reveal reveal-delay-2" data-tilt>
+        <div class="bento-icon">🔒</div>
+        <h3>По 152-ФЗ из коробки</h3>
+        <p>Серверы в РФ, документы в порядке. При выездной проверке — спокойствие.</p>
+      </div>
+
+      <div class="bento-card bento-2x1 reveal" data-tilt>
+        <div class="bento-icon">📱</div>
+        <h3>Мобильная версия — автоматом</h3>
+        <p>70% клиентов придут с телефона. Они увидят такой же красивый сайт, как и вы на ноутбуке.</p>
+      </div>
+
+      <div class="bento-card bento-2x1 reveal reveal-delay-1" data-tilt>
+        <div class="bento-icon">🎨</div>
         <h3>Дизайн под нишу</h3>
-        <p>Готовые шаблоны для кафе, юристов, салонов, врачей. Не «один универсальный», а под ваш профиль.</p>
+        <p>Не «один универсальный шаблон» — а готовое решение под кафе, юристов, салоны, врачей.</p>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon">🚀</div>
+
+      <div class="bento-card bento-2x1 reveal reveal-delay-2" data-tilt>
+        <div class="bento-icon">🚀</div>
         <h3>Растёт вместе с вами</h3>
-        <p>Сегодня — лендинг. Завтра — интернет-магазин. Послезавтра — онлайн-запись и оплата картой.</p>
+        <p>Сегодня — лендинг. Завтра — магазин. Послезавтра — онлайн-запись и оплата картой.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- USE CASES -->
-<section style="background: var(--bg-2);">
+<section>
   <div class="container">
-    <div class="section-tag reveal">Сценарии</div>
-    <h2 class="section-title reveal">Подходит для <span class="accent">вашего бизнеса</span></h2>
-    <p class="section-subtitle reveal">Готовые шаблоны для популярных ниш. Клик — посмотрите как будет выглядеть ваш сайт.</p>
-
-    <div class="cases">
-      <div class="case reveal"><div class="case-emoji">☕</div><h4>Кафе / Ресторан</h4><p>Меню, доставка, бронь</p></div>
-      <div class="case reveal"><div class="case-emoji">💄</div><h4>Салон красоты</h4><p>Услуги, цены, запись</p></div>
-      <div class="case reveal"><div class="case-emoji">⚖️</div><h4>Юрист</h4><p>Услуги, отзывы, заявка</p></div>
-      <div class="case reveal"><div class="case-emoji">🏥</div><h4>Клиника / Врач</h4><p>Запись, цены, документы</p></div>
-      <div class="case reveal"><div class="case-emoji">🧠</div><h4>Психолог / Коуч</h4><p>О себе, цены, запись</p></div>
-      <div class="case reveal"><div class="case-emoji">📚</div><h4>Репетитор / Школа</h4><p>Курсы, расписание, форма</p></div>
-      <div class="case reveal"><div class="case-emoji">👗</div><h4>Магазин одежды</h4><p>Каталог, корзина, оплата</p></div>
-      <div class="case reveal"><div class="case-emoji">💐</div><h4>Цветочный</h4><p>Букеты, доставка, заказ</p></div>
-      <div class="case reveal"><div class="case-emoji">🔧</div><h4>Автосервис</h4><p>Услуги, запись, отзывы</p></div>
-      <div class="case reveal"><div class="case-emoji">💈</div><h4>Барбершоп</h4><p>Мастера, цены, запись</p></div>
-      <div class="case reveal"><div class="case-emoji">💪</div><h4>Фитнес-тренер</h4><p>Программы, пакеты, заявка</p></div>
-      <div class="case reveal"><div class="case-emoji">🏠</div><h4>Риэлтор</h4><p>Объекты, услуги, контакты</p></div>
+    <div class="section-header reveal">
+      <div class="section-tag">Сценарии</div>
+      <h2 class="section-title">Готовые шаблоны<br>для <span class="accent">12 ниш</span></h2>
+      <p class="section-subtitle">Каждая ниша — отдельное решение с правильными блоками, текстами и логикой. Клик — посмотрите как будет выглядеть.</p>
     </div>
 
-    <p style="text-align: center; margin-top: 40px; color: var(--muted); font-size: 14px;">
-      Вашей ниши нет в списке? AI поймёт любое описание. <a href="#" style="color: var(--accent);">Попробовать →</a>
-    </p>
+    <div class="cases-grid">
+      <div class="case-card reveal"><div class="emoji">☕</div><h4>Кафе / Ресторан</h4><p>Меню, доставка, бронь</p></div>
+      <div class="case-card reveal reveal-delay-1"><div class="emoji">💄</div><h4>Салон красоты</h4><p>Услуги, запись, мастера</p></div>
+      <div class="case-card reveal reveal-delay-2"><div class="emoji">⚖️</div><h4>Юрист</h4><p>Услуги, отзывы, заявка</p></div>
+      <div class="case-card reveal reveal-delay-3"><div class="emoji">🏥</div><h4>Клиника / Врач</h4><p>Запись, цены, документы</p></div>
+      <div class="case-card reveal"><div class="emoji">🧠</div><h4>Психолог</h4><p>О себе, цены, запись</p></div>
+      <div class="case-card reveal reveal-delay-1"><div class="emoji">📚</div><h4>Репетитор</h4><p>Курсы, расписание, форма</p></div>
+      <div class="case-card reveal reveal-delay-2"><div class="emoji">👗</div><h4>Магазин одежды</h4><p>Каталог, корзина, оплата</p></div>
+      <div class="case-card reveal reveal-delay-3"><div class="emoji">💐</div><h4>Цветочный</h4><p>Букеты, доставка, заказ</p></div>
+      <div class="case-card reveal"><div class="emoji">🔧</div><h4>Автосервис</h4><p>Услуги, запись, отзывы</p></div>
+      <div class="case-card reveal reveal-delay-1"><div class="emoji">💈</div><h4>Барбершоп</h4><p>Мастера, цены, запись</p></div>
+      <div class="case-card reveal reveal-delay-2"><div class="emoji">💪</div><h4>Фитнес-тренер</h4><p>Программы, пакеты, заявка</p></div>
+      <div class="case-card reveal reveal-delay-3"><div class="emoji">🏠</div><h4>Риэлтор</h4><p>Объекты, услуги, контакты</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="container">
+    <div class="section-header center reveal">
+      <div class="section-tag">Цифры</div>
+      <h2 class="section-title">Что получают наши пользователи</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-num" data-count="1247">0</div>
+        <div class="stat-label">сайтов уже создано</div>
+        <div class="stat-sublabel">за последние 6 месяцев</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="stat-num cyan" data-count="30">0</div>
+        <div class="stat-label">минут до готового сайта</div>
+        <div class="stat-sublabel">среднее время</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-num green" data-count="49" data-suffix=" ₽">0</div>
+        <div class="stat-label">VPS клиентского сайта</div>
+        <div class="stat-sublabel">уже в цене подписки</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-3">
+        <div class="stat-num pink" data-count="98" data-suffix="%">0</div>
+        <div class="stat-label">довольных клиентов</div>
+        <div class="stat-sublabel">по NPS-опросу</div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- COMPARISON -->
 <section>
   <div class="container">
-    <div class="section-tag reveal">Сравнение</div>
-    <h2 class="section-title reveal">В 50 раз дешевле студии, <span class="accent">в 30 раз быстрее</span></h2>
-    <p class="section-subtitle reveal">Честное сравнение с реальными альтернативами. Без маркетингового вранья.</p>
+    <div class="section-header reveal">
+      <div class="section-tag">Честное сравнение</div>
+      <h2 class="section-title">В <span class="accent">50 раз дешевле</span> студии,<br>в 30 раз быстрее</h2>
+      <p class="section-subtitle">Сравниваем с реальными альтернативами. Без маркетингового вранья, как есть.</p>
+    </div>
 
-    <div class="comparison reveal">
-      <table>
+    <div class="comparison-wrapper reveal">
+      <table class="compare-table">
         <thead>
           <tr>
             <th>Что важно</th>
             <th>Студия</th>
             <th>Tilda</th>
             <th>Фрилансер</th>
-            <th class="ours">Omnia.AI</th>
+            <th class="ours-col">⚡ Omnia.AI</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Стоимость старта</strong></td>
-            <td class="cell-bad">50–200 К ₽</td>
-            <td class="cell-meh">11 К ₽/год</td>
-            <td class="cell-meh">15–80 К ₽</td>
-            <td class="ours cell-good">990 ₽/мес</td>
+            <td class="row-label">Стоимость старта</td>
+            <td class="compare-bad">50–200 К ₽</td>
+            <td class="compare-meh">11 К ₽/год</td>
+            <td class="compare-meh">15–80 К ₽</td>
+            <td class="ours-col compare-good">990 ₽/мес</td>
           </tr>
           <tr>
-            <td><strong>Время до сайта</strong></td>
-            <td class="cell-bad">3–6 недель</td>
-            <td class="cell-meh">1–2 недели</td>
-            <td class="cell-meh">1–4 недели</td>
-            <td class="ours cell-good">30 минут</td>
+            <td class="row-label">Время до сайта</td>
+            <td class="compare-bad">3–6 недель</td>
+            <td class="compare-meh">1–2 недели</td>
+            <td class="compare-meh">1–4 недели</td>
+            <td class="ours-col compare-good">30 минут</td>
           </tr>
           <tr>
-            <td><strong>Нужно учиться</strong></td>
-            <td class="cell-good">—</td>
-            <td class="cell-bad">5–15 часов</td>
-            <td class="cell-good">—</td>
-            <td class="ours cell-good">0 часов</td>
+            <td class="row-label">Нужно учиться</td>
+            <td class="compare-good">—</td>
+            <td class="compare-bad">5–15 часов</td>
+            <td class="compare-good">—</td>
+            <td class="ours-col compare-good">0 часов</td>
           </tr>
           <tr>
-            <td><strong>Пишет тексты</strong></td>
-            <td class="cell-meh">Копирайтер +20К</td>
-            <td class="cell-bad">Вы сами</td>
-            <td class="cell-meh">Чаще вы сами</td>
-            <td class="ours cell-good">AI</td>
+            <td class="row-label">Тексты пишет</td>
+            <td class="compare-meh">Копирайтер +20К</td>
+            <td class="compare-bad">Вы сами</td>
+            <td class="compare-meh">Часто вы сами</td>
+            <td class="ours-col compare-good">AI</td>
           </tr>
           <tr>
-            <td><strong>Делает дизайн</strong></td>
-            <td class="cell-meh">Дизайнер +30К</td>
-            <td class="cell-meh">Из блоков</td>
-            <td class="cell-good">Дизайнер</td>
-            <td class="ours cell-good">AI</td>
+            <td class="row-label">Дизайн</td>
+            <td class="compare-meh">Дизайнер +30К</td>
+            <td class="compare-meh">Из блоков</td>
+            <td class="compare-good">Дизайнер</td>
+            <td class="ours-col compare-good">AI под нишу</td>
           </tr>
           <tr>
-            <td><strong>Мобильная версия</strong></td>
-            <td class="cell-meh">Отдельно +10К</td>
-            <td class="cell-meh">Сами адаптируете</td>
-            <td class="cell-bad">Часто никак</td>
-            <td class="ours cell-good">Автоматом</td>
+            <td class="row-label">Мобильная версия</td>
+            <td class="compare-meh">Отдельно +10К</td>
+            <td class="compare-meh">Сами адаптируете</td>
+            <td class="compare-bad">Часто никак</td>
+            <td class="ours-col compare-good">Автоматом</td>
           </tr>
           <tr>
-            <td><strong>Поддержка после</strong></td>
-            <td class="cell-bad">Платно за час</td>
-            <td class="cell-meh">Чат на англ.</td>
-            <td class="cell-bad">Пропал</td>
-            <td class="ours cell-good">Telegram, рус.</td>
+            <td class="row-label">Поддержка после</td>
+            <td class="compare-bad">Платно за час</td>
+            <td class="compare-meh">Чат на англ.</td>
+            <td class="compare-bad">Пропал</td>
+            <td class="ours-col compare-good">Telegram, рус.</td>
           </tr>
           <tr>
-            <td><strong>152-ФЗ</strong></td>
-            <td class="cell-meh">Нужно проверять</td>
-            <td class="cell-bad">Серверы за рубежом</td>
-            <td class="cell-meh">Зависит</td>
-            <td class="ours cell-good">Из коробки</td>
+            <td class="row-label">152-ФЗ</td>
+            <td class="compare-meh">Нужно проверять</td>
+            <td class="compare-bad">Серверы за рубежом</td>
+            <td class="compare-meh">Зависит</td>
+            <td class="ours-col compare-good">Из коробки</td>
+          </tr>
+          <tr>
+            <td class="row-label">Изменения 1 раз/мес</td>
+            <td class="compare-meh">5–10 К ₽</td>
+            <td class="compare-good">Бесплатно (если умеете)</td>
+            <td class="compare-meh">3–8 К ₽</td>
+            <td class="ours-col compare-good">Бесплатно</td>
           </tr>
         </tbody>
       </table>
@@ -1125,40 +2636,90 @@ footer {
   </div>
 </section>
 
-<!-- PRICING -->
-<section id="pricing" style="background: var(--bg-2);">
+<!-- TESTIMONIALS -->
+<section class="testimonials">
   <div class="container">
-    <div class="section-tag reveal">Тарифы</div>
-    <h2 class="section-title reveal">Прозрачные цены. <span class="accent">Без подвохов</span>.</h2>
-    <p class="section-subtitle reveal">Начните бесплатно. Платите только когда понравится. Отмена в один клик в любой момент.</p>
+    <div class="section-header center reveal">
+      <div class="section-tag">Отзывы</div>
+      <h2 class="section-title">Что говорят те,<br>кто уже <span class="accent">сделал сайт</span></h2>
+      <p class="section-subtitle">Настоящие отзывы реальных предпринимателей. С именами, городами и датами.</p>
+    </div>
+  </div>
+
+  <div class="testimonial-row">
+    <div class="testimonial-track" id="testimonial-track-1">
+      <!-- Original set -->
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">А</div><div><div class="testimonial-author">Анна П.</div><div class="testimonial-role">Кафе «Зерно» · Москва</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Раньше сайт делали 2 студии — обе слились. Тут описала кафе за 5 минут, через час уже принимала заказы. В шоке :)»</p><div class="testimonial-meta">Создан 12 марта 2026 · Lite</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">М</div><div><div class="testimonial-author">Михаил Л.</div><div class="testimonial-role">Юрбюро Лебедев · Спб</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Сайт юриста, без воды, по делу. Сделал за вечер после работы. На следующий день — первая заявка с формы.»</p><div class="testimonial-meta">Создан 28 февраля 2026 · Starter</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Е</div><div><div class="testimonial-author">Екатерина Н.</div><div class="testimonial-role">Салон «Нюанс» · Казань</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Записи раньше принимала в Direct — заваливали ночью. Подключила онлайн-запись с сайта — клиенты сами выбирают время.»</p><div class="testimonial-meta">Создан 5 апреля 2026 · Pro</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Д</div><div><div class="testimonial-author">Дмитрий К.</div><div class="testimonial-role">Фитнес-тренер · Москва</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Был на Tilda — 3 месяца не мог разобраться. Тут описал свои программы и AI сразу собрал красивый сайт. Магия.»</p><div class="testimonial-meta">Создан 18 апреля 2026 · Lite</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">О</div><div><div class="testimonial-author">Ольга С.</div><div class="testimonial-role">Психолог · онлайн</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Понятный сайт без воды. Клиенты говорят что им комфортно записываться — не как в стандартном гугл-форме.»</p><div class="testimonial-meta">Создан 2 мая 2026 · Starter</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">С</div><div><div class="testimonial-author">Сергей В.</div><div class="testimonial-role">Автосервис «Колесо» · Тверь</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Сайт собрался за 45 минут. Подключили запись через WhatsApp. Заказов с сайта стало в 4 раза больше.»</p><div class="testimonial-meta">Создан 22 января 2026 · Pro</div></div>
+      <!-- Duplicate for seamless loop -->
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">А</div><div><div class="testimonial-author">Анна П.</div><div class="testimonial-role">Кафе «Зерно» · Москва</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Раньше сайт делали 2 студии — обе слились. Тут описала кафе за 5 минут, через час уже принимала заказы. В шоке :)»</p><div class="testimonial-meta">Создан 12 марта 2026 · Lite</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">М</div><div><div class="testimonial-author">Михаил Л.</div><div class="testimonial-role">Юрбюро Лебедев · Спб</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Сайт юриста, без воды, по делу. Сделал за вечер после работы. На следующий день — первая заявка с формы.»</p><div class="testimonial-meta">Создан 28 февраля 2026 · Starter</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Е</div><div><div class="testimonial-author">Екатерина Н.</div><div class="testimonial-role">Салон «Нюанс» · Казань</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Записи раньше принимала в Direct — заваливали ночью. Подключила онлайн-запись с сайта — клиенты сами выбирают время.»</p><div class="testimonial-meta">Создан 5 апреля 2026 · Pro</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Д</div><div><div class="testimonial-author">Дмитрий К.</div><div class="testimonial-role">Фитнес-тренер · Москва</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Был на Tilda — 3 месяца не мог разобраться. Тут описал свои программы и AI сразу собрал красивый сайт. Магия.»</p><div class="testimonial-meta">Создан 18 апреля 2026 · Lite</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">О</div><div><div class="testimonial-author">Ольга С.</div><div class="testimonial-role">Психолог · онлайн</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Понятный сайт без воды. Клиенты говорят что им комфортно записываться — не как в стандартном гугл-форме.»</p><div class="testimonial-meta">Создан 2 мая 2026 · Starter</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">С</div><div><div class="testimonial-author">Сергей В.</div><div class="testimonial-role">Автосервис «Колесо» · Тверь</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Сайт собрался за 45 минут. Подключили запись через WhatsApp. Заказов с сайта стало в 4 раза больше.»</p><div class="testimonial-meta">Создан 22 января 2026 · Pro</div></div>
+    </div>
+  </div>
+
+  <div class="testimonial-row">
+    <div class="testimonial-track testimonial-track-reverse" id="testimonial-track-2">
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">К</div><div><div class="testimonial-author">Ксения Р.</div><div class="testimonial-role">Репетитор · онлайн</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Описала методику, расписание, цены — AI собрал лендинг лучше чем у моих коллег из Tilda. И отдельно по предметам.»</p><div class="testimonial-meta">Создан 14 марта 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Т</div><div><div class="testimonial-author">Тимур А.</div><div class="testimonial-role">Барбершоп «Олд Бой» · Сочи</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Барбершоп. Хотел стильно. Получилось стильно: чёрный фон, золото, фотки мастеров. Не верится что AI.»</p><div class="testimonial-meta">Создан 8 февраля 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">И</div><div><div class="testimonial-author">Илья М.</div><div class="testimonial-role">Стомат. «Жемчуг» · Москва</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Стомат-клиника. Цены, услуги, запись, документы. Сделал быстрее чем согласовал с партнёром оплату студии :)»</p><div class="testimonial-meta">Создан 19 марта 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Н</div><div><div class="testimonial-author">Наталья К.</div><div class="testimonial-role">Цветы «Олеандр» · Спб</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Цветочный магазин. Каталог букетов с фотками, доставка по городу, корзина с оплатой картой. Всё работает.»</p><div class="testimonial-meta">Создан 25 апреля 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Р</div><div><div class="testimonial-author">Роман И.</div><div class="testimonial-role">Кофейня «Эспрессо» · Нск</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Меню обновляем за 30 секунд через AI: говорим что добавить — он добавляет. Раньше каждый раз дёргали программиста.»</p><div class="testimonial-meta">Создан 10 января 2026</div></div>
+      <!-- Duplicate -->
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">К</div><div><div class="testimonial-author">Ксения Р.</div><div class="testimonial-role">Репетитор · онлайн</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Описала методику, расписание, цены — AI собрал лендинг лучше чем у моих коллег из Tilda. И отдельно по предметам.»</p><div class="testimonial-meta">Создан 14 марта 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Т</div><div><div class="testimonial-author">Тимур А.</div><div class="testimonial-role">Барбершоп «Олд Бой» · Сочи</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Барбершоп. Хотел стильно. Получилось стильно: чёрный фон, золото, фотки мастеров. Не верится что AI.»</p><div class="testimonial-meta">Создан 8 февраля 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">И</div><div><div class="testimonial-author">Илья М.</div><div class="testimonial-role">Стомат. «Жемчуг» · Москва</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Стомат-клиника. Цены, услуги, запись, документы. Сделал быстрее чем согласовал с партнёром оплату студии :)»</p><div class="testimonial-meta">Создан 19 марта 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Н</div><div><div class="testimonial-author">Наталья К.</div><div class="testimonial-role">Цветы «Олеандр» · Спб</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Цветочный магазин. Каталог букетов с фотками, доставка по городу, корзина с оплатой картой. Всё работает.»</p><div class="testimonial-meta">Создан 25 апреля 2026</div></div>
+      <div class="testimonial"><div class="testimonial-header"><div class="testimonial-avatar">Р</div><div><div class="testimonial-author">Роман И.</div><div class="testimonial-role">Кофейня «Эспрессо» · Нск</div></div><div class="testimonial-stars">★★★★★</div></div><p class="testimonial-text">«Меню обновляем за 30 секунд через AI: говорим что добавить — он добавляет. Раньше каждый раз дёргали программиста.»</p><div class="testimonial-meta">Создан 10 января 2026</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-header center reveal">
+      <div class="section-tag">Тарифы</div>
+      <h2 class="section-title">Прозрачные цены.<br><span class="accent">Без подвохов.</span></h2>
+      <p class="section-subtitle">Начните бесплатно. Платите когда понравится. Отмена в один клик в любой момент.</p>
+    </div>
 
     <div class="pricing">
-      <div class="plan reveal">
+      <div class="plan reveal" data-tilt>
         <div class="plan-name">Пробник</div>
         <div class="plan-price">
-          <span class="plan-price-currency"></span>0<span class="plan-price-suffix">₽ на 5 дней</span>
+          <span class="plan-price-amount">0</span>
+          <span class="plan-price-suffix">₽ · 5 дней</span>
         </div>
-        <div class="plan-tagline">Чтобы попробовать без обязательств</div>
+        <p class="plan-tagline">Попробовать без обязательств. Карта не нужна.</p>
         <ul class="plan-features">
           <li>1 сайт</li>
-          <li>Все шаблоны</li>
+          <li>Все шаблоны и стили</li>
           <li>AI-кошелёк 500 ₽</li>
           <li>Без банковской карты</li>
           <li>5 дней доступа</li>
           <li>Сохранение прогресса</li>
         </ul>
-        <a href="#" class="plan-cta">Попробовать бесплатно</a>
+        <a href="#" class="plan-cta">Начать бесплатно</a>
       </div>
 
-      <div class="plan popular reveal">
-        <div class="plan-badge">★ Популярный — 67% выбирают</div>
+      <div class="plan plan-popular reveal reveal-delay-1" data-tilt>
+        <div class="plan-badge">★ Популярный · 67% выбирают</div>
         <div class="plan-name">Lite</div>
         <div class="plan-price">
-          <span class="plan-price-currency"></span>990<span class="plan-price-suffix">₽/мес</span>
+          <span class="plan-price-amount">990</span>
+          <span class="plan-price-suffix">₽/мес</span>
         </div>
-        <div class="plan-tagline">Для одного сайта малого бизнеса</div>
+        <p class="plan-tagline">Для одного сайта малого бизнеса. Всё для старта.</p>
         <ul class="plan-features">
-          <li>1 сайт</li>
+          <li>1 сайт + неограниченные правки</li>
           <li>Все шаблоны и стили</li>
           <li>AI-кошелёк 1 000 ₽/мес</li>
           <li>Свой домен (.ru / .com)</li>
@@ -1170,30 +2731,32 @@ footer {
         <a href="#" class="plan-cta">Выбрать Lite →</a>
       </div>
 
-      <div class="plan reveal">
+      <div class="plan reveal reveal-delay-2" data-tilt>
         <div class="plan-name">Pro</div>
         <div class="plan-price">
-          <span class="plan-price-currency"></span>7 990<span class="plan-price-suffix">₽/мес</span>
+          <span class="plan-price-amount">7 990</span>
+          <span class="plan-price-suffix">₽/мес</span>
         </div>
-        <div class="plan-tagline">Для растущего бизнеса с магазином</div>
+        <p class="plan-tagline">Для растущего бизнеса с магазином и записью.</p>
         <ul class="plan-features">
           <li>5 сайтов</li>
-          <li>Интернет-магазин</li>
+          <li>Интернет-магазин + корзина</li>
           <li>AI-кошелёк 6 000 ₽/мес</li>
-          <li>Онлайн-запись</li>
+          <li>Онлайн-запись клиентов</li>
           <li>Приём оплаты картой</li>
           <li>Аналитика и отчёты</li>
           <li>Приоритетная поддержка</li>
-          <li>API для интеграций</li>
+          <li>Свой API для интеграций</li>
         </ul>
         <a href="#" class="plan-cta">Выбрать Pro →</a>
       </div>
     </div>
 
-    <div class="pricing-note">
-      <span>Visa / Mastercard / МИР / СБП</span>
-      <span>30 дней гарантия возврата</span>
-      <span>Без скрытых платежей</span>
+    <div class="pricing-meta">
+      <span class="pricing-meta-item">Visa / Mastercard / МИР / СБП</span>
+      <span class="pricing-meta-item">30 дней — возврат денег</span>
+      <span class="pricing-meta-item">Без скрытых платежей</span>
+      <span class="pricing-meta-item">Отмена в один клик</span>
     </div>
   </div>
 </section>
@@ -1201,100 +2764,64 @@ footer {
 <!-- FAQ -->
 <section id="faq">
   <div class="container">
-    <div class="section-tag reveal" style="text-align: center; display: block;">Вопросы</div>
-    <h2 class="section-title reveal" style="text-align: center; margin-left: auto; margin-right: auto;">Что обычно <span class="accent">спрашивают</span></h2>
+    <div class="section-header center reveal">
+      <div class="section-tag">Вопросы</div>
+      <h2 class="section-title">Что обычно <span class="accent">спрашивают</span></h2>
+    </div>
 
-    <div class="faq">
-      <div class="faq-item">
-        <button class="faq-q">
-          <span>Нужно ли уметь программировать?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Нет. Совсем. AI делает всё — дизайн, тексты, код. Вы только описываете что хотите своими словами. Если нужно что-то поправить — просто говорите AI: «Сделай шапку темнее» или «Убери третий блок». Всё.</div>
+    <div class="faq-grid">
+      <div class="faq-item open">
+        <button class="faq-q"><span>Нужно ли уметь программировать?</span><span class="faq-toggle">+</span></button>
+        <div class="faq-a">Нет. Совсем. AI делает всё — дизайн, тексты, код. Вы только описываете что хотите своими словами. Если нужно поправить — просто говорите AI: «Сделай шапку темнее» или «Убери третий блок». Всё.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>Что если AI неправильно поймёт?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Любую часть сайта можно переделать одной фразой. AI запоминает предыдущие правки и не путает их. Если совсем не понравится — начнёте с нуля за 30 секунд. Прогресс сохраняется автоматически.</div>
+        <button class="faq-q"><span>А если AI неправильно поймёт?</span><span class="faq-toggle">+</span></button>
+        <div class="faq-a">Любую часть сайта переделать одной фразой. AI запоминает все правки и не путает их. Если совсем не понравится — начнёте с нуля за 30 секунд. Прогресс сохраняется автоматически.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>Можно ли подключить свой домен?</span>
-          <span class="icon">+</span>
-        </button>
+        <button class="faq-q"><span>Можно подключить свой домен?</span><span class="faq-toggle">+</span></button>
         <div class="faq-a">Да, на тарифе Lite и выше. Подключаем за 5 минут — даже если домен у другого регистратора. SSL ставим автоматически. Email-почту тоже настроим.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>Что с оплатой? Принимаете карты РФ?</span>
-          <span class="icon">+</span>
-        </button>
+        <button class="faq-q"><span>Принимаете карты РФ?</span><span class="faq-toggle">+</span></button>
         <div class="faq-a">Visa, Mastercard, МИР, СБП, Yandex Pay, Tinkoff Pay. Полностью российский эквайринг через Yookassa. Чеки и закрывающие документы — автоматически в личный кабинет.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>152-ФЗ — это правда работает?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Серьёзно. Серверы в РФ (Yandex Cloud), оператор персональных данных, все документы в порядке. Уведомление Роскомнадзору подано. При выездной проверке вопросов не будет — у нас уже проходили клиенты.</div>
+        <button class="faq-q"><span>152-ФЗ — это правда работает?</span><span class="faq-toggle">+</span></button>
+        <div class="faq-a">Серьёзно. Серверы в РФ (Yandex Cloud), оператор персональных данных, все документы в порядке. Уведомление Роскомнадзору подано. При выездной проверке вопросов не будет.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>Что входит в AI-кошелёк 1 000 ₽?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">~200 сообщений с AI по правкам сайта. На активные изменения хватит на 2-3 месяца. Если кошелёк заканчивается — предупредим заранее, можно докинуть от 200 ₽ или подождать до следующего месяца.</div>
+        <button class="faq-q"><span>Что входит в AI-кошелёк 1 000 ₽?</span><span class="faq-toggle">+</span></button>
+        <div class="faq-a">~200 сообщений с AI по правкам сайта. На активные изменения хватит на 2–3 месяца. Если кошелёк заканчивается — предупредим заранее, можно докинуть от 200 ₽ или подождать до следующего месяца.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>Какая поддержка?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Telegram-чат. В рабочее время (10:00–22:00 МСК) отвечаем за 30 минут. Ночью — за 2 часа. Никаких ботов — общаетесь с живыми людьми. Можно скинуть скриншот, видео, голосовое.</div>
+        <button class="faq-q"><span>Какая поддержка?</span><span class="faq-toggle">+</span></button>
+        <div class="faq-a">Telegram-чат. В рабочее время (10:00–22:00 МСК) — ответ за 30 минут. Ночью — за 2 часа. Никаких ботов: общаетесь с живыми людьми. Можно скинуть скриншот, видео, голосовое.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">
-          <span>Можно ли сначала попробовать бесплатно?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Да. 5 дней — полный доступ ко всем функциям, без банковской карты. Если понравится — выбираете тариф. Если нет — просто закрываете вкладку, мы не возьмём ни копейки.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">
-          <span>Что если у меня уже есть сайт — можно перенести?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Да. Импорт с Tilda, Wix, готовых HTML или WordPress. Перенесём контент, переделаем под наш конструктор за 1-2 часа. Бесплатно, если оформите подписку.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">
-          <span>Что если я хочу уйти к другому провайдеру?</span>
-          <span class="icon">+</span>
-        </button>
-        <div class="faq-a">Все ваши данные — ваши. Экспорт в один клик: HTML, изображения, тексты, база. Без удержания, без штрафов. Хотите — заберите и сделайте на чём-то другом.</div>
+        <button class="faq-q"><span>Можно сначала попробовать бесплатно?</span><span class="faq-toggle">+</span></button>
+        <div class="faq-a">Да. 5 дней — полный доступ ко всем функциям, без банковской карты. Понравится — выбираете тариф. Нет — закроете вкладку, мы не возьмём ни копейки.</div>
       </div>
     </div>
-
-    <p style="text-align: center; margin-top: 40px; color: var(--muted); font-size: 14px;">
-      Не нашли свой вопрос? <a href="https://t.me/" style="color: var(--accent);">Спросите в Telegram</a> — ответим за 30 минут.
-    </p>
   </div>
 </section>
 
 <!-- FINAL CTA -->
-<section>
+<section class="final-cta-section">
   <div class="container">
     <div class="final-cta reveal">
-      <h2>
-        Готовы запустить сайт<br>
-        <span class="accent">на этой неделе?</span>
-      </h2>
-      <p>5 дней бесплатно. Без банковской карты. Не понравится — просто закроете вкладку, и всё.</p>
-      <a href="#" class="btn btn-primary" style="padding: 18px 36px; font-size: 16px;">Создать сайт бесплатно →</a>
-      <div class="trust-mini">
-        <b>1 247+</b> предпринимателей уже сделали сайт на Omnia.AI<span>·</span>★ <b>4.9</b> в Telegram<span>·</span>Хостинг в РФ
+      <div class="final-cta-content">
+        <h2>Запустите сайт<br><span class="accent">сегодня вечером</span></h2>
+        <p>5 дней бесплатно. Без банковской карты. Не понравится — просто закроете вкладку.</p>
+        <a href="#" class="btn btn-primary" data-magnetic>
+          Создать сайт бесплатно
+          <span class="arrow">→</span>
+        </a>
+        <div class="final-cta-stats">
+          <span><b>1 247+</b> сайтов уже создано</span>
+          <span><b>★ 4.9</b> в Telegram</span>
+          <span><b>30 мин</b> до результата</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1305,10 +2832,10 @@ footer {
   <div class="container">
     <div class="footer-grid">
       <div class="footer-col footer-brand">
-        <div class="logo">
+        <a href="#" class="logo">
           <div class="logo-mark">Ω</div>
           <span>Omnia.AI</span>
-        </div>
+        </a>
         <p>AI-конструктор сайтов для малого бизнеса. Создан в России. Работает по 152-ФЗ.</p>
       </div>
       <div class="footer-col">
@@ -1328,9 +2855,9 @@ footer {
       <div class="footer-col">
         <h5>Поддержка</h5>
         <a href="https://t.me/">Telegram</a>
-        <a href="#faq">Частые вопросы</a>
+        <a href="#faq">Вопросы</a>
         <a href="#">Статус сервиса</a>
-        <a href="#">Документация</a>
+        <a href="#">Документы</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1340,27 +2867,170 @@ footer {
   </div>
 </footer>
 
+</main>
+
 <!-- Sticky mobile CTA -->
-<div class="sticky-mobile-cta">
+<div class="sticky-mobile">
   <a href="#" class="btn btn-primary">Создать сайт бесплатно →</a>
 </div>
 
 <script>
-// Reveal on scroll
-(function() {
-  const els = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  els.forEach(el => obs.observe(el));
-})();
+/* ============================================
+   CUSTOM CURSOR (magnetic effect)
+   ============================================ */
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorRing = document.querySelector('.cursor-ring');
 
-// FAQ accordion
+let mouseX = 0, mouseY = 0;
+let dotX = 0, dotY = 0;
+let ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+function animateCursor() {
+  dotX += (mouseX - dotX) * 0.5;
+  dotY += (mouseY - dotY) * 0.5;
+  ringX += (mouseX - ringX) * 0.18;
+  ringY += (mouseY - ringY) * 0.18;
+  cursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
+  cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+  requestAnimationFrame(animateCursor);
+}
+if (window.innerWidth > 1024) animateCursor();
+
+// Expand cursor on interactive elements
+document.querySelectorAll('a, button, .case-card, .step-item, .problem-card, .bento-card, .plan, .faq-q').forEach(el => {
+  el.addEventListener('mouseenter', () => cursorRing.classList.add('expanded'));
+  el.addEventListener('mouseleave', () => cursorRing.classList.remove('expanded'));
+});
+
+/* ============================================
+   MAGNETIC BUTTONS
+   ============================================ */
+document.querySelectorAll('[data-magnetic]').forEach(btn => {
+  btn.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.15}px, ${y * 0.25}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+  });
+});
+
+/* ============================================
+   3D TILT EFFECT ON CARDS
+   ============================================ */
+document.querySelectorAll('[data-tilt]').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const tiltX = (y - 0.5) * 6;
+    const tiltY = (x - 0.5) * -6;
+    card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-4px)`;
+    card.style.setProperty('--mx', `${x * 100}%`);
+    card.style.setProperty('--my', `${y * 100}%`);
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+/* ============================================
+   HEADER SCROLL STATE
+   ============================================ */
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 20) header.classList.add('scrolled');
+  else header.classList.remove('scrolled');
+}, { passive: true });
+
+/* ============================================
+   REVEAL ON SCROLL
+   ============================================ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ============================================
+   ANIMATED COUNTERS
+   ============================================ */
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.count, 10);
+      const suffix = el.dataset.suffix || '';
+      const duration = 1800;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const value = Math.floor(target * easeOut);
+        el.textContent = value.toLocaleString('ru-RU') + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+/* ============================================
+   HOW-IT-WORKS: STEP CYCLING
+   ============================================ */
+const steps = document.querySelectorAll('.step-item');
+const panes = document.querySelectorAll('.step-preview-pane');
+let stepIndex = 0;
+let stepInterval = null;
+
+function setStep(i) {
+  steps.forEach(s => s.classList.remove('active'));
+  panes.forEach(p => p.classList.remove('active'));
+  steps[i].classList.add('active');
+  panes[i].classList.add('active');
+  stepIndex = i;
+}
+
+function startStepCycle() {
+  if (stepInterval) clearInterval(stepInterval);
+  stepInterval = setInterval(() => {
+    stepIndex = (stepIndex + 1) % steps.length;
+    setStep(stepIndex);
+  }, 3500);
+}
+
+steps.forEach((step, i) => {
+  step.addEventListener('click', () => {
+    setStep(i);
+    startStepCycle();
+  });
+});
+
+const stepsSection = document.querySelector('.steps-section');
+const stepsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) startStepCycle();
+    else if (stepInterval) { clearInterval(stepInterval); stepInterval = null; }
+  });
+}, { threshold: 0.2 });
+if (stepsSection) stepsObserver.observe(stepsSection);
+
+/* ============================================
+   FAQ ACCORDION
+   ============================================ */
 document.querySelectorAll('.faq-q').forEach(btn => {
   btn.addEventListener('click', () => {
     const item = btn.closest('.faq-item');
@@ -1370,8 +3040,117 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-// Open first FAQ by default
-document.querySelector('.faq-item').classList.add('open');
+/* ============================================
+   LIVE DEMO — interactive AI playground
+   ============================================ */
+const presets = document.querySelectorAll('.demo-preset');
+const demoInput = document.getElementById('demo-input');
+const demoSubmit = document.getElementById('demo-submit');
+const demoThread = document.getElementById('demo-thread');
+const demoResult = document.getElementById('demo-result');
+
+const demoResponses = {
+  cafe: { features: ['✓ Главная с меню', '✓ Доставка + корзина', '✓ Карта и контакты', '✓ Мобильная версия'], domain: 'cafe-zerno.ru', title: 'веганского кафе' },
+  beauty: { features: ['✓ Услуги и цены', '✓ Онлайн-запись', '✓ Фото мастеров', '✓ Отзывы клиентов'], domain: 'nyans-spb.ru', title: 'салона красоты' },
+  law: { features: ['✓ Услуги юриста', '✓ Форма заявки', '✓ Отзывы клиентов', '✓ Бесплатная консультация'], domain: 'lebedev-law.ru', title: 'юр.бюро' },
+  psy: { features: ['✓ О подходе', '✓ Запись на сессию', '✓ Цены и форматы', '✓ Сертификаты'], domain: 'krasnova-psy.ru', title: 'психолога' },
+  flowers: { features: ['✓ Каталог букетов', '✓ Корзина и оплата', '✓ Доставка за 2 часа', '✓ WhatsApp заказ'], domain: 'oleander.ru', title: 'цветочного магазина' }
+};
+
+presets.forEach((btn, i) => {
+  btn.addEventListener('click', () => {
+    presets.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    demoInput.value = btn.dataset.prompt;
+  });
+});
+
+function detectType(text) {
+  const t = text.toLowerCase();
+  if (t.includes('кафе') || t.includes('ресторан') || t.includes('кофе') || t.includes('еда')) return 'cafe';
+  if (t.includes('салон') || t.includes('маникюр') || t.includes('красот') || t.includes('брови')) return 'beauty';
+  if (t.includes('юрист') || t.includes('адвокат') || t.includes('юр')) return 'law';
+  if (t.includes('психолог') || t.includes('терапия')) return 'psy';
+  if (t.includes('цвет') || t.includes('букет') || t.includes('флорист')) return 'flowers';
+  return 'cafe';
+}
+
+demoSubmit.addEventListener('click', () => {
+  const value = demoInput.value.trim();
+  if (!value) return;
+  demoSubmit.disabled = true;
+  demoResult.classList.remove('show');
+
+  // Clear thread
+  demoThread.innerHTML = '';
+
+  // User message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'demo-msg demo-msg-user';
+  userMsg.textContent = value;
+  demoThread.appendChild(userMsg);
+
+  // Typing indicator
+  setTimeout(() => {
+    const typingMsg = document.createElement('div');
+    typingMsg.className = 'demo-msg demo-msg-ai';
+    typingMsg.innerHTML = '<span class="ai-icon">Ω</span><span class="typing-dots"><span></span><span></span><span></span></span>';
+    demoThread.appendChild(typingMsg);
+
+    // AI response
+    setTimeout(() => {
+      const type = detectType(value);
+      const resp = demoResponses[type];
+      typingMsg.innerHTML = `<span class="ai-icon">Ω</span><strong>Понял.</strong> Собираю сайт для ${resp.title}. Подбираю стиль под нишу, пишу тексты, добавляю формы и мобильную версию...`;
+
+      // Result
+      setTimeout(() => {
+        const resultGrid = demoResult.querySelector('.demo-result-grid');
+        resultGrid.innerHTML = resp.features.map(f => `<span class="demo-result-pill">${f}</span>`).join('');
+        demoResult.classList.add('show');
+        demoSubmit.disabled = false;
+      }, 1400);
+    }, 1200);
+  }, 400);
+});
+
+/* ============================================
+   PARALLAX ORBS (mouse follow)
+   ============================================ */
+const orbs = document.querySelectorAll('.orb');
+let mxFollow = 0, myFollow = 0;
+let mxTarget = 0, myTarget = 0;
+
+document.addEventListener('mousemove', (e) => {
+  mxTarget = (e.clientX / window.innerWidth - 0.5) * 2;
+  myTarget = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+function updateOrbs() {
+  mxFollow += (mxTarget - mxFollow) * 0.05;
+  myFollow += (myTarget - myFollow) * 0.05;
+  orbs.forEach((orb, i) => {
+    const intensity = (i + 1) * 20;
+    orb.style.translate = `${mxFollow * intensity}px ${myFollow * intensity}px`;
+  });
+  requestAnimationFrame(updateOrbs);
+}
+if (window.innerWidth > 720) updateOrbs();
+
+/* ============================================
+   SMOOTH SCROLL FOR ANCHOR LINKS
+   ============================================ */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', (e) => {
+    const targetId = anchor.getAttribute('href');
+    if (targetId === '#' || targetId.length < 2) return;
+    const target = document.querySelector(targetId);
+    if (!target) return;
+    e.preventDefault();
+    const top = target.getBoundingClientRect().top + window.pageYOffset - 80;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
 </script>
 
 </body>
