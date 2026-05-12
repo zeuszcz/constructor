@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0f" />
+<title>Omnia.AI — Сайт для бизнеса за 30 минут. Без программиста.</title>
+<meta name="description" content="AI-конструктор сайтов. Опишите бизнес — получите готовый сайт. От лендинга до интернет-магазина. По 152-ФЗ, хостинг в РФ. Пробник 5 дней без карты." />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Omnia.AI — Сайт для бизнеса за 30 минут" />
+<meta property="og:description" content="AI-конструктор для тех, кому нужен сайт сегодня, а не через месяц." />
+<meta property="og:url" content="https://omniadevelop.ru/newsite/" />
+<meta property="og:image" content="https://omniadevelop.ru/og.png" />
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg-2: #11121a;
+  --bg-3: #15161f;
+  --line: rgba(255,255,255,0.07);
+  --line-2: rgba(255,255,255,0.12);
+  --text: #ffffff;
+  --text-2: #c0c0cf;
+  --muted: #7a7a8c;
+  --accent: #7c7eff;
+  --accent-2: #b06cff;
+  --accent-3: #06b6d4;
+  --gradient: linear-gradient(135deg, #7c7eff 0%, #b06cff 60%, #ff5e85 100%);
+  --gradient-2: linear-gradient(135deg, #06b6d4 0%, #7c7eff 100%);
+  --gradient-text: linear-gradient(180deg, #ffffff 0%, #a8a8c0 100%);
+  --shadow: 0 24px 60px rgba(124,126,255,0.15);
+  --shadow-2: 0 8px 24px rgba(0,0,0,0.4);
+  --r: 14px;
+  --r-lg: 22px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+/* Background grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle at 20% 30%, rgba(124,126,255,0.12) 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, rgba(176,108,255,0.10) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* === HEADER === */
+header {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(10,10,15,0.7);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 17px; letter-spacing: -0.02em;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--gradient);
+  border-radius: 9px;
+  display: grid; place-items: center;
+  font-size: 14px; font-weight: 900;
+  box-shadow: 0 4px 16px rgba(124,126,255,0.4);
+}
+nav { display: flex; gap: 28px; align-items: center; }
+nav a {
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+nav a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--gradient);
+  padding: 10px 18px;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124,126,255,0.4);
+}
+@media (max-width: 720px) {
+  nav .nav-link-desktop { display: none; }
+}
+
+/* === HERO === */
+.hero {
+  padding: 160px 0 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1100px; height: 1100px;
+  background: radial-gradient(circle, rgba(124,126,255,0.25) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+.hero .pre-title {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; margin-bottom: 24px;
+  background: rgba(124,126,255,0.1);
+  border: 1px solid rgba(124,126,255,0.3);
+  border-radius: 99px;
+  font-size: 13px; font-weight: 500;
+  color: var(--accent);
+}
+.hero .pre-title span { width: 6px; height: 6px; background: var(--accent); border-radius: 99px; box-shadow: 0 0 12px var(--accent); }
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: clamp(40px, 7vw, 92px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  max-width: 1000px; margin-left: auto; margin-right: auto;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero h1 .accent {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+.hero .subtitle {
+  font-size: clamp(17px, 2vw, 21px);
+  color: var(--text-2);
+  max-width: 640px;
+  margin: 0 auto 40px;
+  line-height: 1.5;
+}
+
+.hero-cta {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 28px;
+  border-radius: 99px;
+  font-size: 15px; font-weight: 600;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--gradient);
+  color: white;
+  box-shadow: 0 8px 32px rgba(124,126,255,0.4);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(124,126,255,0.55);
+}
+.btn-secondary {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.09);
+}
+
+.trust-line {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+}
+.trust-line span::before { content: '★ '; color: var(--accent); }
+
+/* Hero preview block */
+.hero-preview {
+  margin: 80px auto 0;
+  max-width: 980px;
+  position: relative;
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid var(--line-2);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.preview-inner {
+  background: var(--bg-3);
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  position: relative;
+}
+.browser-bar {
+  background: rgba(255,255,255,0.04);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.browser-bar .dot { width: 12px; height: 12px; border-radius: 99px; background: rgba(255,255,255,0.15); }
+.browser-bar .url {
+  margin-left: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.04);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.demo-chat {
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  height: calc(100% - 41px);
+  justify-content: center;
+}
+.chat-user, .chat-ai {
+  max-width: 80%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14px; line-height: 1.5;
+}
+.chat-user {
+  background: var(--gradient);
+  align-self: flex-end;
+  color: white;
+  font-weight: 500;
+}
+.chat-ai {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--line);
+  align-self: flex-start;
+}
+.chat-typing {
+  display: inline-flex; gap: 4px; align-items: center;
+}
+.chat-typing span {
+  width: 6px; height: 6px; background: var(--accent); border-radius: 99px;
+  animation: typing 1.4s infinite;
+}
+.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* === SECTIONS === */
+section {
+  padding: 100px 0;
+  position: relative;
+}
+.section-tag {
+  display: inline-block;
+  font-size: 13px; font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  max-width: 720px;
+}
+.section-title .accent {
+  font-style: italic;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.section-subtitle {
+  font-size: 18px;
+  color: var(--text-2);
+  max-width: 640px;
+  margin-bottom: 60px;
+  line-height: 1.55;
+}
+
+/* === TRUST BAR === */
+.trust-bar {
+  padding: 50px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.trust-bar-inner {
+  display: flex; justify-content: space-around; gap: 32px; align-items: center; flex-wrap: wrap;
+}
+.trust-stat {
+  text-align: center;
+}
+.trust-stat .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; font-weight: 700;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.trust-stat .label {
+  font-size: 13px; color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* === PROBLEM SECTION === */
+.problems-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+}
+.problem-card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 32px 28px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.problem-card:hover {
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+}
+.problem-card .emoji {
+  font-size: 32px; margin-bottom: 16px; display: block;
+}
+.problem-card h3 {
+  font-size: 18px; font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.problem-card p {
+  font-size: 15px; color: var(--text-2); line-height: 1.55;
+}
+
+.problem-summary {
+  margin-top: 48px;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(124,126,255,0.08), rgba(176,108,255,0.04));
+  border: 1px solid rgba(124,126,255,0.2);
+  border-radius: var(--r-lg);
+  text-align: center;
+}
+.problem-summary h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 700;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* === HOW IT WORKS === */
+.steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+  position: relative;
+}
+.step {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 28px;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.step:hover { transform: translateY(-3px); border-color: rgba(124,126,255,0.3); }
+.step-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px; font-weight: 700;
+  line-height: 1;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 16px;
+}
+.step h3 {
+  font-size: 18px; font-weight: 600; margin-bottom: 10px;
+}
+.step p {
+  font-size: 14px; color: var(--text-2); line-height: 1.5;
+}
+.step .time {
+  display: inline-block; margin-top: 14px;
+  padding: 4px 12px;
+  background: rgba(124,126,255,0.15);
+  border-radius: 99px;
+  font-size: 12px; font-weight: 500;
+  color: var(--accent);
+}
+
+/* === FEATURES (BENEFITS) === */
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+}
+.feature {
+  padding: 32px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+.feature:hover {
+  transform: translateY(-3px);
+  background: var(--bg-3);
+  border-color: rgba(124,126,255,0.4);
+}
+.feature-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, rgba(124,126,255,0.2), rgba(176,108,255,0.1));
+  border: 1px solid rgba(124,126,255,0.3);
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.feature h3 {
+  font-size: 19px; font-weight: 600; margin-bottom: 10px;
+}
+.feature p {
+  font-size: 15px; color: var(--text-2); line-height: 1.55;
+}
+
+/* === USE CASES === */
+.cases {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;
+}
+.case {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 24px 20px;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.case:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124,126,255,0.4);
+}
+.case-emoji {
+  font-size: 38px; margin-bottom: 12px;
+}
+.case h4 {
+  font-size: 15px; font-weight: 600; margin-bottom: 6px;
+}
+.case p {
+  font-size: 12px; color: var(--muted);
+  line-height: 1.4;
+}
+
+/* === COMPARISON === */
+.comparison {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-top: 32px;
+}
+.comparison table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.comparison th, .comparison td {
+  padding: 16px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.comparison th {
+  background: var(--bg-3);
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+}
+.comparison td:not(:first-child) { text-align: center; }
+.comparison th:not(:first-child) { text-align: center; }
+.comparison .ours {
+  background: rgba(124,126,255,0.08);
+  color: var(--text);
+  font-weight: 600;
+  position: relative;
+}
+.comparison .ours::before {
+  content: '★';
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; color: var(--accent);
+}
+.comparison tr:last-child td { border-bottom: 0; }
+.cell-good { color: #4ade80; font-weight: 600; }
+.cell-bad { color: #f87171; }
+.cell-meh { color: var(--muted); }
+
+@media (max-width: 720px) {
+  .comparison { overflow-x: auto; }
+  .comparison table { min-width: 600px; }
+}
+
+/* === PRICING === */
+.pricing {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+}
+.plan {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 36px 32px;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.plan:hover { transform: translateY(-4px); border-color: var(--line-2); }
+.plan.popular {
+  background: linear-gradient(180deg, rgba(124,126,255,0.12) 0%, rgba(176,108,255,0.05) 100%);
+  border: 1px solid rgba(124,126,255,0.4);
+  transform: scale(1.03);
+  box-shadow: var(--shadow);
+}
+.plan.popular:hover { transform: scale(1.03) translateY(-4px); }
+.plan-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--gradient);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.plan-name {
+  font-size: 14px; font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.plan-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px; font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.plan-price-currency {
+  font-size: 22px; font-weight: 600;
+  color: var(--text-2);
+  vertical-align: top;
+  margin-right: 4px;
+}
+.plan-price-suffix {
+  font-size: 15px; font-weight: 500;
+  color: var(--muted);
+  margin-left: 4px;
+}
+.plan-tagline {
+  font-size: 14px; color: var(--muted);
+  margin-bottom: 24px;
+}
+.plan-features {
+  list-style: none; margin: 0 0 28px 0;
+}
+.plan-features li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--text-2);
+  display: flex; align-items: center; gap: 10px;
+}
+.plan-features li::before {
+  content: '✓';
+  color: var(--accent);
+  font-weight: 700;
+  width: 16px;
+}
+.plan-cta {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  display: block;
+  transition: all 0.15s;
+}
+.plan-cta:hover { background: rgba(255,255,255,0.1); }
+.plan.popular .plan-cta {
+  background: var(--gradient);
+  border: 0;
+  box-shadow: 0 8px 24px rgba(124,126,255,0.4);
+}
+.plan.popular .plan-cta:hover {
+  box-shadow: 0 12px 32px rgba(124,126,255,0.5);
+  transform: translateY(-1px);
+}
+
+.pricing-note {
+  text-align: center;
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--muted);
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+}
+.pricing-note span::before { content: '★ '; color: var(--accent); }
+
+/* === FAQ === */
+.faq {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+.faq-q {
+  width: 100%;
+  padding: 24px 0;
+  text-align: left;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  font-size: 16px; font-weight: 600;
+  transition: color 0.15s;
+}
+.faq-q:hover { color: var(--accent); }
+.faq-q .icon {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  border-radius: 99px;
+  background: rgba(124,126,255,0.15);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.faq-item.open .faq-q .icon { transform: rotate(45deg); }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  color: var(--text-2);
+  font-size: 15px; line-height: 1.6;
+}
+.faq-item.open .faq-a {
+  max-height: 400px;
+  padding: 0 0 24px 0;
+}
+
+/* === FINAL CTA === */
+.final-cta {
+  background: linear-gradient(135deg, rgba(124,126,255,0.18) 0%, rgba(176,108,255,0.10) 50%, rgba(255,94,133,0.08) 100%);
+  border: 1px solid rgba(124,126,255,0.3);
+  border-radius: 28px;
+  padding: 80px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.final-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(124,126,255,0.2), transparent 60%);
+  pointer-events: none;
+}
+.final-cta h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  position: relative;
+}
+.final-cta h2 .accent {
+  font-style: italic;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.final-cta p {
+  font-size: 18px;
+  color: var(--text-2);
+  max-width: 540px;
+  margin: 0 auto 32px;
+  position: relative;
+}
+.final-cta .btn {
+  position: relative;
+}
+.final-cta .trust-mini {
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--muted);
+  position: relative;
+}
+.final-cta .trust-mini span { margin: 0 8px; }
+.final-cta .trust-mini b { color: var(--accent); font-weight: 600; }
+
+/* === FOOTER === */
+footer {
+  padding: 60px 0 32px;
+  border-top: 1px solid var(--line);
+  color: var(--text-2);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr repeat(3, auto);
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-col h5 {
+  font-size: 12px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: var(--text-2);
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.footer-col a:hover { color: var(--text); }
+.footer-brand p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 8px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+.footer-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+@media (max-width: 720px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Animations on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sticky bottom CTA on mobile */
+.sticky-mobile-cta {
+  display: none;
+}
+@media (max-width: 720px) {
+  .sticky-mobile-cta {
+    display: flex;
+    position: fixed; bottom: 16px; left: 16px; right: 16px;
+    z-index: 50;
+    justify-content: center;
+  }
+  .sticky-mobile-cta .btn {
+    width: 100%;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 8px 32px rgba(124,126,255,0.4);
+  }
+  .hero { padding: 130px 0 60px; }
+  section { padding: 70px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container header-inner">
+    <a href="/newsite/" class="logo">
+      <div class="logo-mark">Ω</div>
+      <span>Omnia.AI</span>
+    </a>
+    <nav>
+      <a href="#features" class="nav-link-desktop">Возможности</a>
+      <a href="#pricing" class="nav-link-desktop">Тарифы</a>
+      <a href="#faq" class="nav-link-desktop">Вопросы</a>
+      <a href="#" class="nav-cta">Попробовать бесплатно</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="pre-title">
+      <span></span>
+      Новое — AI-конструктор для русского бизнеса
+    </div>
+    <h1>
+      Опишите бизнес.<br>
+      Получите <span class="accent">сайт за 30 минут</span>.
+    </h1>
+    <p class="subtitle">
+      Без программиста, без дизайнера, без головной боли. AI-конструктор для тех, кому нужен сайт сегодня, а не через месяц.
+    </p>
+    <div class="hero-cta">
+      <a href="#" class="btn btn-primary">Создать сайт бесплатно →</a>
+      <a href="#demo" class="btn btn-secondary">Посмотреть демо</a>
+    </div>
+    <div class="trust-line">
+      <span>Без банковской карты</span>
+      <span>5 дней пробник</span>
+      <span>152-ФЗ соответствие</span>
+      <span>Отмена в 1 клик</span>
+    </div>
+
+    <!-- Preview -->
+    <div class="hero-preview reveal" id="demo">
+      <div class="preview-inner">
+        <div class="browser-bar">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <div class="url">omnia.ai / создать сайт</div>
+        </div>
+        <div class="demo-chat">
+          <div class="chat-user">Кафе на 30 столиков, веганская кухня, цены 350–1200₽, доставка по Москве. Стиль — светлый, уютный.</div>
+          <div class="chat-ai">
+            ✨ Понял. Собираю сайт для веганского кафе в Москве:<br>
+            • Меню с фото и ценами<br>
+            • Форму онлайн-заказа<br>
+            • Карту с адресом и часами работы<br>
+            • Мобильную версию
+          </div>
+          <div class="chat-ai" style="background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(124,126,255,0.05)); border-color: rgba(74,222,128,0.3);">
+            ✓ Готово за 47 секунд. Опубликовать на ваш домен?
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<section class="trust-bar">
+  <div class="container trust-bar-inner">
+    <div class="trust-stat">
+      <div class="num">1 247+</div>
+      <div class="label">Сайтов создано</div>
+    </div>
+    <div class="trust-stat">
+      <div class="num">★ 4.9</div>
+      <div class="label">Рейтинг в Telegram</div>
+    </div>
+    <div class="trust-stat">
+      <div class="num">30 мин</div>
+      <div class="label">Среднее время до сайта</div>
+    </div>
+    <div class="trust-stat">
+      <div class="num">152-ФЗ</div>
+      <div class="label">Хостинг в РФ</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM SECTION -->
+<section>
+  <div class="container">
+    <div class="section-tag reveal">Боль знакома</div>
+    <h2 class="section-title reveal">Раньше сайт был <span class="accent">долгой проблемой</span></h2>
+
+    <div class="problems-grid">
+      <div class="problem-card reveal">
+        <span class="emoji">😩</span>
+        <h3>Студия = 80–200 К ₽ и месяц ожидания</h3>
+        <p>Брифинг, согласование, правки, дизайн, верстка. Каждый этап — две недели. Запуска нет, клиенты есть прямо сейчас.</p>
+      </div>
+      <div class="problem-card reveal">
+        <span class="emoji">🤯</span>
+        <h3>Конструкторы требуют учиться</h3>
+        <p>47 настроек, 12 блоков, 6 разделов админки. Туториал на YouTube, чат на английском. До первого блока — 5 часов.</p>
+      </div>
+      <div class="problem-card reveal">
+        <span class="emoji">👻</span>
+        <h3>Фрилансер пропал после оплаты</h3>
+        <p>Аванс ушёл, портфолио красивое, дедлайн через неделю. Через три дня — игнор в Telegram, сайта нет.</p>
+      </div>
+    </div>
+
+    <div class="problem-summary reveal">
+      <h3>Запустить сайт сегодня — должно быть просто. И возможно.</h3>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background: var(--bg-2);">
+  <div class="container">
+    <div class="section-tag reveal">Как работает</div>
+    <h2 class="section-title reveal">От описания до сайта — <span class="accent">4 шага</span></h2>
+    <p class="section-subtitle reveal">Никаких таблиц блоков, никаких туториалов на 3 часа. Объясните бизнес — получите готовый сайт.</p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3>Расскажите о бизнесе</h3>
+        <p>Что делаете, для кого, цены, контакты. Можно одним абзацем.</p>
+        <span class="time">⏱ ~1 минута</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h3>Выберите стиль</h3>
+        <p>Светлый, тёмный, яркий или строгий — три клика.</p>
+        <span class="time">⏱ ~30 секунд</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h3>AI делает всю работу</h3>
+        <p>Дизайн, тексты, иконки, мобильная версия, форма обратной связи.</p>
+        <span class="time">⏱ ~5 минут</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <h3>Опубликуйте</h3>
+        <p>Подключаем ваш домен, ставим SSL. Сайт работает.</p>
+        <span class="time">⏱ ~5 минут</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-tag reveal">Что вы получите</div>
+    <h2 class="section-title reveal">Всё что нужно, <span class="accent">ничего лишнего</span></h2>
+    <p class="section-subtitle reveal">Каждая функция — это конкретная выгода. Никаких «инновационных решений», только то что работает.</p>
+
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-icon">⚡</div>
+        <h3>За 30 минут</h3>
+        <p>От пустого экрана до опубликованного сайта на вашем домене. Без согласований и брифингов.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">💬</div>
+        <h3>Без кода</h3>
+        <p>AI пишет всё — текст, дизайн, код. Вам не нужно учиться. Правка одной фразой: «Сделай шапку темнее».</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🔒</div>
+        <h3>По закону РФ</h3>
+        <p>152-ФЗ из коробки. Серверы в России. Документы в порядке. Спокойствие при проверке.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">📱</div>
+        <h3>Мобильная версия сразу</h3>
+        <p>Авто-адаптация под телефон. 70% ваших клиентов придут с мобильного — они увидят то же что и вы.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🎨</div>
+        <h3>Дизайн под нишу</h3>
+        <p>Готовые шаблоны для кафе, юристов, салонов, врачей. Не «один универсальный», а под ваш профиль.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🚀</div>
+        <h3>Растёт вместе с вами</h3>
+        <p>Сегодня — лендинг. Завтра — интернет-магазин. Послезавтра — онлайн-запись и оплата картой.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section style="background: var(--bg-2);">
+  <div class="container">
+    <div class="section-tag reveal">Сценарии</div>
+    <h2 class="section-title reveal">Подходит для <span class="accent">вашего бизнеса</span></h2>
+    <p class="section-subtitle reveal">Готовые шаблоны для популярных ниш. Клик — посмотрите как будет выглядеть ваш сайт.</p>
+
+    <div class="cases">
+      <div class="case reveal"><div class="case-emoji">☕</div><h4>Кафе / Ресторан</h4><p>Меню, доставка, бронь</p></div>
+      <div class="case reveal"><div class="case-emoji">💄</div><h4>Салон красоты</h4><p>Услуги, цены, запись</p></div>
+      <div class="case reveal"><div class="case-emoji">⚖️</div><h4>Юрист</h4><p>Услуги, отзывы, заявка</p></div>
+      <div class="case reveal"><div class="case-emoji">🏥</div><h4>Клиника / Врач</h4><p>Запись, цены, документы</p></div>
+      <div class="case reveal"><div class="case-emoji">🧠</div><h4>Психолог / Коуч</h4><p>О себе, цены, запись</p></div>
+      <div class="case reveal"><div class="case-emoji">📚</div><h4>Репетитор / Школа</h4><p>Курсы, расписание, форма</p></div>
+      <div class="case reveal"><div class="case-emoji">👗</div><h4>Магазин одежды</h4><p>Каталог, корзина, оплата</p></div>
+      <div class="case reveal"><div class="case-emoji">💐</div><h4>Цветочный</h4><p>Букеты, доставка, заказ</p></div>
+      <div class="case reveal"><div class="case-emoji">🔧</div><h4>Автосервис</h4><p>Услуги, запись, отзывы</p></div>
+      <div class="case reveal"><div class="case-emoji">💈</div><h4>Барбершоп</h4><p>Мастера, цены, запись</p></div>
+      <div class="case reveal"><div class="case-emoji">💪</div><h4>Фитнес-тренер</h4><p>Программы, пакеты, заявка</p></div>
+      <div class="case reveal"><div class="case-emoji">🏠</div><h4>Риэлтор</h4><p>Объекты, услуги, контакты</p></div>
+    </div>
+
+    <p style="text-align: center; margin-top: 40px; color: var(--muted); font-size: 14px;">
+      Вашей ниши нет в списке? AI поймёт любое описание. <a href="#" style="color: var(--accent);">Попробовать →</a>
+    </p>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+  <div class="container">
+    <div class="section-tag reveal">Сравнение</div>
+    <h2 class="section-title reveal">В 50 раз дешевле студии, <span class="accent">в 30 раз быстрее</span></h2>
+    <p class="section-subtitle reveal">Честное сравнение с реальными альтернативами. Без маркетингового вранья.</p>
+
+    <div class="comparison reveal">
+      <table>
+        <thead>
+          <tr>
+            <th>Что важно</th>
+            <th>Студия</th>
+            <th>Tilda</th>
+            <th>Фрилансер</th>
+            <th class="ours">Omnia.AI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Стоимость старта</strong></td>
+            <td class="cell-bad">50–200 К ₽</td>
+            <td class="cell-meh">11 К ₽/год</td>
+            <td class="cell-meh">15–80 К ₽</td>
+            <td class="ours cell-good">990 ₽/мес</td>
+          </tr>
+          <tr>
+            <td><strong>Время до сайта</strong></td>
+            <td class="cell-bad">3–6 недель</td>
+            <td class="cell-meh">1–2 недели</td>
+            <td class="cell-meh">1–4 недели</td>
+            <td class="ours cell-good">30 минут</td>
+          </tr>
+          <tr>
+            <td><strong>Нужно учиться</strong></td>
+            <td class="cell-good">—</td>
+            <td class="cell-bad">5–15 часов</td>
+            <td class="cell-good">—</td>
+            <td class="ours cell-good">0 часов</td>
+          </tr>
+          <tr>
+            <td><strong>Пишет тексты</strong></td>
+            <td class="cell-meh">Копирайтер +20К</td>
+            <td class="cell-bad">Вы сами</td>
+            <td class="cell-meh">Чаще вы сами</td>
+            <td class="ours cell-good">AI</td>
+          </tr>
+          <tr>
+            <td><strong>Делает дизайн</strong></td>
+            <td class="cell-meh">Дизайнер +30К</td>
+            <td class="cell-meh">Из блоков</td>
+            <td class="cell-good">Дизайнер</td>
+            <td class="ours cell-good">AI</td>
+          </tr>
+          <tr>
+            <td><strong>Мобильная версия</strong></td>
+            <td class="cell-meh">Отдельно +10К</td>
+            <td class="cell-meh">Сами адаптируете</td>
+            <td class="cell-bad">Часто никак</td>
+            <td class="ours cell-good">Автоматом</td>
+          </tr>
+          <tr>
+            <td><strong>Поддержка после</strong></td>
+            <td class="cell-bad">Платно за час</td>
+            <td class="cell-meh">Чат на англ.</td>
+            <td class="cell-bad">Пропал</td>
+            <td class="ours cell-good">Telegram, рус.</td>
+          </tr>
+          <tr>
+            <td><strong>152-ФЗ</strong></td>
+            <td class="cell-meh">Нужно проверять</td>
+            <td class="cell-bad">Серверы за рубежом</td>
+            <td class="cell-meh">Зависит</td>
+            <td class="ours cell-good">Из коробки</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background: var(--bg-2);">
+  <div class="container">
+    <div class="section-tag reveal">Тарифы</div>
+    <h2 class="section-title reveal">Прозрачные цены. <span class="accent">Без подвохов</span>.</h2>
+    <p class="section-subtitle reveal">Начните бесплатно. Платите только когда понравится. Отмена в один клик в любой момент.</p>
+
+    <div class="pricing">
+      <div class="plan reveal">
+        <div class="plan-name">Пробник</div>
+        <div class="plan-price">
+          <span class="plan-price-currency"></span>0<span class="plan-price-suffix">₽ на 5 дней</span>
+        </div>
+        <div class="plan-tagline">Чтобы попробовать без обязательств</div>
+        <ul class="plan-features">
+          <li>1 сайт</li>
+          <li>Все шаблоны</li>
+          <li>AI-кошелёк 500 ₽</li>
+          <li>Без банковской карты</li>
+          <li>5 дней доступа</li>
+          <li>Сохранение прогресса</li>
+        </ul>
+        <a href="#" class="plan-cta">Попробовать бесплатно</a>
+      </div>
+
+      <div class="plan popular reveal">
+        <div class="plan-badge">★ Популярный — 67% выбирают</div>
+        <div class="plan-name">Lite</div>
+        <div class="plan-price">
+          <span class="plan-price-currency"></span>990<span class="plan-price-suffix">₽/мес</span>
+        </div>
+        <div class="plan-tagline">Для одного сайта малого бизнеса</div>
+        <ul class="plan-features">
+          <li>1 сайт</li>
+          <li>Все шаблоны и стили</li>
+          <li>AI-кошелёк 1 000 ₽/мес</li>
+          <li>Свой домен (.ru / .com)</li>
+          <li>SSL сертификат</li>
+          <li>Хостинг в РФ</li>
+          <li>Поддержка в Telegram</li>
+          <li>Отмена в 1 клик</li>
+        </ul>
+        <a href="#" class="plan-cta">Выбрать Lite →</a>
+      </div>
+
+      <div class="plan reveal">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">
+          <span class="plan-price-currency"></span>7 990<span class="plan-price-suffix">₽/мес</span>
+        </div>
+        <div class="plan-tagline">Для растущего бизнеса с магазином</div>
+        <ul class="plan-features">
+          <li>5 сайтов</li>
+          <li>Интернет-магазин</li>
+          <li>AI-кошелёк 6 000 ₽/мес</li>
+          <li>Онлайн-запись</li>
+          <li>Приём оплаты картой</li>
+          <li>Аналитика и отчёты</li>
+          <li>Приоритетная поддержка</li>
+          <li>API для интеграций</li>
+        </ul>
+        <a href="#" class="plan-cta">Выбрать Pro →</a>
+      </div>
+    </div>
+
+    <div class="pricing-note">
+      <span>Visa / Mastercard / МИР / СБП</span>
+      <span>30 дней гарантия возврата</span>
+      <span>Без скрытых платежей</span>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-tag reveal" style="text-align: center; display: block;">Вопросы</div>
+    <h2 class="section-title reveal" style="text-align: center; margin-left: auto; margin-right: auto;">Что обычно <span class="accent">спрашивают</span></h2>
+
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Нужно ли уметь программировать?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Нет. Совсем. AI делает всё — дизайн, тексты, код. Вы только описываете что хотите своими словами. Если нужно что-то поправить — просто говорите AI: «Сделай шапку темнее» или «Убери третий блок». Всё.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Что если AI неправильно поймёт?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Любую часть сайта можно переделать одной фразой. AI запоминает предыдущие правки и не путает их. Если совсем не понравится — начнёте с нуля за 30 секунд. Прогресс сохраняется автоматически.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Можно ли подключить свой домен?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Да, на тарифе Lite и выше. Подключаем за 5 минут — даже если домен у другого регистратора. SSL ставим автоматически. Email-почту тоже настроим.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Что с оплатой? Принимаете карты РФ?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Visa, Mastercard, МИР, СБП, Yandex Pay, Tinkoff Pay. Полностью российский эквайринг через Yookassa. Чеки и закрывающие документы — автоматически в личный кабинет.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>152-ФЗ — это правда работает?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Серьёзно. Серверы в РФ (Yandex Cloud), оператор персональных данных, все документы в порядке. Уведомление Роскомнадзору подано. При выездной проверке вопросов не будет — у нас уже проходили клиенты.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Что входит в AI-кошелёк 1 000 ₽?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">~200 сообщений с AI по правкам сайта. На активные изменения хватит на 2-3 месяца. Если кошелёк заканчивается — предупредим заранее, можно докинуть от 200 ₽ или подождать до следующего месяца.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Какая поддержка?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Telegram-чат. В рабочее время (10:00–22:00 МСК) отвечаем за 30 минут. Ночью — за 2 часа. Никаких ботов — общаетесь с живыми людьми. Можно скинуть скриншот, видео, голосовое.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Можно ли сначала попробовать бесплатно?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Да. 5 дней — полный доступ ко всем функциям, без банковской карты. Если понравится — выбираете тариф. Если нет — просто закрываете вкладку, мы не возьмём ни копейки.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Что если у меня уже есть сайт — можно перенести?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Да. Импорт с Tilda, Wix, готовых HTML или WordPress. Перенесём контент, переделаем под наш конструктор за 1-2 часа. Бесплатно, если оформите подписку.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Что если я хочу уйти к другому провайдеру?</span>
+          <span class="icon">+</span>
+        </button>
+        <div class="faq-a">Все ваши данные — ваши. Экспорт в один клик: HTML, изображения, тексты, база. Без удержания, без штрафов. Хотите — заберите и сделайте на чём-то другом.</div>
+      </div>
+    </div>
+
+    <p style="text-align: center; margin-top: 40px; color: var(--muted); font-size: 14px;">
+      Не нашли свой вопрос? <a href="https://t.me/" style="color: var(--accent);">Спросите в Telegram</a> — ответим за 30 минут.
+    </p>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section>
+  <div class="container">
+    <div class="final-cta reveal">
+      <h2>
+        Готовы запустить сайт<br>
+        <span class="accent">на этой неделе?</span>
+      </h2>
+      <p>5 дней бесплатно. Без банковской карты. Не понравится — просто закроете вкладку, и всё.</p>
+      <a href="#" class="btn btn-primary" style="padding: 18px 36px; font-size: 16px;">Создать сайт бесплатно →</a>
+      <div class="trust-mini">
+        <b>1 247+</b> предпринимателей уже сделали сайт на Omnia.AI<span>·</span>★ <b>4.9</b> в Telegram<span>·</span>Хостинг в РФ
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <div class="logo">
+          <div class="logo-mark">Ω</div>
+          <span>Omnia.AI</span>
+        </div>
+        <p>AI-конструктор сайтов для малого бизнеса. Создан в России. Работает по 152-ФЗ.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Продукт</h5>
+        <a href="#features">Возможности</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#">Шаблоны</a>
+        <a href="#demo">Демо</a>
+      </div>
+      <div class="footer-col">
+        <h5>Компания</h5>
+        <a href="#">О нас</a>
+        <a href="#">Блог</a>
+        <a href="#">Карьера</a>
+        <a href="mailto:hello@omniadevelop.ru">Контакты</a>
+      </div>
+      <div class="footer-col">
+        <h5>Поддержка</h5>
+        <a href="https://t.me/">Telegram</a>
+        <a href="#faq">Частые вопросы</a>
+        <a href="#">Статус сервиса</a>
+        <a href="#">Документация</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Omnia.AI · Политика конфиденциальности · Договор-оферта · 152-ФЗ</div>
+      <div>ИП Иванов И.И. · ИНН 770000000000</div>
+    </div>
+  </div>
+</footer>
+
+<!-- Sticky mobile CTA -->
+<div class="sticky-mobile-cta">
+  <a href="#" class="btn btn-primary">Создать сайт бесплатно →</a>
+</div>
+
+<script>
+// Reveal on scroll
+(function() {
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => obs.observe(el));
+})();
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// Open first FAQ by default
+document.querySelector('.faq-item').classList.add('open');
+</script>
+
+</body>
+</html>
