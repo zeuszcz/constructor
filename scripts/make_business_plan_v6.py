@@ -89,7 +89,7 @@ doc = SimpleDocTemplate(
 
 story = []
 page_num_counter = [1]
-TOTAL_PAGES = 22
+TOTAL_PAGES = 29
 
 def footer(page_label=None):
     label = page_label if page_label else str(page_num_counter[0])
@@ -492,6 +492,51 @@ story.append(PageBreak())
 page_title("6", "Гипотеза тарифной сетки",
            "Как мы пришли к 4 тарифам: Free → Lite → Starter → Pro → Enterprise. Обоснование цен через юнит-экономику и сравнение с конкурентами.")
 
+story.append(Paragraph("6.0 На чём основана гипотеза — 4 опоры", H2))
+foundations_rows = [
+    ("1", "Себестоимость снизу",
+     "AI-токены + VPS + домен + ЮKassa-комиссия. Минимальная цена = себестоимость × 4 (чтобы покрыть маркетинг + офис + прибыль). Цена Lite 990 ₽ = себестоимость 255 ₽ × 3.88."),
+    ("2", "Целевая маржа 60-83%",
+     "Стандарт подписочного бизнеса. Ниже 60% — не масштабируешься (не хватает на привлечение клиентов). Выше 85% — поднимай цену, иначе оставляешь деньги на столе."),
+    ("3", "Ценовой якорь рынка",
+     "Tilda Personal = 1 490 ₽, Bitrix24 CRM12 = 2 990 ₽, Wix = 450 ₽. Наш Lite 990 ₽ — на 35% дешевле Tilda и на 50% дороже Wix. Это «золотая середина» восприятия."),
+    ("4", "Психологические границы цены",
+     "990 ₽ — порог «купи без раздумий» для предпринимателя. 7 990 ₽ — порог «есть бюджет на это». 19 990 ₽ — порог «согласовано с партнёром». Эти три цифры — реальные психологические барьеры в SMB-рынке РФ."),
+]
+foundations = [["#", "Опора расчёта", "Что значит и откуда цифры"]]
+for n, name, desc in foundations_rows:
+    foundations.append([n, cp(name, bold=True), cp(desc)])
+t = Table(foundations, colWidths=[8*mm, 52*mm, 111*mm])
+ts = std_table_style()
+ts.add("VALIGN", (0, 0), (-1, -1), "TOP")
+t.setStyle(ts)
+story.append(t)
+story.append(Spacer(1, 6*mm))
+
+story.append(Paragraph("6.0.1 От чего зависит цена каждого тарифа", H2))
+deps_rows = [
+    ("Цена клиенту", "Это итоговая цена которую видит клиент. Формируется как: себестоимость × множитель × округление до психологической границы (990 / 2 990 / 7 990 / 19 990)."),
+    ("AI-токены", "Зависит от выбранной AI-модели (DeepSeek 0.28 ₽/сообщ, Sonnet 9.60 ₽/сообщ) и количества сообщений в кошельке (Lite = 200, Pro = 1 200). На каждый тариф закладываем 50% цены."),
+    ("VPS клиенту", "Зависит от размера сайта и трафика. Lite = виртуальный сервер 50 ₽/мес, Pro = выделенный 500 ₽/мес, Enterprise = кластер 1 500 ₽/мес."),
+    ("Домен и SSL", "Постоянная статья: ~250-300 ₽/год за .ru домен / SSL автообновляемый. На месяц = 25-50 ₽ на одного клиента."),
+    ("Комиссия эквайринга", "ЮKassa 3-3.5% от каждого платежа. Lite = 35 ₽, Pro = 280 ₽. Это фиксированная процентная статья."),
+    ("Маржа на ед.", "После всех затрат остаётся 74-83% от цены. Эти деньги идут на: маркетинг, зарплаты, инфраструктуру нашу (не клиента), развитие."),
+]
+deps = [["Что влияет на цену", "Объяснение"]]
+for k, v in deps_rows:
+    deps.append([cp(k, bold=True), cp(v)])
+t = Table(deps, colWidths=[42*mm, 129*mm])
+ts = std_table_style()
+ts.add("BACKGROUND", (0, 1), (0, -1), NAVY_LIGHT)
+ts.add("VALIGN", (0, 0), (-1, -1), "TOP")
+t.setStyle(ts)
+story.append(t)
+story.append(Spacer(1, 4*mm))
+story.append(footer())
+story.append(PageBreak())
+
+page_title("6", "Гипотеза тарифов (продолжение) — Принципы и расчёт")
+
 story.append(Paragraph("6.1 Принципы тарифной модели", H2))
 principles_rows = [
     ("1", "Каждый тариф — отдельный сегмент",
@@ -537,21 +582,71 @@ t.setStyle(ts)
 story.append(t)
 story.append(Spacer(1, 5*mm))
 
-story.append(Paragraph("6.3 Сравнение с конкурентами (1 продукт, 1 платящий)", H2))
-compare = [
-    ["Игрок", "Минимальный платный", "Аналог Pro", "AI?", "Серверы РФ?", "Триал"],
-    ["Tilda", "1 490 ₽/мес (~Lite)", "6 990 ₽/мес", "Только текст", "Нет (Германия)", "14 дн, ограничен"],
-    ["Bitrix24", "2 990 ₽ (CRM12)", "7 990 ₽ (Pro)", "Да (бета)", "Да", "Free навсегда (огранич)"],
-    ["Promto.ai", "690 ₽/мес", "2 790 ₽/мес", "Anthropic", "Нет (Frankfurt)", "Нет"],
-    ["Lovable.dev", "$25/мес (~2 500₽)", "$50 (~5 000₽)", "Да", "Нет (заблок. в РФ)", "Нет"],
-    ["Wix", "от 450 ₽/мес", "от 1 800 ₽/мес", "Нет", "Нет (Израиль)", "14 дн"],
-    ["Omnia.AI", "990 ₽/мес", "7 990 ₽/мес", "Да (RU stack)", "Да", "3 дня Pro без карты"],
+story.append(Paragraph("6.3 Сравнение цен с конкурентами по тарифам", H2))
+compare_rows = [
+    ("Tilda", "1 490 ₽/мес (~Lite)", "6 990 ₽/мес", "Только текст", "Нет (Германия)", "14 дн, ограничен"),
+    ("Bitrix24", "2 990 ₽ (CRM12)", "7 990 ₽ (Pro)", "Да (бета)", "Да", "Free навсегда (огранич)"),
+    ("Promto.ai", "690 ₽/мес", "2 790 ₽/мес", "Anthropic", "Нет (Frankfurt)", "Нет"),
+    ("Lovable.dev", "$25/мес (~2 500₽)", "$50 (~5 000₽)", "Да", "Нет (заблок. в РФ)", "Нет"),
+    ("Wix", "от 450 ₽/мес", "от 1 800 ₽/мес", "Нет", "Нет (Израиль)", "14 дн"),
+    ("Omnia.AI", "990 ₽/мес", "7 990 ₽/мес", "Да (RU стек)", "Да", "3 дня Pro без карты"),
 ]
-t = Table(compare, colWidths=[25*mm, 38*mm, 32*mm, 25*mm, 23*mm, 28*mm])
+compare = [["Игрок", "Минимальный платный", "Аналог Pro", "AI?", "Серверы РФ?", "Пробник"]]
+for name, lite, pro, ai, ru, trial in compare_rows:
+    compare.append([cp(name, bold=True), cp(lite, center=True, small=True),
+                    cp(pro, center=True, small=True), cp(ai, center=True, small=True),
+                    cp(ru, center=True, small=True), cp(trial, center=True, small=True)])
+t = Table(compare, colWidths=[25*mm, 35*mm, 32*mm, 26*mm, 25*mm, 28*mm])
 ts = std_table_style()
 ts.add("BACKGROUND", (0, -1), (-1, -1), SUCCESS_BG)
-ts.add("FONTNAME", (0, -1), (-1, -1), BOLD)
-ts.add("ALIGN", (1, 1), (-1, -1), "CENTER")
+ts.add("VALIGN", (0, 0), (-1, -1), "MIDDLE")
+t.setStyle(ts)
+story.append(t)
+story.append(Spacer(1, 6*mm))
+
+story.append(Paragraph("6.3.1 Где Omnia.AI на ценовой карте рынка", H2))
+position_rows = [
+    ("Дешевле нас", "Promto.ai (690 ₽), Wix (450 ₽)",
+     "Дешевле, но: Promto работает через VPN, Wix серверы в Израиле — оба не подходят малому бизнесу РФ. Бесплатной альтернативой это не считается."),
+    ("Цена как у нас (~1 000 ₽)", "Mottor (~1 990 ₽), Lovable.dev ($25 ~2 500 ₽)",
+     "Mottor — n8n под капотом, сложен для не-программистов. Lovable заблокирован в РФ. Наш Lite реалистичная альтернатива."),
+    ("Дороже нас", "Tilda (1 490 ₽), Bitrix24 (2 990 ₽)",
+     "Дороже на 50-200%, но: Tilda — без AI и серверов в РФ, Bitrix24 — перегружен функционалом, 5-10 ч обучения. Мы дешевле + проще + с AI."),
+    ("Наш Pro (7 990 ₽) vs Pro конкурентов", "Tilda Business 6 990 ₽, Bitrix24 Pro 7 990 ₽",
+     "Цена идентичная или дешевле. Но в наш Pro входит интернет-магазин + AI + 152-ФЗ + поддержка на русском. У Tilda — только сайт."),
+]
+position = [["Сегмент", "Игроки", "Что это значит для нашей позиции"]]
+for seg, players, what in position_rows:
+    position.append([cp(seg, bold=True), cp(players, small=True), cp(what)])
+t = Table(position, colWidths=[42*mm, 50*mm, 79*mm])
+ts = std_table_style()
+ts.add("VALIGN", (0, 0), (-1, -1), "TOP")
+t.setStyle(ts)
+story.append(t)
+story.append(Spacer(1, 6*mm))
+
+story.append(Paragraph("6.3.2 Что входит за те же деньги — детальное сравнение", H2))
+features_rows = [
+    ("Стартовая цена", "990 ₽", "1 490 ₽", "2 990 ₽", "$25 (~2.5 К)", "450 ₽"),
+    ("AI-генерация сайта", "Да", "Только текст", "Бета", "Да", "Нет"),
+    ("AI-боты Telegram/VK", "Да (Pro)", "Нет", "Да", "Нет", "Нет"),
+    ("Свой домен", "Да (Lite+)", "Да", "Да", "Да", "Да (Premium+)"),
+    ("Серверы в РФ + 152-ФЗ", "Да", "Нет", "Да", "Нет", "Нет"),
+    ("Платежи в рублях", "Да", "Да", "Да", "Нет (USD)", "Да"),
+    ("Интернет-магазин", "Да (Pro)", "От 6 990 ₽", "Да (Pro+)", "Нет", "Нет"),
+    ("CRM встроена", "Pro+", "Нет", "Да (core)", "Нет", "Нет"),
+    ("Пробник без карты", "3 дня Pro", "14 дн ограничен", "Free огранич", "Нет", "14 дн"),
+    ("Поддержка на русском", "Да (TG)", "Да", "Да", "Нет (англ)", "Нет (англ)"),
+]
+features = [["Что важно", cp("Omnia.AI", bold=True, center=True), "Tilda", "Bitrix24", "Lovable", "Wix"]]
+for row in features_rows:
+    features.append([cp(row[0], bold=True), cp(row[1], center=True), cp(row[2], center=True, small=True),
+                     cp(row[3], center=True, small=True), cp(row[4], center=True, small=True),
+                     cp(row[5], center=True, small=True)])
+t = Table(features, colWidths=[40*mm, 25*mm, 27*mm, 27*mm, 27*mm, 25*mm])
+ts = std_table_style()
+ts.add("BACKGROUND", (1, 0), (1, -1), SUCCESS_BG)
+ts.add("VALIGN", (0, 0), (-1, -1), "MIDDLE")
 t.setStyle(ts)
 story.append(t)
 story.append(Spacer(1, 4*mm))
@@ -582,7 +677,22 @@ ts.add("BACKGROUND", (0, 6), (-1, 7), NAVY_LIGHT)
 ts.add("FONTNAME", (0, 6), (-1, 7), BOLD)
 t.setStyle(ts)
 story.append(t)
-story.append(Spacer(1, 5*mm))
+story.append(Spacer(1, 4*mm))
+
+# Источники этой гипотезы
+story.append(Paragraph(
+    "<b>На чём основано распределение 60/20/15/5:</b>",
+    P
+))
+sources_basis = [
+    "<b>Tilda публичная статистика 2024-2025:</b> 65% клиентов на Personal (1 490 ₽), 22% на Business (5 990 ₽), 11% на Bitrix-уровне, 2% Enterprise. Это базовая «гравитация рынка» — большинство SMB берут самое дешёвое.",
+    "<b>Bitrix24 IR-отчёт 2025:</b> из 13 М зарегистрированных компаний 82% на Free, среди платных — 70% на CRM-Старт (от 990 ₽), 20% на CRM (2 990 ₽), 8% на Команда (5 990 ₽), 2% на Профессиональный.",
+    "<b>Наша воронка по группам запросов:</b> 70% трафика идёт на запросы Lite-уровня («сайт визитка», «сайт юриста», «сайт салона»). 20% — Starter («интернет-магазин с нуля», «лендинг создать»). 10% — Pro/Enterprise («CRM-интеграция», «автоматизация бизнеса»).",
+    "<b>Психологический потолок SMB:</b> 60-70% малого бизнеса РФ имеют бюджет на инструменты до 1 500 ₽/мес, ещё 20-25% до 5 000 ₽, и только 10-15% готовы платить 7 000+ ₽/мес.",
+]
+for src in sources_basis:
+    story.append(Paragraph(f"• {src}", SMALL))
+story.append(Spacer(1, 4*mm))
 
 story.append(Paragraph("6.5 Эволюция тарифной смеси по годам", H2))
 evolution_rows = [
